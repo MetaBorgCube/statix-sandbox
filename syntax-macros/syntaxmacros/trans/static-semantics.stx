@@ -1,0 +1,117 @@
+module static-semantics
+
+signature
+  sorts Program Term MacroDef
+  constructors
+    Program : list(Term) -> Program
+    
+    List    : list(Term) -> Term
+    Sym     : string -> Term
+    Num     : int -> Term
+    Str     : string -> Term
+    
+    Macro   : list(Term) * Term -> Term
+    Occ     : occurrence -> Term
+    
+  name-resolution
+    labels P 
+    
+  namespaces
+    Var : string
+    Macro : string 
+    
+  relations 
+//    defOf  : occurrence -> Term
+    instOf : occurrence -> Term
+
+rules // top-level 
+
+  programOK : Program 
+
+  programOK(Program(trms)) :- {s trms'}
+    new s,
+    defsOk(s, trms) == trms'.
+    
+  defsOk : scope * list(Term) -> list(Term)
+    
+  defsOk(s, []) = [].
+  
+  defsOk(s1, [trm | trms]) = [trm' | trms'] :- {s2}
+    new s2, s2 -P-> s1,
+    defOk(s1, s2, trm) == trm',
+    defsOk(s2, trms) == trms'.
+    
+rules // definitions 
+
+  defOk: scope * scope * Term -> Term
+    
+  defOk(s1, s2, List([Sym("def"), Sym(x), trm])) = List([Sym("def"), Occ(Var{x@x}), trm']) :-
+    termOk(s1, trm) == trm',
+    // s2 -> Var{x@x} with defOf trm',
+    s2 -> Var{x@x} with instOf Occ(Var{x@x}).
+  
+  defOk(s1, s2, List([Sym("macro"), List([Sym(m) | pats]), trm])) = List([]) :- 
+    s2 -> Var{m@m} with instOf Macro(pats, trm).
+  
+  defOk(s1, s2, trm) = trm' :- termOk(s1, trm) == trm'.
+  
+rules // terms 
+    
+  termOk: scope * Term -> Term
+  termsOk maps termOk(*, list(*)) = list(*)
+  
+  termOk(_, Num(i)) = Num(i).
+  termOk(_, Str(x)) = Str(x). 
+  
+  termOk(s, List([])) = List([]).
+  
+  termOk(s, Occ(o)) = Occ(o).
+  
+  termOk(s, Sym(x)) = trm' :- {p d trm}
+    instOf of Var{x@x} in s |-> [(p, (d, trm))],
+    termOk(s, trm) == trm'.
+
+  termOk(s, List([Sym("lambda"), List([Sym(x)]), trm])) = List([Sym("lambda"), Occ(Var{x@x}), trm']) :- {s_lam}
+    new s_lam, s_lam -P-> s,
+    s_lam -> Var{x@x} with instOf Occ(Var{x@x}),
+    termOk(s_lam, trm) == trm'.
+    
+  termOk(s, List([trm1 | trms2])) = List([trm1' | trms2']) :-
+    termOk(s, trm1) == trm1',
+    termsOk(s, trms2) == trms2'.
+      
+rules // macro application 
+
+  termOk(s, List([Sym(m) | trms])) = trm' :- {p d trm}
+    instOf of Var{m@m} in s |-> [(p, (d, trm))],
+    match(s, trm, trms) == trm'.
+    
+  match : scope * Term * list(Term) -> Term
+    
+  match(s, trm, trms) = List([trm | trms']) :-
+    termsOk(s, trms) == trms'.
+    
+  match(s, Macro(pats, trm), trms) = trm' :- {s_m}
+    new s_m, s_m -P-> s, 
+    matchPats(s_m, pats, trms),
+    termOk(s_m, trm) == trm'.
+    
+  matchPat  : scope * Term * Term
+  matchPats : scope * list(Term) * list(Term)
+  
+  matchPats(s_m, [], []).
+  
+  matchPats(s_m, [pat | pats], [trm | trms]) :-
+    matchPat(s_m, pat, trm),
+    matchPats(s_m, pats, trms).
+  
+  matchPat(s_m, Sym(x), trm) :- 
+    s_m -> Var{x@x} with instOf trm.
+   
+  matchPat(s_m, Num(i), Num(i)).
+  matchPat(s_m, Str(i), Str(i)).
+  
+  matchPat(s_m, List(pats), List(trms)) :- 
+    matchPats(s_m, pats, trms).
+  
+  

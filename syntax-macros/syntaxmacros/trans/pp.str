@@ -1,0 +1,49 @@
+module pp
+
+imports
+
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/editor/refactoring/-
+  pp/syntax-macros-parenthesize
+  pp/syntax-macros-pp
+
+rules
+
+  editor-format:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[pp.[ext]])> path
+    ; result   := <pp-debug> node
+
+rules
+  
+  pp-syntax-macros-string =
+    parenthesize-syntax-macros
+    ; prettyprint-syntax-macros-start-symbols
+    ; !V([], <id>)
+    ; box2text-string(|120)
+      
+  pp-partial-syntax-macros-string =
+    parenthesize-syntax-macros
+    ; prettyprint-syntax-macros
+    ; !V([], <id>)
+    ; box2text-string(|120)
+    
+  pp-partial-syntax-macros-string(|sort) =
+    parenthesize-syntax-macros
+    ; prettyprint-syntax-macros(|sort)
+    ; !V([], <id>)
+    ; box2text-string(|120)  
+      
+  pp-debug :
+    ast -> result
+    with
+       result := <pp-syntax-macros-string> ast
+    <+ <bottomup(try(not(is-string); not(is-list); not(pp-syntax-macros-string); debug(!"cannot pp ")))> ast
+    ;  result := ""
+
+rules
+  
+  construct-textual-change = construct-textual-change(pp-partial-syntax-macros-string, parenthesize, override-reconstruction, resugar)

@@ -1,0 +1,17 @@
+module syntax-macros
+
+imports Common
+
+context-free start-symbols Program
+
+context-free syntax
+  
+  Program.Program = <<Term*>>
+
+  Term.List = <(<{Term " "}*>)>
+  
+  Term.Sym = ID
+ 
+  Term.Num = INT
+  
+  Term.Str = STRING
