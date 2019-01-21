@@ -10,15 +10,15 @@ dependencies:
   source:
   - org.metaborg:meta.lib.spoofax:${metaborgVersion}
   - org.metaborg:statix.runtime:${metaborgVersion}
+runtime:
+  nabl2:
+    debug: analysis files custom
 pardonedLanguages:
 - EditorService
 - Stratego-Sugar
 - SDF
 debug:
   typesmart: false
-runtime:
-  nabl2:
-    debug: analysis files custom
 language:
   sdf:
     pretty-print: syntax-macros
