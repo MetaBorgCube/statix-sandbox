@@ -8,7 +8,7 @@ imports
 
 rules // Analysis
 
-  editor-analyze = stx-editor-analyze(id|"static-semantics", "programOK")
+  editor-analyze = stx-editor-elaborate(id|"static-semantics", "programOK")
 
 rules // Editor Services
 
@@ -27,3 +27,10 @@ rules // Debugging
   debug-show-analyzed: (selected, _, _, path, project-path) -> (filename, result)
     with filename := <guarantee-extension(|"analyzed.aterm")> path
        ; result   := selected
+
+  editor-format-analyzed:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[analyzed.pp.[ext]])> path
+    ; result   := <pp-debug> node

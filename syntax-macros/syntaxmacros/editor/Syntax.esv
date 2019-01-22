@@ -18,8 +18,13 @@ menus
   
   menu: "Syntax" (openeditor)
     
-    action: "Format"          = editor-format (source)
-    action: "Show parsed AST" = debug-show-aterm (source)
+    action: "Format (parsed)"   = editor-format (source)
+    action: "Show AST (parsed)" = debug-show-aterm (source)
+
+    separator
+
+    action: "Format (analyzed)"   = editor-format-analyzed
+    action: "Show AST (analyzed)" = debug-show-analyzed
 
 views
   

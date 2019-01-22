@@ -26,9 +26,9 @@ signature
 
 rules // top-level 
 
-  programOK : Program 
+  programOK : Program -> Program
 
-  programOK(Program(trms)) :- {s trms'}
+  programOK(Program(trms)) = Program(trms') :- {s}
     new s,
     defsOk(s, trms) == trms'.
     
