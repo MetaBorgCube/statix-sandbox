@@ -16,4 +16,4 @@ module C {
     def y = 3
     > x + 1 + z
   }
-} 
+}

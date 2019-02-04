@@ -71,7 +71,6 @@ signature
   namespaces
     Var : string
     Mod : string
-    Imp : string
     
   name-resolution
     labels P I R
@@ -82,8 +81,6 @@ signature
     resolve Mod filter pathMatch[P P* I*] 
                 min pathLt[$ < I, $ < P, I < P, R < P] 
                 
-    resolve Imp filter pathMatch[e] 
-       
   relations 
     typeOfDecl : occurrence -> TYPE 
     
@@ -116,17 +113,19 @@ rules // modules
 //    typeOfDecl of Mod{m@m} in s |-> [(p, (d, MOD(s_mod)))],
 //    s -I-> s_mod.
         
-  declOk(s, Import([x | xs])) :- {p d s_mod}
-    typeOfDecl of Mod{x@x} in s |-> [(p, (d, MOD(s_mod)))],
+  declOk(s, Import([x | xs])) :- {s_mod}
+    typeOfDecl of Mod{x@x} in s |-> [(_, (_, MOD(s_mod)))],
     importOk(s, s_mod, xs).
-    
+
   importOk : scope * scope * list(ID)
   
-  importOk(s, s_prev, []) :- 
-    s -I-> s_prev. 
+  importOk(s, s_prev, []) :-
+    s -I-> s_prev.
     
-  importOk(s, s_prev, [x | xs]) :- {p d s_mod} 
-    typeOfDecl of Imp{x@x} in s_prev |-> [(p, (d, MOD(s_mod)))],
+  importOk(s, s_prev, [x | xs]) :- {s_mod}
+    query typeOfDecl filter pathMatch[e] and { Mod{y@_} :- y == x }
+                     min pathLt[$ < I, $ < P, I < P, R < P] and true
+      in s_prev |-> [(_, (_, MOD(s_mod)))],
     importOk(s, s_mod, xs). 
     
 //  declOk(s, Import(m)) :- {p d s_mod}
