@@ -1,0 +1,131 @@
+module modules
+
+imports Common
+
+context-free start-symbols Program
+
+context-free syntax
+  
+  Program.Program = <
+    <{Decl "\n"}*>
+  >
+  
+context-free syntax // declarations 
+
+  Decl.Module = <
+    module <ID> {
+      <{Decl "\n"}*>
+    }
+  >
+  Decl.Import = <import <{ID "."}+>>
+  
+  Decl.Def = <def <Bind>>
+
+  Decl.Record = <
+    record <ID> { 
+      <{FDecl "\n"}*> 
+    }
+  >
+  FDecl.FDecl = <<ID> : <Type>>
+  
+  Decl.Exp = [>[Exp]]
+
+context-free syntax // bindings 
+
+  Bind.Bind  = <<ID> = <Exp>>
+  Bind.TBind = <<ID> : <Type> = <Exp>>
+  
+  FBind.FBind = <<ID> = <Exp>>
+  
+context-free syntax // types 
+
+  Type.IntT  = <Int>
+  Type.BoolT = <Bool>
+  Type.RecT  = <<ID>>
+  Type.FunT  = [[Type] -> [Type]] {right}
+
+context-free syntax // modules
+
+  Exp.Mod  = <@<ID>>
+  
+context-free syntax // variables 
+
+  Exp.Var = <<ID>>
+  
+  Exp.Let = <
+    let 
+      <{Bind ";\n"}*> 
+    in 
+      <Exp>
+  >
+  Exp.LetPar = <
+    letpar
+      <{Bind ";\n"}*> 
+    in 
+      <Exp>
+  >
+  Exp.LetRec = <
+    letrec 
+      <{Bind ";\n"}*> 
+    in 
+      <Exp>
+  >
+  
+context-free syntax // functions 
+
+  Exp.Fun = <
+    fun(<ID> : <Type>) { 
+      <Exp> 
+    }
+  >
+  Exp.App   = <<Exp><Exp>> {left}
+ 
+context-free syntax // records 
+
+  Exp.New  = <new <ID> { <{FBind ","}*> }>
+  
+  Exp.Proj = <<Exp>.<ID>> 
+    
+  Exp.With = <
+    with <Exp> do 
+      <Exp>
+  >
+
+context-free syntax // arithmetic
+
+  Exp.Int   = <<INT>>
+  Exp.Add   = <<Exp> + <Exp>> {left}
+  Exp.Sub   = <<Exp> - <Exp>> {left}
+  Exp.Mul   = <<Exp> * <Exp>> {left}
+  Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
+ 
+context-free syntax // booleans
+
+  Exp.Not   = <!<Exp>>
+  Exp.True  = <true>
+  Exp.False = <false>  
+  Exp.If = <
+    if <Exp> then 
+      <Exp> 
+    else 
+      <Exp>
+  >
+
+context-free syntax // disamb
+
+  Exp = <(<Exp>)> {bracket}
+  
+context-free priorities 
+
+  Exp.Proj
+  > Exp.App 
+  > Exp.Mul 
+  > {left: Exp.Add Exp.Sub} 
+  > Exp.Eq 
+  > Exp.If 
+  > {Exp.Let Exp.LetPar Exp.LetRec Exp.With }
+  
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

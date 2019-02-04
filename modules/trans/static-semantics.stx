@@ -1,0 +1,314 @@
+module static-semantics
+
+signature
+  sorts ID = string
+  sorts INT = string
+  
+  sorts Program constructors
+    Program  : list(Decl) -> Program
+    
+  sorts Decl constructors
+    Def      : Bind -> Decl
+    Exp      : Exp -> Decl
+    Module   : ID * list(Decl) -> Decl
+    Import   : list(ID) -> Decl
+    Record   : ID * list(FDecl) -> Decl
+    
+  sorts FDecl constructors 
+    FDecl    : ID * Type -> FDecl
+
+  sorts Type constructors
+    IntT     : Type
+    BoolT    : Type
+    RecT     : ID -> Type
+    FunT     : Type * Type -> Type
+    
+  sorts Bind constructors
+    Bind     : ID * Exp -> Bind
+    TBind    : ID * Type * Exp -> Bind
+  
+  sorts FBind constructors
+    FBind    : ID * Exp -> FBind
+    
+  sorts Exp constructors
+    Mod      : ID -> Exp
+    
+  constructors // variables
+    Var      : ID -> Exp
+    Let      : list(Bind) * Exp -> Exp
+    LetPar   : list(Bind) * Exp -> Exp
+    LetRec   : list(Bind) * Exp -> Exp
+    
+  constructors // booleans
+    True     : Exp
+    False    : Exp
+    Not      : Exp -> Exp
+    If       : Exp * Exp * Exp -> Exp
+
+  constructors // functions
+    Fun      : ID * Type * Exp -> Exp
+    App      : Exp * Exp -> Exp
+    
+  constructors // arithmetic
+    Int      : INT -> Exp
+    Add      : Exp * Exp -> Exp
+    Sub      : Exp * Exp -> Exp
+    Mul      : Exp * Exp -> Exp
+    Eq       : Exp * Exp -> Exp
+    
+  constructors // records
+    New      : ID * list(FBind) -> Exp
+    With     : Exp * Exp -> Exp
+    Proj     : Exp * ID -> Exp
+    
+  sorts TYPE constructors
+    INT  : TYPE
+    BOOL : TYPE
+    FUN  : TYPE * TYPE -> TYPE
+    REC  : scope -> TYPE
+    MOD  : scope -> TYPE
+    
+  namespaces
+    Var : string
+    Mod : string
+    Imp : string
+    
+  name-resolution
+    labels P I R
+     
+    resolve Var filter pathMatch[P* (R* | I*)] 
+                min pathLt[$ < I, $ < P, I < P, R < P] 
+                
+    resolve Mod filter pathMatch[P P* I*] 
+                min pathLt[$ < I, $ < P, I < P, R < P] 
+                
+    resolve Imp filter pathMatch[e] 
+       
+  relations 
+    typeOfDecl : occurrence -> TYPE 
+    
+rules
+
+  programOK : Program 
+
+  programOK(Program(decls)) :- {s} 
+    new s, 
+    declsOk(s, decls).
+  
+rules // declarations
+
+  declOk : scope * Decl 
+  declsOk maps declOk(*, list(*))
+  
+  declOk(s, Def(bind)) :- 
+    bindOk(s, s, bind).
+  
+  declOk(s, Exp(e)) :- {T}
+    typeOfExp(s, e) == T.
+  
+rules // modules 
+  declOk(s, Module(m, decls)) :- {s_mod}
+    new s_mod, s_mod -P-> s,
+    s -> Mod{m@m} with typeOfDecl MOD(s_mod),
+    declsOk(s_mod, decls).
+    
+//  declOk(s, Import(m)) :- {p d s_mod} 
+//    typeOfDecl of Mod{m@m} in s |-> [(p, (d, MOD(s_mod)))],
+//    s -I-> s_mod.
+        
+  declOk(s, Import([x | xs])) :- {p d s_mod}
+    typeOfDecl of Mod{x@x} in s |-> [(p, (d, MOD(s_mod)))],
+    importOk(s, s_mod, xs).
+    
+  importOk : scope * scope * list(ID)
+  
+  importOk(s, s_prev, []) :- 
+    s -I-> s_prev. 
+    
+  importOk(s, s_prev, [x | xs]) :- {p d s_mod} 
+    typeOfDecl of Imp{x@x} in s_prev |-> [(p, (d, MOD(s_mod)))],
+    importOk(s, s_mod, xs). 
+    
+//  declOk(s, Import(m)) :- {p d s_mod}
+//    query typeOfDecl filter pathMatch[P P* I*] and true
+//                     min pathLt[$ < I, $ < P, I < P, R < P] and true
+//       in s |-> [(_, (_, MOD(s_mod)))],
+//    s -I-> s_mod.
+  
+rules // record type
+
+  declOk(s, Record(x, fdecls)) :- {s_rec}
+     new s_rec,
+     fdeclsOk(s_rec, s, fdecls),
+     s -> Var{x@x} with typeOfDecl REC(s_rec).
+  
+  fdeclOk : scope * scope * FDecl
+  fdeclsOk maps fdeclOk(*, *, list(*))
+  
+  fdeclOk(s_bnd, s_ctx, FDecl(x, t)) :- {T}
+    typeOfType(s_ctx, t) == T,
+    s_bnd -> Var{x@x} with typeOfDecl T.
+
+rules // bindings 
+
+  bindOk : scope * scope * Bind 
+  
+  bindsOk maps bindOk(*, *, list(*))
+  
+  bindOk(s_bnd, s_ctx, Bind(x, e)) :- {T}
+    typeOfExp(s_ctx, e) == T,
+    s_bnd -> Var{x@x} with typeOfDecl T.
+  
+  bindOk(s_bnd, s_ctx, TBind(x, t, e)) :- {T}
+    typeOfType(s_ctx, t) == T,
+    typeOfExp(s_ctx, e) == T,
+    s_bnd -> Var{x@x} with typeOfDecl T.
+    
+  sbindsOk : scope * scope * list(Bind)
+  
+  sbindsOk(s, s_fin, []) :-
+    s_fin -P-> s.
+    
+  sbindsOk(s, s_fin, [bind | binds]) :- {s_mid}
+    new s_mid, s_mid -P-> s,
+    bindOk(s_mid, s, bind),
+    sbindsOk(s_mid, s_fin, binds).
+    
+    
+rules // types 
+
+  typeOfType : scope * Type -> TYPE
+  
+  typeOfType(s, IntT()) = INT().
+  
+  typeOfType(s, BoolT()) = BOOL().
+  
+  typeOfType(s, FunT(t1, t2)) = FUN(typeOfType(s, t1), typeOfType(s, t2)).
+  
+  typeOfType(s, RecT(x)) = REC(s_rec) :- {p d}
+    typeOfDecl of Var{x@x} in s |-> [(p, (d, REC(s_rec)))].
+  
+rules // expressions 
+
+  typeOfExp : scope * Exp -> TYPE
+  
+rules  // arithmetic
+  
+  typeOfExp(s, Int(i)) = INT().
+    
+  typeOfExp(s, Add(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  typeOfExp(s, Sub(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  typeOfExp(s, Mul(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  typeOfExp(s, Eq(e1, e2)) = BOOL() :- {T}
+    typeOfExp(s, e1) == T,
+    typeOfExp(s, e2) == T.
+    
+rules // module reference
+  
+  typeOfExp(s, Mod(x)) = MOD(s_mod) :- {p d s'}
+    new s', s' -P-> s,
+    typeOfDecl of Mod{x@x} in s' |-> [(p, (d, MOD(s_mod)))].
+    
+rules  // variables 
+    
+  typeOfExp(s, Var(x)) = T :- {p d }
+    typeOfDecl of Var{x@x} in s |-> [(p, (d, T))].
+    
+rules // let bindings
+
+  typeOfExp(s, Let([Bind(x, e1)], e2)) = T :- {S s_let}
+     typeOfExp(s, e1) == S,
+     new s_let,
+     s_let -P-> s,
+     s_let -> Var{x@x} with typeOfDecl S,
+     typeOfExp(s_let, e2) == T.
+ 
+rules // let bindings 
+   
+  typeOfExp(s, Let(binds, e)) = T :- {s_let}
+    new s_let,
+    sbindsOk(s, s_let, binds),
+    typeOfExp(s_let, e) == T.
+    
+  typeOfExp(s, LetPar(binds, e)) = T :- {s_let}
+    new s_let, s_let -P-> s,
+    bindsOk(s_let, s, binds),
+    typeOfExp(s_let, e) == T.
+    
+  typeOfExp(s, LetRec(binds, e)) = T :- {s_let}
+    new s_let, s_let -P-> s,
+    bindsOk(s_let, s_let, binds),
+    typeOfExp(s_let, e) == T.
+    
+rules  // functions 
+    
+  typeOfExp(s, Fun(x, t, e)) = FUN(T, S) :- {s_fun}
+    typeOfType(s, t) == T,
+    new s_fun, 
+    s_fun -P-> s,
+    s_fun -> Var{x@x} with typeOfDecl T,
+    typeOfExp(s_fun, e) == S.
+    
+  typeOfExp(s, App(e1, e2)) = T :- {S}
+    typeOfExp(s, e1) == FUN(S, T),
+    typeOfExp(s, e2) == S.
+  
+rules // records construction
+  
+  typeOfExp(s, New(x, fbinds)) = REC(s_rec) :- {p d}
+    typeOfDecl of Var{x@x} in s |-> [(p, (d, REC(s_rec)))],
+    fbindsOk(s, s_rec, fbinds).
+    
+  fbindOk : scope * scope * FBind
+  fbindsOk maps fbindOk(*, *, list(*))
+  
+  fbindOk(s, s_rec, FBind(x, e)) :- {p d T}
+    typeOfExp(s, e) == T,
+    typeOfDecl of Var{x@x} in s_rec |-> [(p, (d, T))].
+    
+rules // record projection
+
+  typeOfExp(s, Proj(e, x)) = T :- {p d s_rec S}
+    typeOfExp(s, e) == S,
+    proj(S, x) == T.
+    
+  proj : TYPE * ID -> TYPE
+  
+  proj(REC(s_rec), x) = T :- {p d}
+    typeOfDecl of Var{x@x} in s_rec |-> [(p, (d, T))].
+    
+  proj(MOD(s_mod), x) = T :- {p d}
+    typeOfDecl of Var{x@x} in s_mod |-> [(p, (d, T))].
+    
+rules // with record value
+
+  typeOfExp(s, With(e1, e2)) = T :- {s_with s_rec}
+    typeOfExp(s, e1) == REC(s_rec),
+    new s_with,
+    s_with -P-> s, s_with -R-> s_rec,
+    typeOfExp(s_with, e2) == T.
+    
+rules  // booleans 
+  
+  typeOfExp(s, True()) = BOOL().
+  
+  typeOfExp(s, False()) = BOOL().
+  
+  typeOfExp(s, If(e1, e2, e3)) = T :-
+    typeOfExp(s, e1) == BOOL(),
+    typeOfExp(s, e2) == T,
+    typeOfExp(s, e3) == T.
+    
+
+
+  
+    

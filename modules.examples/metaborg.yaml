@@ -1,0 +1,10 @@
+---
+id: org.metaborg:modules.example:0.1.0-SNAPSHOT
+name: modules
+dependencies:
+  compile:
+  - org.metaborg:modules:0.1.0-SNAPSHOT
+debug:
+  typesmart: false
+build:
+  useBuildSystemSpec: true
