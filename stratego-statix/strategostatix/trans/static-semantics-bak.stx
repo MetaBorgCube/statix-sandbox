@@ -43,24 +43,23 @@ rules
     
 rules
 
-  moduleOk : Module -> Module
+  moduleOk : Module
 
-  moduleOk(Module(x, sections)) = Module(x, sections') :- {s}
+  moduleOk(Module(x, sections)) :- {s}
     new s,
-    sectionsOk(s, sections, sections').
+    sectionsOk(s, sections).
 
-  sectionOk : scope * Section * Section
-  sectionsOk maps sectionOk(*, list(*), list(*))
+  sectionOk : scope * Section
+  sectionsOk maps sectionOk(*, list(*))
   
 rules // signatures
   
-  sectionOk(s, Signature(sigsections), Signature(sigsections')) :- 
-    sigSectionsOk(s, sigsections, sigsections').
+  sectionOk(s, Signature(sigsections)) :- sigSectionsOk(s, sigsections).
   
-  sigSectionOk: scope * SigSection * SigSection
-  sigSectionsOk maps sigSectionOk(*, list(*), list(*))
+  sigSectionOk: scope * SigSection
+  sigSectionsOk maps sigSectionOk(*, list(*))
   
-  sigSectionOk(s, Sorts(srts), Sorts(srts)) :- sortsOk(s, srts).
+  sigSectionOk(s, Sorts(srts)) :- sortsOk(s, srts).
   
   sortOk : scope * string 
   sortsOk maps sortOk(*, list(*)) 
@@ -69,7 +68,7 @@ rules // signatures
     d == Sort{srt@srt},
     s -> d with typeOfSort SRT(d).
   
-  sigSectionOk(s, Constructors(cdecls), Constructors(cdecls)) :- 
+  sigSectionOk(s, Constructors(cdecls)) :- 
     consDeclsOk(s, cdecls).
     
   consDeclOk : scope * ConsDecl 
@@ -88,7 +87,7 @@ rules // signatures
   
 rules // rules 
 
-  sectionOk(s, Rules(rs), Rules(rs)) :- rulesOk(s, rs).
+  sectionOk(s, Rules(rs)) :- rulesOk(s, rs).
   
   ruleOk : scope * Rule
   rulesOk maps ruleOk(*, list(*))
