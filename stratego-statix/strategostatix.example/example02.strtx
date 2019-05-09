@@ -1,0 +1,28 @@
+module example02
+
+signature
+  sorts Exp String Int
+  constructors
+    Var   : String -> Exp
+    Int   : Int -> Exp
+    Neg   : Exp -> Exp
+    Plus  : Exp * Exp -> Exp
+    Minus : Exp * Exp -> Exp
+    
+rules
+
+  eval : Plus(Int(i),Int(j)) -> Int(plus(i,j))
+  
+  desugar :
+    Minus(e1, e2) -> Plus(e1, Neg(e2))
+  
+//strategies
+//
+//  topdown(s) =
+//    s ; all(topdown(s))
+//    
+//  try(s) = s <+ id 
+  
+  
+  
+  
