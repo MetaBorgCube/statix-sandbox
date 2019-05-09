@@ -10,18 +10,23 @@ signature
     Minus : Exp * Exp -> Exp
     
 rules
-
-  eval : Plus(Int(i),Int(j)) -> Int(plus(i,j))
   
-  desugar :
+  desugar : // Exp -> Exp
     Minus(e1, e2) -> Plus(e1, Neg(e2))
   
-//strategies
-//
-//  topdown(s) =
-//    s ; all(topdown(s))
-//    
-//  try(s) = s <+ id 
+strategies
+
+  topdown(s : D -> D) : D -> D =
+    s ; all(topdown(s))
+    
+  try(s: D -> D) : D -> D = s <+ id 
+  
+  desugar-all = topdown(try(desugar))
+  
+  
+  all(s) :
+    c#(ts) -> c#(<map(s)> ts)
+  
   
   
   
