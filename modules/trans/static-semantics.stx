@@ -3,6 +3,7 @@ module static-semantics
 signature
   sorts ID = string
   sorts INT = string
+  sorts STRING = string
   
   sorts Program constructors
     Program  : list(Decl) -> Program
@@ -20,6 +21,7 @@ signature
   sorts Type constructors
     IntT     : Type
     BoolT    : Type
+    StringT  : Type
     RecT     : ID -> Type
     FunT     : Type * Type -> Type
     
@@ -49,6 +51,11 @@ signature
     Fun      : ID * Type * Exp -> Exp
     App      : Exp * Exp -> Exp
     
+    FunUT    : ID * Exp -> Exp
+    
+  constructors // strings
+    Str      : STRING -> Exp
+    
   constructors // arithmetic
     Int      : INT -> Exp
     Add      : Exp * Exp -> Exp
@@ -61,12 +68,16 @@ signature
     With     : Exp * Exp -> Exp
     Proj     : Exp * ID -> Exp
     
+//  constructors // placeholders
+//    Exp-Plhdr : Exp
+    
   sorts TYPE constructors
-    INT  : TYPE
-    BOOL : TYPE
-    FUN  : TYPE * TYPE -> TYPE
-    REC  : scope -> TYPE
-    MOD  : scope -> TYPE
+    INT    : TYPE
+    BOOL   : TYPE
+    STRING : TYPE
+    FUN    : TYPE * TYPE -> TYPE
+    REC    : scope -> TYPE
+    MOD    : scope -> TYPE
     
   namespaces
     Var : string
@@ -211,6 +222,24 @@ rules  // arithmetic
     typeOfExp(s, e1) == T,
     typeOfExp(s, e2) == T.
     
+   
+rules // strings 
+
+  typeOfExp(s, Str(_)) = STRING().
+
+  // overloaded operators 
+  
+//  typeOfExp(s, Add(e1, e2)) = T3 :- {T1 T2}
+//    typeOfExp(s, e1) == T1,
+//    typeOfExp(s, e2) == T2,
+//    add(T1, T2) == T3.
+//    
+//  add : TYPE * TYPE -> TYPE
+//  
+//  add(INT(), INT()) = INT().
+//  add(_, STRING()) = STRING().
+//  add(STRING(), _) = STRING().
+    
 rules // module reference
   
   typeOfExp(s, Mod(x)) = MOD(s_mod) :- {p d s'}
@@ -260,6 +289,13 @@ rules  // functions
   typeOfExp(s, App(e1, e2)) = T :- {S}
     typeOfExp(s, e1) == FUN(S, T),
     typeOfExp(s, e2) == S.
+    
+
+  typeOfExp(s, FunUT(x, e)) = FUN(T, S) :- {s_fun}
+    new s_fun, 
+    s_fun -P-> s,
+    s_fun -> Var{x@x} with typeOfDecl T,
+    typeOfExp(s_fun, e) == S.
   
 rules // records construction
   
@@ -302,12 +338,18 @@ rules  // booleans
   
   typeOfExp(s, False()) = BOOL().
   
+  typeOfExp(s, Not(e)) = BOOL() :-
+    typeOfExp(s, e) == BOOL().
+  
   typeOfExp(s, If(e1, e2, e3)) = T :-
     typeOfExp(s, e1) == BOOL(),
     typeOfExp(s, e2) == T,
     typeOfExp(s, e3) == T.
     
 
+rules // placeholders 
 
+  typeOfExp(s, Exp-Plhdr()) = T.
+  
   
     

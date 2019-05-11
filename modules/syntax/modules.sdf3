@@ -39,14 +39,19 @@ context-free syntax // bindings
   
 context-free syntax // types 
 
-  Type.IntT  = <Int>
-  Type.BoolT = <Bool>
-  Type.RecT  = <<ID>>
-  Type.FunT  = [[Type] -> [Type]] {right}
+  Type.IntT    = <Int>
+  Type.BoolT   = <Bool>
+  Type.StringT = <String>
+  Type.RecT    = <<ID>>
+  Type.FunT    = [[Type] -> [Type]] {right}
 
 context-free syntax // modules
 
   Exp.Mod  = <@<ID>>
+  
+context-free syntax // expressions 
+
+  Exp = <(<Exp>)> {bracket}
   
 context-free syntax // variables 
 
@@ -79,6 +84,12 @@ context-free syntax // functions
     }
   >
   Exp.App   = <<Exp><Exp>> {left}
+  
+  Exp.FunUT = <
+    fun(<ID>) { 
+      <Exp> 
+    }
+  >
  
 context-free syntax // records 
 
@@ -98,6 +109,10 @@ context-free syntax // arithmetic
   Exp.Sub   = <<Exp> - <Exp>> {left}
   Exp.Mul   = <<Exp> * <Exp>> {left}
   Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
+  
+context-free syntax // strings
+
+  Exp.Str = <<STRING>>
  
 context-free syntax // booleans
 
@@ -129,3 +144,5 @@ template options
 
   ID = keyword {reject}
   keyword -/- [a-zA-Z0-9]
+  
+  
