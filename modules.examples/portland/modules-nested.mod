@@ -12,8 +12,9 @@ module B {
 }
 module C {
   module CC {
+    import B.BB
     def y = 3
     > x + 1 + z
-    import B.BB
   }
 }
+ 

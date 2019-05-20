@@ -115,6 +115,7 @@ rules // declarations
     typeOfExp(s, e) == T.
   
 rules // modules 
+
   declOk(s, Module(m, decls)) :- {s_mod}
     new s_mod, s_mod -P-> s,
     s -> Mod{m@m} with typeOfDecl MOD(s_mod),
@@ -347,9 +348,9 @@ rules  // booleans
     typeOfExp(s, e3) == T.
     
 
-rules // placeholders 
-
-  typeOfExp(s, Exp-Plhdr()) = T.
+//rules // placeholders 
+//
+//  typeOfExp(s, Exp-Plhdr()) = T.
   
   
     
