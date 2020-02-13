@@ -22,6 +22,7 @@ signature
     Module   : ID * list(Decl) -> Decl
     Import   : Path -> Decl
     Path     : list(ID) -> Path
+    ModRef   : Path * ID -> Exp
     
   sorts Type constructors
     TypeRef  : ID -> Type
@@ -115,10 +116,10 @@ rules // variable binding
     typeOfDecl of Var{x} in s |-> [(_, (_, T))]. 
     // declaration is distinct
   
-  lookupVar(s, x) = T :- {d}
-    typeOfDecl of Var{x} in s |-> [(_, (d, T))|_] | error $[Variable [x] not defined],
+  lookupVar(s, x) = T :- {x'}
+    typeOfDecl of Var{x} in s |-> [(_, (Var{x'}, T))|_] | error $[Variable [x] not defined],
     // permissive lookup to cope with double declaration 
-    @x.ref := d.
+    @x.ref := x'.
     
 rules // type binding 
 
@@ -136,8 +137,9 @@ rules // type binding
     typeOfDecl of Type{x} in s |-> [(_, (_, T))]. 
     // declaration is distinct
   
-  lookupType(s, x) = T :-
-    typeOfDecl of Type{x} in s |-> [(_, (_, T))|_] | error $[Type [x] not defined]. 
+  lookupType(s, x) = T :- {x'}
+    typeOfDecl of Type{x} in s |-> [(_, (Type{x'}, T))|_] | error $[Type [x] not defined], 
+    @x.ref := x'.
     // permissive lookup to cope with double declaration 
     
     
@@ -146,33 +148,31 @@ rules // module binding
   declareMod : scope * string * TYPE
   declareModRaw : scope * string * TYPE
   lookupMod : scope * string -> TYPE
-    
+  lookupModMember : scope * string -> TYPE
+  
   declareMod(s, x, T) :-   
-    s -> Mod{x} with typeOfDecl T.
-    //typeOfDecl of Mod{x} in s |-> [(_, (_, T))] | error $[Duplicate definition of module [x]].
-    // declaration is distinct
+    s -> Mod{x} with typeOfDecl T,   
+    query typeOfDecl
+      filter P* I* and { Mod{ y @_ } :- y == x }
+          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+          in s |-> [(_, (Mod{ x }, T))] | error $[Duplicate definition of module [x]].
 
   declareModRaw(s, x, T) :-   
     s -> Mod{x} with typeOfDecl T,
     typeOfDecl of Mod{x} in s |-> [(_, (_, T))]. 
-    // declaration is distinct
+    // declaration is distinct 
   
-  lookupMod(s, x) = T :-
-    typeOfDecl of Mod{x} in s |-> [(_, (_, T))|_] | error $[Module [x] not defined]. 
+  lookupMod(s, x) = T :- {x'}
+    typeOfDecl of Mod{x} in s |-> [(_, (Mod{x'}, T))|_] | error $[Module [x] not defined], 
+    @x.ref := x'.
     // permissive lookup to cope with double declaration 
     
-    
-    
-    
-    
-  
-    //typeOfDecl of Mod{x} in s_prev |-> [(_, (_, MOD(s_mod)))],
-    //    query typeOfDecl filter pathMatch[e] and { Mod{y@_} :- y == x }
-//                     min pathLt[$ < I, $ < P, I < P, R < P] and true
-
-//  declOk(s, Import(m)) :- {p d s_mod}
-//    query typeOfDecl filter pathMatch[P P* I*] and true
-//                     min pathLt[$ < I, $ < P, I < P, R < P] and true
-//       in s |-> [(_, (_, MOD(s_mod)))],
-//    s -I-> s_mod.
+  lookupModMember(s, x) = T :- {x'}
+    query typeOfDecl
+      filter e and { Mod{ y @_ } :- y == x }
+          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+          in s |-> [(_, (Mod{ x' }, T))|_] | error $[Module [x] not defined],
+    @x.ref := x'.
+          
+          
 
