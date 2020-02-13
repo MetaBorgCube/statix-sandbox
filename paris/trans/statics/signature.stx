@@ -15,11 +15,13 @@ signature
     Exp      : Exp -> Decl
     TypeDef  : ID * Type -> Decl
     
+  sorts Path
   constructors // modules
     MOD      : scope -> TYPE
     Mod      : ID -> Exp
     Module   : ID * list(Decl) -> Decl
-    Import   : list(ID) -> Decl
+    Import   : Path -> Decl
+    Path     : list(ID) -> Path
     
   sorts Type constructors
     TypeRef  : ID -> Type
@@ -90,8 +92,8 @@ signature
     labels P I R
              
     resolve Type filter P* (R* | I*) min $ < I, $ < P, I < P, R < P
-    resolve Var filter P* (R* | I*) min $ < I, $ < P, I < P, R < P
-    resolve Mod filter P P* I* min $ < I, $ < P, I < P, R < P     
+    resolve Var  filter P* (R* | I*) min $ < I, $ < P, I < P, R < P
+    resolve Mod  filter P P* I*      min $ < I, $ < P, I < P, R < P     
               
   relations 
     typeOfDecl : occurrence -> TYPE 
@@ -105,7 +107,7 @@ rules // variable binding
     
   declareVar(s, x, T) :-   
     s -> Var{x} with typeOfDecl T, 
-    typeOfDecl of Var{x} in s |-> [(_, (_, T))] | error $[Duplicate definition].
+    typeOfDecl of Var{x} in s |-> [(_, (_, T))] | error $[Duplicate definition of variable [x]].
     // declaration is distinct
 
   declareVarRaw(s, x, T) :-   
@@ -114,7 +116,7 @@ rules // variable binding
     // declaration is distinct
   
   lookupVar(s, x) = T :- {d}
-    typeOfDecl of Var{x} in s |-> [(_, (d, T))|_] | error $[Variable not defined],
+    typeOfDecl of Var{x} in s |-> [(_, (d, T))|_] | error $[Variable [x] not defined],
     // permissive lookup to cope with double declaration 
     @x.ref := d.
     
@@ -126,7 +128,7 @@ rules // type binding
     
   declareType(s, x, T) :-   
     s -> Type{x} with typeOfDecl T, 
-    typeOfDecl of Type{x} in s |-> [(_, (_, T))] | error $[Duplicate definition].
+    typeOfDecl of Type{x} in s |-> [(_, (_, T))] | error $[Duplicate definition of type [x]].
     // declaration is distinct
 
   declareTypeRaw(s, x, T) :-   
@@ -135,7 +137,7 @@ rules // type binding
     // declaration is distinct
   
   lookupType(s, x) = T :-
-    typeOfDecl of Type{x} in s |-> [(_, (_, T))|_] | error $[Type not defined]. 
+    typeOfDecl of Type{x} in s |-> [(_, (_, T))|_] | error $[Type [x] not defined]. 
     // permissive lookup to cope with double declaration 
     
     
@@ -156,7 +158,7 @@ rules // module binding
     // declaration is distinct
   
   lookupMod(s, x) = T :-
-    typeOfDecl of Mod{x} in s |-> [(_, (_, T))|_] | error $[Modiable not defined]. 
+    typeOfDecl of Mod{x} in s |-> [(_, (_, T))|_] | error $[Module [x] not defined]. 
     // permissive lookup to cope with double declaration 
     
   
