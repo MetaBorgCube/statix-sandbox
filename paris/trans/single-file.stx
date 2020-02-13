@@ -1,0 +1,7 @@
+module single-file
+
+//rules // single-file entry point
+//
+//  programOK : Start
+//
+//  programOK(Empty()).

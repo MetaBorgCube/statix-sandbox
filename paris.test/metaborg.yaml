@@ -1,0 +1,9 @@
+---
+id: org.example:paris.test:0.1.0-SNAPSHOT
+name: paris
+dependencies:
+  compile:
+  - org.example:paris:0.1.0-SNAPSHOT
+  - org.metaborg:org.metaborg.meta.lang.spt:${metaborgVersion}
+build:
+  useBuildSystemSpec: true

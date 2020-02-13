@@ -1,0 +1,274 @@
+module static-semantics
+
+imports statics/signature
+
+rules // multi-file entry point
+
+  projectOk : scope
+
+  projectOk(s).
+  
+  fileOk : scope * Program 
+  
+  fileOk(s, p) :- programOK(s, p).
+
+rules
+
+  programOK : scope * Program 
+
+  programOK(s, Program(decls)) :- {s_prog}
+    new s_prog,
+    //s_prog -P-> s_prog,
+    declsOk(s_prog, decls).
+  
+rules // declarations
+
+  declOk : scope * Decl 
+  declsOk maps declOk(*, list(*))
+  
+  declOk(s, Def(bind)) :- 
+    bindOk(s, s, bind).
+  
+  declOk(s, Exp(e)) :- {T}
+    typeOfExp(s, e) == T.
+  
+rules // modules 
+
+  declOk(s, Module(m, decls)) :- {s_mod}
+    new s_mod, s_mod -P-> s,
+    declareMod(s, m, MOD(s_mod)),
+    declsOk(s_mod, decls).
+        
+  declOk(s, Import([x | xs])) :- {s_mod} 
+    lookupMod(s, x) == MOD(s_mod),
+    importOk(s, s_mod, xs).
+
+  importOk : scope * scope * list(ID)
+  
+  importOk(s, s_prev, []) :-
+    s -I-> s_prev.
+    
+  importOk(s, s_prev, [x | xs]) :- {s_mod}
+    lookupMod(s_prev, x) == MOD(s_mod),
+    importOk(s, s_mod, xs). 
+    
+rules // type declaration
+
+  declOk(s, TypeDef(x, t)) :- {T}
+    declareType(s, x, T),
+    typeOfType(s, t) == T.
+  
+rules // record type
+
+  declOk(s, Record(x, fdecls)) :- {s_rec}
+     new s_rec,
+     fdeclsOk(s_rec, s, fdecls),
+     declareType(s, x, REC(s_rec)).
+  
+  fdeclOk : scope * scope * FDecl
+  fdeclsOk maps fdeclOk(*, *, list(*))
+  
+  fdeclOk(s_bnd, s_ctx, FDecl(x, t)) :- {T}
+    typeOfType(s_ctx, t) == T,
+    declareVar(s_bnd, x, T).
+
+rules // bindings 
+
+  bindOk : scope * scope * Bind 
+  
+  bindsOk maps bindOk(*, *, list(*))
+  
+  bindOk(s_bnd, s_ctx, Bind(x, e)) :- {T}
+    typeOfExp(s_ctx, e) == T,
+    declareVar(s_bnd, x, T).
+  
+  bindOk(s_bnd, s_ctx, TBind(x, t, e)) :- {T}
+    typeOfType(s_ctx, t) == T,
+    typeOfExp(s_ctx, e) == T,
+    declareVar(s_bnd, x, T).
+    
+  sbindsOk : scope * scope * list(Bind)
+  
+  sbindsOk(s, s_fin, []) :-
+    s_fin -P-> s.
+    
+  sbindsOk(s, s_fin, [bind | binds]) :- {s_mid}
+    new s_mid, s_mid -P-> s,
+    bindOk(s_mid, s, bind),
+    sbindsOk(s_mid, s_fin, binds).
+    
+    
+rules // types 
+
+  typeOfType : scope * Type -> TYPE
+  
+  typeOfType(s, IntT()) = INT().
+  
+  typeOfType(s, BoolT()) = BOOL().
+  
+  typeOfType(s, RecT(fdecls)) = REC(s_rec) :-
+    new s_rec,
+    fdeclsOk(s_rec, s, fdecls).
+  
+  typeOfType(s, FunT(t1, t2)) = FUN(typeOfType(s, t1), typeOfType(s, t2)).
+  
+  typeOfType(s, TypeRef(x)) = T :- {p d}
+    lookupType(s, x) == T.
+  
+rules // expressions 
+
+  typeOfExp : scope * Exp -> TYPE
+  
+rules  // arithmetic
+  
+  typeOfExp(s, Int(i)) = INT().
+    
+  typeOfExp(s, Add(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  typeOfExp(s, Sub(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  typeOfExp(s, Mul(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  typeOfExp(s, Eq(e1, e2)) = BOOL() :- {T}
+    typeOfExp(s, e1) == T,
+    typeOfExp(s, e2) == T.
+    
+  
+   
+rules // strings 
+
+  typeOfExp(s, Str(_)) = STRING().
+
+  // overloaded operators 
+  
+//  typeOfExp(s, Add(e1, e2)) = T3 :- {T1 T2}
+//    typeOfExp(s, e1) == T1,
+//    typeOfExp(s, e2) == T2,
+//    add(T1, T2) == T3.
+//    
+//  add : TYPE * TYPE -> TYPE
+//  
+//  add(INT(), INT()) = INT().
+//  add(_, STRING()) = STRING().
+//  add(STRING(), _) = STRING().
+    
+rules // module reference
+  
+  typeOfExp(s, Mod(x)) = MOD(s_mod) :- {p d s'}
+    new s', s' -P-> s,
+    lookupMod(s', x) == MOD(s_mod).
+    
+rules  // variables 
+    
+  typeOfExp(s, Var(x)) = T :- {p d }
+    lookupVar(s, x) == T.
+    
+rules // let bindings
+
+  typeOfExp(s, Let([Bind(x, e1)], e2)) = T :- {S s_let}
+     typeOfExp(s, e1) == S,
+     new s_let,
+     s_let -P-> s,
+     declareVar(s_let, x, S),
+     typeOfExp(s_let, e2) == T.
+ 
+rules // let bindings 
+   
+  typeOfExp(s, Let(binds, e)) = T :- {s_let}
+    new s_let,
+    sbindsOk(s, s_let, binds),
+    typeOfExp(s_let, e) == T.
+    
+  typeOfExp(s, LetPar(binds, e)) = T :- {s_let}
+    new s_let, s_let -P-> s,
+    bindsOk(s_let, s, binds),
+    typeOfExp(s_let, e) == T.
+    
+  typeOfExp(s, LetRec(binds, e)) = T :- {s_let}
+    new s_let, s_let -P-> s,
+    bindsOk(s_let, s_let, binds),
+    typeOfExp(s_let, e) == T.
+    
+rules  // functions 
+    
+  typeOfExp(s, Fun(x, t, e)) = FUN(T, S) :- {s_fun}
+    typeOfType(s, t) == T,
+    new s_fun, 
+    s_fun -P-> s,
+    declareVar(s_fun, x, T),
+    typeOfExp(s_fun, e) == S.
+    
+  typeOfExp(s, App(e1, e2)) = T :- {S}
+    typeOfExp(s, e1) == FUN(S, T),
+    typeOfExp(s, e2) == S.
+    
+
+  typeOfExp(s, FunUT(x, e)) = FUN(T, S) :- {s_fun}
+    new s_fun, 
+    s_fun -P-> s,
+    declareVar(s_fun, x, T),
+    typeOfExp(s_fun, e) == S.
+  
+rules // records construction
+  
+  typeOfExp(s, New(x, fbinds)) = REC(s_rec) :- {p d}
+    lookupVar(s, x) == REC(s_rec),
+    fbindsOk(s, s_rec, fbinds).
+    
+  fbindOk : scope * scope * FBind
+  fbindsOk maps fbindOk(*, *, list(*))
+  
+  fbindOk(s, s_rec, FBind(x, e)) :- {T}
+    typeOfExp(s, e) == T,
+    lookupVar(s_rec, x) == T.
+    
+rules // record projection
+
+  typeOfExp(s, Proj(e, x)) = T :- {p d s_rec S}
+    typeOfExp(s, e) == S,
+    proj(S, x) == T.
+    
+  proj : TYPE * ID -> TYPE
+  
+  proj(REC(s_rec), x) = T :- 
+    lookupVar(s_rec, x) == T.
+    
+  proj(MOD(s_mod), x) = T :- {p d}
+    lookupVar(s_mod, x) == T.
+    
+rules // with record value
+
+  typeOfExp(s, With(e1, e2)) = T :- {s_with s_rec}
+    typeOfExp(s, e1) == REC(s_rec),
+    new s_with,
+    s_with -P-> s, s_with -R-> s_rec,
+    typeOfExp(s_with, e2) == T. 
+    
+rules  // booleans 
+  
+  typeOfExp(s, True()) = BOOL().
+  
+  typeOfExp(s, False()) = BOOL().
+  
+  typeOfExp(s, Not(e)) = BOOL() :-
+    typeOfExp(s, e) == BOOL().
+  
+  typeOfExp(s, If(e1, e2, e3)) = T :-
+    typeOfExp(s, e1) == BOOL(),
+    typeOfExp(s, e2) == T,
+    typeOfExp(s, e3) == T.
+    
+
+//rules // placeholders 
+//
+//  typeOfExp(s, Exp-Plhdr()) = T.
+  
+  
+    
+  
