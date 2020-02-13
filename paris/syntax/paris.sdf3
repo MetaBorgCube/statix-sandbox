@@ -17,7 +17,7 @@ context-free syntax // declarations
       <{Decl "\n"}*>
     }
   >
-  Decl.Import = <import <{ID "."}+>>
+  Decl.Import = <import <Path>>
   
   Decl.Def = <def <Bind>>
   
@@ -31,6 +31,10 @@ context-free syntax // declarations
   FDecl.FDecl = <<ID> : <Type>>
   
   Decl.Exp = [>[Exp]]
+  
+  Exp.ModRef = <<Path>.<ID>>
+  
+  Path.Path = <<{ID "."}+>>
 
 context-free syntax // bindings 
 
