@@ -32,7 +32,7 @@ context-free syntax // declarations
   
   Decl.Exp = [>[Exp]]
   
-  Exp.ModRef = <<Path>.<ID>>
+  Exp.ModRef = <<Path>:<ID>>
   
   Path.Path = <<{ID "."}+>>
 
