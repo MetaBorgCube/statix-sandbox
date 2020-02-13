@@ -131,7 +131,7 @@ rules // type binding
     typeOfDecl of Type{x} in s |-> [(_, (_, T))] | error $[Duplicate definition of type [x]].
     // declaration is distinct
 
-  declareTypeRaw(s, x, T) :-   
+  declareTypeRaw(s, x, T) :-    
     s -> Type{x} with typeOfDecl T,
     typeOfDecl of Type{x} in s |-> [(_, (_, T))]. 
     // declaration is distinct
@@ -148,8 +148,8 @@ rules // module binding
   lookupMod : scope * string -> TYPE
     
   declareMod(s, x, T) :-   
-    s -> Mod{x} with typeOfDecl T, 
-    typeOfDecl of Mod{x} in s |-> [(_, (_, T))] | error $[Duplicate definition of module [x]].
+    s -> Mod{x} with typeOfDecl T.
+    //typeOfDecl of Mod{x} in s |-> [(_, (_, T))] | error $[Duplicate definition of module [x]].
     // declaration is distinct
 
   declareModRaw(s, x, T) :-   
@@ -160,6 +160,10 @@ rules // module binding
   lookupMod(s, x) = T :-
     typeOfDecl of Mod{x} in s |-> [(_, (_, T))|_] | error $[Module [x] not defined]. 
     // permissive lookup to cope with double declaration 
+    
+    
+    
+    
     
   
     //typeOfDecl of Mod{x} in s_prev |-> [(_, (_, MOD(s_mod)))],

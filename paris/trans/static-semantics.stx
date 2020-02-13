@@ -18,7 +18,7 @@ rules
 
   programOK(s, Program(decls)) :- {s_prog}
     new s_prog,
-    //s_prog -P-> s_prog,
+    s_prog -P-> s_prog,
     declsOk(s_prog, decls).
   
 rules // declarations
@@ -42,8 +42,8 @@ rules // modules
   declOk(s, Import(Path([x | xs]))) :- {s_mod s_end} 
     lookupMod(s, x) == MOD(s_mod),
     resolvePath(s, s_mod, xs) == s_end,
-    s -I-> s_end.
-    //importOk(s, s_mod, xs).
+//    s -I-> s_end.
+    importOk(s, s_mod, xs).
     
   resolvePath : scope * scope * list(ID) -> scope
   
@@ -53,14 +53,14 @@ rules // modules
     lookupMod(s_prev, x) == MOD(s_mod),
     resolvePath(s, s_mod, xs) == s_end. 
 
-//  importOk : scope * scope * list(ID)
-//  
-//  importOk(s, s_prev, []) :-
-//    s -I-> s_prev.
-//    
-//  importOk(s, s_prev, [x | xs]) :- {s_mod}
-//    lookupMod(s_prev, x) == MOD(s_mod),
-//    importOk(s, s_mod, xs). 
+  importOk : scope * scope * list(ID)
+  
+  importOk(s, s_prev, []) :-
+    s -I-> s_prev.
+    
+  importOk(s, s_prev, [x | xs]) :- {s_mod}
+    lookupMod(s_prev, x) == MOD(s_mod),
+    importOk(s, s_mod, xs). 
     
 rules // type declaration
 
