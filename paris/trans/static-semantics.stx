@@ -16,9 +16,7 @@ rules
 
   programOK : scope * Program 
 
-  programOK(s, Program(decls)) :- //{s_prog}
-//    new s_prog,
-//    s_prog -P-> s,
+  programOK(s, Program(decls)) :- 
     declsOk(s, decls).
   
 rules // declarations
@@ -39,28 +37,30 @@ rules // modules
     declareMod(s, m, MOD(s_mod)),
     declsOk(s_mod, decls).
         
-  declOk(s, Import(Path([x | xs]))) :- {s_mod s_end} 
-    lookupMod(s, x) == MOD(s_mod),
-    resolvePath(s, s_mod, xs) == s_end,
-//    s -I-> s_end.
-    importOk(s, s_mod, xs).
+  declOk(s, Import(p)) :- {s_mod s_end} 
+    resolvePath(s, p) == s_end,
+    s -I-> s_end.
     
-  resolvePath : scope * scope * list(ID) -> scope
-  
-  resolvePath(s, s_prev, []) = s_prev.
-  
-  resolvePath(s, s_prev, [x | xs]) = s_end :- {s_mod}
-    lookupMod(s_prev, x) == MOD(s_mod),
-    resolvePath(s, s_mod, xs) == s_end. 
+    
+  typeOfExp(s, ModRef(p, x)) = T :- {s_p}
+    resolvePath(s, p) == s_p,
+    lookupVar(s_p, x) == T. 
+    
+    // TODO: x could also refer to a type?
 
-  importOk : scope * scope * list(ID)
+  resolvePath : scope * Path -> scope 
   
-  importOk(s, s_prev, []) :-
-    s -I-> s_prev.
+  resolvePath(s, Path([x | xs])) = s_end :- {s_mod} 
+    lookupMod(s, x) == MOD(s_mod),
+    resolvePathL(s_mod, xs) == s_end.
     
-  importOk(s, s_prev, [x | xs]) :- {s_mod}
-    lookupMod(s_prev, x) == MOD(s_mod),
-    importOk(s, s_mod, xs). 
+  resolvePathL : scope * list(ID) -> scope
+  
+  resolvePathL(s, []) = s.
+  
+  resolvePathL(s, [x | xs]) = s_end :- {s_mod}
+    lookupModMember(s, x) == MOD(s_mod),
+    resolvePathL(s_mod, xs) == s_end. 
     
 rules // type declaration
 
