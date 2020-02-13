@@ -16,10 +16,10 @@ rules
 
   programOK : scope * Program 
 
-  programOK(s, Program(decls)) :- {s_prog}
-    new s_prog,
-    s_prog -P-> s_prog,
-    declsOk(s_prog, decls).
+  programOK(s, Program(decls)) :- //{s_prog}
+//    new s_prog,
+//    s_prog -P-> s,
+    declsOk(s, decls).
   
 rules // declarations
 
