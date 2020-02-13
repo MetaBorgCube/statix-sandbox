@@ -39,18 +39,28 @@ rules // modules
     declareMod(s, m, MOD(s_mod)),
     declsOk(s_mod, decls).
         
-  declOk(s, Import([x | xs])) :- {s_mod} 
+  declOk(s, Import(Path([x | xs]))) :- {s_mod s_end} 
     lookupMod(s, x) == MOD(s_mod),
-    importOk(s, s_mod, xs).
-
-  importOk : scope * scope * list(ID)
-  
-  importOk(s, s_prev, []) :-
-    s -I-> s_prev.
+    resolvePath(s, s_mod, xs) == s_end,
+    s -I-> s_end.
+    //importOk(s, s_mod, xs).
     
-  importOk(s, s_prev, [x | xs]) :- {s_mod}
+  resolvePath : scope * scope * list(ID) -> scope
+  
+  resolvePath(s, s_prev, []) = s_prev.
+  
+  resolvePath(s, s_prev, [x | xs]) = s_end :- {s_mod}
     lookupMod(s_prev, x) == MOD(s_mod),
-    importOk(s, s_mod, xs). 
+    resolvePath(s, s_mod, xs) == s_end. 
+
+//  importOk : scope * scope * list(ID)
+//  
+//  importOk(s, s_prev, []) :-
+//    s -I-> s_prev.
+//    
+//  importOk(s, s_prev, [x | xs]) :- {s_mod}
+//    lookupMod(s_prev, x) == MOD(s_mod),
+//    importOk(s, s_mod, xs). 
     
 rules // type declaration
 
