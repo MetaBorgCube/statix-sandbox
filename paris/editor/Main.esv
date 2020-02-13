@@ -7,7 +7,7 @@ imports
 
 language
 
-  extensions : paris
+  extensions : paris, mod
 
   provider : target/metaborg/stratego.ctree
   provider : target/metaborg/stratego-javastrat.jar
