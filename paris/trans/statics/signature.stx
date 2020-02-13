@@ -158,3 +158,15 @@ rules // module binding
   lookupMod(s, x) = T :-
     typeOfDecl of Mod{x} in s |-> [(_, (_, T))|_] | error $[Modiable not defined]. 
     // permissive lookup to cope with double declaration 
+    
+  
+    //typeOfDecl of Mod{x} in s_prev |-> [(_, (_, MOD(s_mod)))],
+    //    query typeOfDecl filter pathMatch[e] and { Mod{y@_} :- y == x }
+//                     min pathLt[$ < I, $ < P, I < P, R < P] and true
+
+//  declOk(s, Import(m)) :- {p d s_mod}
+//    query typeOfDecl filter pathMatch[P P* I*] and true
+//                     min pathLt[$ < I, $ < P, I < P, R < P] and true
+//       in s |-> [(_, (_, MOD(s_mod)))],
+//    s -I-> s_mod.
+
