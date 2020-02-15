@@ -14,7 +14,7 @@ context-free syntax
   
   Path.Path = <<{ID "."}+>>
   
-  Exp.ModRef = <<Path>:<ID>>
+  Exp.ModRef = <<Path>@<ID>>
    
 template options
 

@@ -12,7 +12,7 @@ signature
     Path     : list(ID) -> Path
     ModRef   : Path * ID -> Exp
   namespaces
-    Mod  : string
+    Mod  : string 
   name-resolution
     resolve Mod filter P P* I* min $ < I, $ < P, I < P, R < P     
            

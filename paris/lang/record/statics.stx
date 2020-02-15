@@ -22,15 +22,12 @@ signature
     
 rules
 
-  subtype(NULL(), REC(_)).
+  subtype(_, NULL(), REC(_)).
   equitype(NULL(), REC(_)).
   equitype(REC(_), NULL()).
   
   lub(T@REC(_), NULL()) = T.
   lub(NULL(), T@REC(_)) = T.
-  
-//  subtype(REC(s1), REC(s2)) :- 
-    // all fields of s1 in s2
   
 rules // record type
 
@@ -64,7 +61,7 @@ rules // records construction
   fbindOk(s, T_rec, FBind(x, e)) :- {T1 T2}
     typeOfExp(s, e) == T1,
     proj(T_rec, x) == T2,
-    subtype(T1, T2).
+    subtype(e, T1, T2).
     
 rules // record projection
 
@@ -79,8 +76,28 @@ rules // with record value
 
   typeOfExp(s, With(e1, e2)) = T :- {s_with s_rec}
     typeOfExp(s, e1) == REC(s_rec),
-    new s_with,
-    s_with -P-> s, s_with -R-> s_rec,
+    new s_with, s_with -P-> s, s_with -R-> s_rec,
     typeOfExp(s_with, e2) == T. 
     
   typeOfExp(s, Null()) = NULL().
+  
+rules
+
+  allFields : scope -> list((path * (occurrence * TYPE)))
+  
+  allFields(s) = ds :-
+    query typeOfDecl
+      filter e and { Var{ y @_ } :- y == _ }
+          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+          in s |-> ds.
+
+//  subtype(e, REC(s1), REC(s2)) :- {ps}
+//    allFields(s2) == ps,
+//    fieldsInScope(e, ps, s1).
+//    
+//  fieldInScope : Exp * (path * (occurrence * TYPE)) * scope 
+//  fieldsInScope maps fieldInScope(*, list(*), *) 
+//
+//  fieldInScope(e, (_, (Var{x}, T)), s) :- {S}
+//    lookupVar(s, x) == S | error $[field [x] not in subtype],
+//    subtype(e, S, T).

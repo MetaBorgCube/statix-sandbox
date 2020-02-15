@@ -60,9 +60,9 @@ rules // bindings
     typeOfType(s_ctx, t) == T1,
     declareVar(s_bnd, x, T1),
     typeOfExp(s_ctx, e) == T2,
-    subtype(T2, T1) | error $[type of expression [T2] does not match expected type [T1]].
+    subtype(e, T2, T1) | error $[type of expression [T2] does not match expected type [T1]].
     
-rules 
+rules  
 
   sbindsOk : scope * scope * list(Bind)
   
