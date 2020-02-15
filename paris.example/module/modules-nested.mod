@@ -14,7 +14,7 @@ module C {
   module CC {
     import B.BB
     def y = 3
-    > x + 1 + z
+    > x + 1 //+ z
   }
 }
  

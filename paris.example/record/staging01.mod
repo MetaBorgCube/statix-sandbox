@@ -1,3 +1,5 @@
+module Staging {
+
 module A {
   import B
   def z : Int = 3
@@ -7,4 +9,6 @@ module A {
 module B {
   import A
   def y : Int = z * 2
+}
+
 }

@@ -1,3 +1,5 @@
+module ESOP9 {
+
 def a = true
 module B {
 }
@@ -7,4 +9,6 @@ module C {
     import B
     def e = a + 1
   }
+}
+
 }

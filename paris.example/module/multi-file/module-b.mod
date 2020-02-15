@@ -1,6 +1,8 @@
-module ParisB {
-  import ParisA
+module ParisB { 
+  import ParisA 
   
-  def c = a + b
+  def c = a 
+  def d : Bool = b 
+  def e = c + d
  
 }

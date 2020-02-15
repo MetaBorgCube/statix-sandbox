@@ -1,3 +1,7 @@
+module PEPM03b {
+
+// mutually recursive imports
+
 module A {
   import B
   def a = 4
@@ -6,4 +10,6 @@ module A {
 module B {
   import A 
   def b = a + 3
+}
+
 }

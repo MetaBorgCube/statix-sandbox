@@ -1,3 +1,5 @@
+module RecordsAandB {
+
 module A {
   import B
   def p = new Point { x = 1, y = 2}
@@ -11,4 +13,6 @@ module B {
     x : Int
     y : Int
   }
+}
+
 }

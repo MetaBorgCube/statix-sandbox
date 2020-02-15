@@ -1,3 +1,5 @@
+module MutualImport2 {
+
 module A {
   import B
   def z = y
@@ -7,4 +9,6 @@ module A {
 module B {
   import A
   def y = z
+}
+
 }

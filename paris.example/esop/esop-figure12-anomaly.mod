@@ -1,3 +1,5 @@
+module Esop12 {
+
 module A {
   module B {
     def x = 1
@@ -12,5 +14,7 @@ module C {
   import A
   import B
   def z = x + y
+} 
+
 }
 

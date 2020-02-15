@@ -1,8 +1,12 @@
+module ModuleRef {
+
 module A {
   def x : Int = 1
 }
 module B {
-  > @A.x
+  > A:x + 2
 }
-> @A.x
-> @C.x
+> A:x
+> C:x
+
+}

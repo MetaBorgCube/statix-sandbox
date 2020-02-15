@@ -1,3 +1,5 @@
+module ESOP7 {
+
 def c = 4
 module A {
   import B
@@ -10,4 +12,6 @@ module B {
 module C {
   def b = 1
   def c = b
+} 
+
 }
