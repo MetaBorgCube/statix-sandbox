@@ -1,0 +1,14 @@
+module lang/union/statics
+
+imports lang/base/statics
+
+signature
+  constructors
+    UnionT : Type * Type -> Type
+    
+    UNION : TYPE * TYPE -> TYPE
+    
+rules
+
+  typeOfType(s, UnionT(t1, t2)) = UNION(typeOfType(s, t1), typeOfType(s, t2)).
+  

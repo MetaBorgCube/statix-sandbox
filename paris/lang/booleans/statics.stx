@@ -1,0 +1,48 @@
+module lang/booleans/statics
+
+imports lang/base/statics
+imports lang/unit/statics
+
+signature
+  constructors // booleans
+    BoolT    : Type
+    BOOL     : TYPE
+    True     : Exp
+    False    : Exp
+    Not      : Exp -> Exp
+    And      : Exp * Exp -> Exp
+    Or       : Exp * Exp -> Exp
+    IfT      : Exp * Exp -> Exp
+    If       : Exp * Exp * Exp -> Exp
+    
+rules
+  
+  typeOfType(s, BoolT()) = BOOL().
+
+rules  // booleans 
+  
+  typeOfExp(s, True()) = BOOL().
+  
+  typeOfExp(s, False()) = BOOL().
+  
+  typeOfExp(s, Not(e)) = BOOL() :-
+    typeOfExp(s, e) == BOOL().
+  
+  typeOfExp(s, And(e1, e2)) = BOOL() :-
+    typeOfExp(s, e1) == BOOL(),
+    typeOfExp(s, e2) == BOOL().
+  
+  typeOfExp(s, Or(e1, e2)) = BOOL() :-
+    typeOfExp(s, e1) == BOOL(),
+    typeOfExp(s, e2) == BOOL().
+  
+  typeOfExp(s, If(e1, e2, e3)) = lub(T1, T2) :-
+    typeOfExp(s, e1) == BOOL(),
+    typeOfExp(s, e2) == T1,
+    typeOfExp(s, e3) == T2,
+    equitype(T1, T2).
+  
+  typeOfExp(s, IfT(e1, e2)) = UNIT() :- {T}
+    typeOfExp(s, e1) == BOOL(),
+    typeOfExp(s, e2) == T.
+    

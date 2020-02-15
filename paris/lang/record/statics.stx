@@ -1,0 +1,86 @@
+module lang/record/statics
+
+imports lang/base/statics
+imports lang/variable/statics
+imports lang/type/statics
+
+signature  
+  sorts FDecl FBind 
+  constructors 
+    RecT     : list(FDecl) -> Type
+    FDecl    : ID * Type -> FDecl
+    REC      : scope -> TYPE
+    NULL     : TYPE
+    Record   : ID * list(FDecl) -> Decl
+    
+    New      : ID * list(FBind) -> Exp
+    Cns      : ID * list(FBind) -> Exp
+    FBind    : ID * Exp -> FBind
+    With     : Exp * Exp -> Exp
+    Proj     : Exp * ID -> Exp
+    Null     : Exp
+    
+rules
+
+  subtype(NULL(), REC(_)).
+  equitype(NULL(), REC(_)).
+  equitype(REC(_), NULL()).
+  
+  lub(T@REC(_), NULL()) = T.
+  lub(NULL(), T@REC(_)) = T.
+  
+//  subtype(REC(s1), REC(s2)) :- 
+    // all fields of s1 in s2
+  
+rules // record type
+
+  declOk(s, Record(x, fdecls)) :- {s_rec}
+     new s_rec,
+     fdeclsOk(s_rec, s, fdecls),
+     declareType(s, x, REC(s_rec)).
+  
+  fdeclOk : scope * scope * FDecl
+  fdeclsOk maps fdeclOk(*, *, list(*))
+  
+  fdeclOk(s_bnd, s_ctx, FDecl(x, t)) :- {T}
+    typeOfType(s_ctx, t) == T,
+    declareVar(s_bnd, x, T).
+  
+  typeOfType(s, RecT(fdecls)) = REC(s_rec) :-
+    new s_rec,
+    fdeclsOk(s_rec, s, fdecls).
+    
+rules // records construction
+  
+  typeOfExp(s, New(x, fbinds)) = REC(s_rec) :- {p d}
+    lookupType(s, x) == REC(s_rec),
+    fbindsOk(s, REC(s_rec), fbinds).
+    
+  typeOfExp(s, Cns(x, fbinds)) = typeOfExp(s, New(x, fbinds)).
+    
+  fbindOk : scope * TYPE * FBind
+  fbindsOk maps fbindOk(*, *, list(*))
+  
+  fbindOk(s, T_rec, FBind(x, e)) :- {T1 T2}
+    typeOfExp(s, e) == T1,
+    proj(T_rec, x) == T2,
+    subtype(T1, T2).
+    
+rules // record projection
+
+  typeOfExp(s, Proj(e, x)) = T :- {p d s_rec S}
+    typeOfExp(s, e) == S,
+    proj(S, x) == T.
+    
+  proj(REC(s_rec), x) = T :- 
+    lookupVar(s_rec, x) == T.
+    
+rules // with record value
+
+  typeOfExp(s, With(e1, e2)) = T :- {s_with s_rec}
+    typeOfExp(s, e1) == REC(s_rec),
+    new s_with,
+    s_with -P-> s, s_with -R-> s_rec,
+    typeOfExp(s_with, e2) == T. 
+    
+  typeOfExp(s, Null()) = NULL().

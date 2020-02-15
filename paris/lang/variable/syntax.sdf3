@@ -1,0 +1,38 @@
+module lang/variable/syntax
+
+imports lang/base/syntax
+
+context-free syntax // variables 
+
+  Exp.Var = <<ID>>
+
+  Decl.Def = <def <Bind>> 
+  
+  Bind.Bind = <<ID> = <Exp>>
+  
+  Bind.BindTyped = <<ID> : <Type> = <Exp>>
+  
+  Exp.LetSeq = <
+    let 
+      <{Bind ";\n"}*> 
+    in 
+      <Exp>
+  >
+  Exp.LetPar = <
+    letpar
+      <{Bind ";\n"}*> 
+    in 
+      <Exp>
+  >
+  Exp.LetRec = <
+    letrec 
+      <{Bind ";\n"}*> 
+    in 
+      <Exp>
+  >
+  
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]
+  

@@ -1,0 +1,16 @@
+module lang/file/syntax
+
+imports lang/base/syntax
+
+context-free syntax
+  
+  Program.Program = <
+    <{Decl "\n"}*>
+  >
+  
+  Decl.Exp = [>[Exp]]  
+  
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

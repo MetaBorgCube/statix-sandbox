@@ -1,0 +1,22 @@
+module lang/arithmetic/syntax
+
+imports lang/base/syntax 
+
+context-free syntax // arithmetic
+
+  Type.IntT = <Int>
+
+  Exp.Int   = <<INT>>
+  Exp.Add   = <<Exp> + <Exp>> {left}
+  Exp.Sub   = <<Exp> - <Exp>> {left}
+  Exp.Mul   = <<Exp> * <Exp>> {left}
+  Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
+  
+context-free priorities
+
+  Exp.Mul > {left: Exp.Add Exp.Sub} > Exp.Eq 
+  
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

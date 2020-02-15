@@ -1,0 +1,11 @@
+module lang/base/syntax
+
+imports lang/base/lexical
+
+sorts ID INT STRING 
+
+sorts Exp Type 
+context-free syntax
+
+  Exp = <(<Exp>)> {bracket}
+  

@@ -1,0 +1,5 @@
+module lang/union/syntax
+
+context-free syntax
+
+  Type.UnionT  = <<Type> | <Type>>

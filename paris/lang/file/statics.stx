@@ -1,0 +1,21 @@
+module lang/file/statics
+
+imports lang/base/statics
+
+signature
+  
+  sorts Program constructors
+    Program  : list(Decl) -> Program
+    
+  constructors
+    Exp : Exp -> Decl
+
+rules
+
+  programOK : scope * Program 
+
+  programOK(s, Program(decls)) :- 
+    declsOk(s, decls).
+
+  declOk(s, Exp(e)) :- {T}
+    typeOfExp(s, e) == T.

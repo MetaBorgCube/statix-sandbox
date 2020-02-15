@@ -1,0 +1,53 @@
+module lang/type/statics
+
+imports lang/base/statics
+
+signature
+  constructors
+    TypeDef : ID * Type -> Decl
+    TypeRef : ID -> Type
+    TBind   : ID * Type -> Bind
+    Ascr    : Exp * Type -> Exp
+  namespaces
+    Type : string
+  name-resolution   
+    resolve Type 
+     filter P* (R* | I*) 
+        min $ < I, $ < P, I < P, R < P  
+       
+rules // type declaration
+
+  declOk(s, TypeDef(x, t)) :- {T}
+    typeOfType(s, t) == T,
+    declareType(s, x, T).
+    
+  typeOfType(s, TypeRef(x)) = T :- {p d}
+    lookupType(s, x) == T.
+    
+  typeOfExp(s, Ascr(e, t)) = T :- {S}
+    typeOfExp(s, e) == S,
+    typeOfType(s, t) == T,
+    subtype(S, T).
+
+//  bindOk(s_bnd, s_ctx, TBind(x, t)) :- {T}
+//    typeOfType(s_ctx, t) == T,
+//    declareType(s_bnd, x, T).
+    
+rules
+
+  declareType : scope * string * TYPE
+  lookupType : scope * string -> TYPE
+    
+  declareType(s, x, T) :-   
+    s -> Type{x} with typeOfDecl T, 
+    typeOfDecl of Type{x} in s |-> [(_, (_, T))] 
+             | error $[Duplicate definition of type [x]].
+               // declaration is distinct
+  
+  lookupType(s, x) = T :- {x'}
+    typeOfDecl of Type{x} in s |-> [(_, (Type{x'}, T))|_] 
+             | error $[Type [x] not defined], 
+               // permissive lookup to cope with double declaration 
+    @x.ref := x'.
+               
+    

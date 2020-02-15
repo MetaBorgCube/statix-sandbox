@@ -1,0 +1,18 @@
+module lang/L1/statics
+
+imports lang/base/statics
+
+imports lang/arithmetic/statics
+imports lang/booleans/statics
+imports lang/string/statics
+imports lang/unit/statics
+//imports lang/union/statics
+
+imports lang/record/statics
+imports lang/function/statics
+
+imports lang/variable/statics
+imports lang/type/statics
+imports lang/module/statics
+
+imports lang/file/statics

@@ -1,0 +1,12 @@
+module lang/unit/syntax
+
+imports lang/base/syntax
+
+context-free syntax
+
+  Type.Unit = <unit>  
+  
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

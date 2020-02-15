@@ -1,0 +1,46 @@
+module lang/function/statics
+
+imports lang/base/statics
+imports lang/variable/statics
+
+signature
+  constructors 
+    FunT     : Type * Type -> Type
+    FUN      : TYPE * TYPE -> TYPE
+    Fun      : ID * Type * Exp -> Exp
+    FunRT    : ID * Type * Type * Exp -> Exp
+    FunUT    : ID * Exp -> Exp
+    App      : Exp * Exp -> Exp
+    
+rules
+
+  typeOfType(s, FunT(t1, t2)) = FUN(typeOfType(s, t1), typeOfType(s, t2)).
+ 
+rules  // functions 
+    
+  typeOfExp(s, FunRT(x, t1, t2, e)) = FUN(T1, T2) :- {s_fun S}
+    typeOfType(s, t1) == T1,
+    typeOfType(s, t2) == T2,
+    new s_fun, 
+    s_fun -P-> s,
+    declareVar(s_fun, x, T1),
+    typeOfExp(s_fun, e) == S,
+    subtype(S, T2).
+    
+  typeOfExp(s, Fun(x, t, e)) = FUN(T, S) :- {s_fun}
+    typeOfType(s, t) == T,
+    new s_fun, 
+    s_fun -P-> s,
+    declareVar(s_fun, x, T),
+    typeOfExp(s_fun, e) == S.
+    
+  typeOfExp(s, App(e1, e2)) = T2 :- {T1 S}
+    typeOfExp(s, e1) == FUN(T1, T2),
+    typeOfExp(s, e2) == S,
+    subtype(S, T1) | error $[expression of type [T1] expected].
+    
+  typeOfExp(s, FunUT(x, e)) = FUN(T, S) :- {s_fun}
+    new s_fun, 
+    s_fun -P-> s,
+    declareVar(s_fun, x, T),
+    typeOfExp(s_fun, e) == S.

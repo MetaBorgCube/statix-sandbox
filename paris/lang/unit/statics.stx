@@ -1,0 +1,7 @@
+module lang/unit/statics
+
+imports lang/base/statics
+
+signature
+  constructors
+    UNIT : TYPE
