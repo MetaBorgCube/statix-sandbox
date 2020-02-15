@@ -4,5 +4,6 @@ module M {
 }
 
 module N {
-  def y = x
+  def y = 1
+  //def z = x
 }

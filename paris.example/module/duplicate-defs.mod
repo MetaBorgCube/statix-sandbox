@@ -1,4 +1,4 @@
-module DuplicateDefs {
+module DuplicateDefsA {
 
  def a = 1
  
@@ -8,12 +8,12 @@ module DuplicateDefs {
  
  module B {
    def b = 2// dup
-   def b = 4 // dup
+//   def b = 4 // dup
  }
  
  module C {
    module D {} // dup
-   module D {} // dup
+//   module D {} // dup
  }
  
  module E {

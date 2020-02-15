@@ -3,6 +3,6 @@ module ParisB {
   
   def c = a 
   def d : Bool = b 
-  def e = c + d
+  def e = c //+ d
  
 }

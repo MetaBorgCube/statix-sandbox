@@ -1,6 +1,6 @@
 module RecursiveTypes {
 
-  type List = {hd : Int tl: List} 
+  type List = {hd : Int, tl: List} 
   
   def length = fun(xs : List) {
     if xs == null then 0 else length xs.tl
@@ -15,6 +15,8 @@ module RecursiveTypes {
   > cons 1 nil
 
   > cons 2 (null : List)
+  
+//  > cons true null
   
   > cons 3 null
   

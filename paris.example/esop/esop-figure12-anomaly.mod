@@ -13,7 +13,7 @@ module B {
 module C {
   import A
   import B
-  def z = x + y
+//  def z = x + y
 } 
 
 }

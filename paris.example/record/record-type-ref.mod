@@ -1,7 +1,7 @@
 module RecordType {
 
 record Point {
-  x : Int
+  x : Int,
   y : Int
 }
 

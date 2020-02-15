@@ -3,7 +3,7 @@ module Records {
 module A {
 
   type List = {
-    hd : Int
+    hd : Int,
     tl : List
   }
   
