@@ -2,7 +2,7 @@ module ESOP15 {
 
 module B {
   module C {
-    def c = D:f
+    def c = D@f
     def d = c 4
   }
   module D {

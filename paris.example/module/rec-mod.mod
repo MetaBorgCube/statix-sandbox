@@ -1,15 +1,14 @@
-module MutualImport {
+module MutualImportTyped {
 
 module A {
   import B
-  def z = 3
-  def x = y + z
+  def z : Int = 3
+  def x : Int = y + z
 }
 
 module B {
   import A
-//  def y = true * z 
-  def y = z * 2
+  def y : Int = z * 2
 }
 
 }
