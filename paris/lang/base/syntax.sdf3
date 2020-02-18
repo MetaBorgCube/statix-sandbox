@@ -4,8 +4,9 @@ imports lang/base/lexical
 
 sorts ID INT STRING 
 
-sorts Exp Type 
+sorts Exp Type Val
 context-free syntax
 
   Exp = <(<Exp>)> {bracket}
+  Type = <(<Type>)> {bracket}
   

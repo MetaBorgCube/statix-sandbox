@@ -4,8 +4,12 @@ imports lang/base/statics
 
 signature
   
-  sorts Program constructors
-    Program  : list(Decl) -> Program
+  sorts Program Prog
+  
+  constructors
+    Program  : Prog -> Program 
+    Decls    : list(Decl) -> Prog
+    Value    : Val -> Prog
     
   constructors
     Exp : Exp -> Decl
@@ -14,8 +18,12 @@ rules
 
   programOK : scope * Program 
 
-  programOK(s, Program(decls)) :- 
+  programOK(s, Program(Decls(decls))) :- 
     declsOk(s, decls).
 
+  programOK(s, Program(Value(v))).
+  
   declOk(s, Exp(e)) :- {T}
     typeOfExp(s, e) == T.
+    
+    

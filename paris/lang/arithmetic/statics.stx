@@ -4,20 +4,19 @@ imports lang/base/statics
 imports lang/booleans/statics
 
 signature
-  constructors // arithmetic
-    IntT     : Type
-    INT      : TYPE
+  constructors
     Int      : INT -> Exp
     Add      : Exp * Exp -> Exp
     Sub      : Exp * Exp -> Exp
     Mul      : Exp * Exp -> Exp
-    Eq       : Exp * Exp -> Exp
+    IntT     : Type
+    INT      : TYPE
     
 rules
 
   typeOfType(s, IntT()) = INT().
   
-rules  // arithmetic
+rules
   
   typeOfExp(s, Int(i)) = INT().
     
@@ -32,10 +31,5 @@ rules  // arithmetic
   typeOfExp(s, Mul(e1, e2)) = INT() :-
     typeOfExp(s, e1) == INT(),
     typeOfExp(s, e2) == INT().
-    
-  typeOfExp(s, Eq(e1, e2)) = BOOL() :- {T1 T2}
-    typeOfExp(s, e1) == T1,
-    typeOfExp(s, e2) == T2,
-    equitype(T1, T2).
     
   

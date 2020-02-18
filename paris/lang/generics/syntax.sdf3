@@ -1,0 +1,13 @@
+module lang/generics/syntax
+
+imports lang/base/syntax
+
+context-free syntax
+
+  Type.AbsT  = <[<ID>]<Type>>
+  Type.AppT = <<Type>[<Type>]>
+  
+  Exp.AbsE  = <[<ID>]<Exp>>
+  Exp.AppE  = <<Exp>[<Type>]>
+  
+  

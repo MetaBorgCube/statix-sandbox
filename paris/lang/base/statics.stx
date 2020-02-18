@@ -12,6 +12,7 @@ signature
     Exp    // exressions
     Decl   // declarations
     Bind   // binding
+    Val    // values
  
   name-resolution
     labels P I R

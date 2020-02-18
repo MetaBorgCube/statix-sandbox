@@ -4,6 +4,8 @@ context-free syntax // booleans
 
   Type.BoolT = <Bool>
 
+  Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
+  
   Exp.True  = <true>
   Exp.False = <false>  
   Exp.Not   = <!<Exp>>  
@@ -22,9 +24,13 @@ context-free syntax // booleans
       <Exp>
   >
   
+  Val.BoolV = <<BoolV>>
+  BoolV.True = <true>
+  BoolV.False = <false>
+  
 context-free priorities
 
-  Exp.Not > Exp.And > Exp.Or > Exp.IfT > Exp.If
+  Exp.Not > Exp.Eq > Exp.And > Exp.Or > Exp.IfT > Exp.If
   
 template options
 

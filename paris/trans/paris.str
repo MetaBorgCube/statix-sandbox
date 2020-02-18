@@ -5,6 +5,8 @@ imports
   completion/completion
   pp
   outline
+  lang/base/dynamics 
+  lang/L1/dynamics 
   analysis
 
 rules // Debugging
@@ -13,4 +15,12 @@ rules // Debugging
     (node, _, _, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|"aterm")> path
-    ; result   := node
+    ; result   := node 
+
+rules // Debugging
+  
+  eval-pp:
+    (node, _, _, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"val.mod")> path
+    ; result   := <eval; pp-paris-string> node

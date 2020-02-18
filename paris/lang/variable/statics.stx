@@ -77,7 +77,6 @@ rules
 rules // variable binding 
 
   declareVar : scope * string * TYPE
-  declareVarRaw : scope * string * TYPE
   lookupVar : scope * string -> TYPE
     
   declareVar(s, x, T) :-   

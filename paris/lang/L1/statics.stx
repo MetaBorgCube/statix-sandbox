@@ -8,6 +8,8 @@ imports lang/string/statics
 imports lang/unit/statics
 //imports lang/union/statics
 
+//imports lang/generics/statics
+
 imports lang/record/statics
 imports lang/function/statics
 

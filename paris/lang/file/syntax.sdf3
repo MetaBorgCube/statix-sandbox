@@ -5,10 +5,18 @@ imports lang/base/syntax
 context-free syntax
   
   Program.Program = <
-    <{Decl "\n"}*>
+    <Prog>
   >
   
-  Decl.Exp = [>[Exp]]  
+  Prog.Decls = <
+    <{Decl "\n"}*>
+  > 
+  
+  Prog.Value = <
+    value <Val>
+  >
+  
+  Decl.Exp = [>[Exp]] 
   
 template options
 

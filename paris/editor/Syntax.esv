@@ -20,6 +20,10 @@ menus
     
     action: "Format"          = editor-format (source)
     action: "Show parsed AST" = debug-show-aterm (source)
+    
+  menu: "Dynamics" (openeditor)
+  
+    action: "Eval" = eval-pp (source)
 
 views
   
