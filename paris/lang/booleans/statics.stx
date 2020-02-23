@@ -4,7 +4,7 @@ imports lang/base/statics
 imports lang/unit/statics
 
 signature
-  constructors // booleans
+  constructors
     BoolT    : Type
     BOOL     : TYPE
     True     : Exp
@@ -20,7 +20,7 @@ rules
   
   typeOfType(s, BoolT()) = BOOL().
 
-rules  // booleans 
+rules 
   
   typeOfExp(s, True()) = BOOL().
   

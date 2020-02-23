@@ -5,12 +5,12 @@ imports lang/booleans/statics
 
 signature
   constructors
-    Int      : INT -> Exp
-    Add      : Exp * Exp -> Exp
-    Sub      : Exp * Exp -> Exp
-    Mul      : Exp * Exp -> Exp
-    IntT     : Type
-    INT      : TYPE
+    IntT : Type
+    INT  : TYPE
+    Int  : INT -> Exp
+    Add  : Exp * Exp -> Exp
+    Sub  : Exp * Exp -> Exp
+    Mul  : Exp * Exp -> Exp
     
 rules
 

@@ -9,17 +9,16 @@ signature
   sorts 
     Type   // syntactic types
     TYPE   // semantic types
-    Exp    // exressions
+    Exp    // expressions
     Decl   // declarations
     Bind   // binding
     Val    // values
  
-  name-resolution
-    labels P I R
-    
-  relations 
-    typeOfDecl : occurrence -> TYPE 
-  
+rules // type of ...
+
+  typeOfType : scope * Type -> TYPE
+  typeOfExp  : scope * Exp  -> TYPE
+ 
 rules // well-typedness of ...
 
   declOk : scope * Decl 
@@ -27,12 +26,6 @@ rules // well-typedness of ...
 
   bindOk : scope * scope * Bind  
   bindsOk maps bindOk(*, *, list(*))
-  
-rules // type of ...
-
-  typeOfType : scope * Type -> TYPE
-  typeOfExp  : scope * Exp  -> TYPE
-  proj       : TYPE * ID -> TYPE
   
 rules // operations on types
 
@@ -44,4 +37,13 @@ rules // operations on types
   equitype(T, T).
   lub(T, T) = T.
   
+rules
+
+  proj : TYPE * ID -> TYPE
   
+signature
+  name-resolution
+    labels P I R
+    
+  relations 
+    typeOfDecl : occurrence -> TYPE 
