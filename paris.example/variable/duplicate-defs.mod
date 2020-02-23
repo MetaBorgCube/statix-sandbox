@@ -1,8 +1,9 @@
-module Defs {
+module xxx {
 
 def a = 0
 def b = a + 1
-def c = a + b
+def b = 2 + a
+def c = 3
 > a + b + c 
 
 }

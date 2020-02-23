@@ -7,7 +7,7 @@ module DuplicateDefsA {
  }
  
  module B {
-   def b = 2// dup
+   def b = 2// dup 
 //   def b = 4 // dup
  }
  

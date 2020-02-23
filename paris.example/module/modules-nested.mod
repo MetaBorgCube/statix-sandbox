@@ -1,3 +1,5 @@
+module ModulesNested01 {
+
 module A {
   module AA {
     import C.CC
@@ -16,5 +18,7 @@ module C {
     def y = 3
     > x + 1 //+ z
   }
+}
+
 }
  

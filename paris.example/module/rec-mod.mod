@@ -3,7 +3,7 @@ module MutualImportTyped {
 module A {
   import B
   def z : Int = 3
-  def x : Int = y + z
+  def x : Int = y + 4
 }
 
 module B {
