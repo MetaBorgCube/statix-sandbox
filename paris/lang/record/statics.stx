@@ -30,6 +30,10 @@ rules
   lub(NULL(), T@REC(_)) = T.
   
 rules // record type
+  
+  typeOfType(s, RecT(fdecls)) = REC(s_rec) :-
+    new s_rec,
+    fdeclsOk(s_rec, s, fdecls).
 
   declOk(s, Record(x, fdecls)) :- {s_rec}
      new s_rec,
@@ -42,15 +46,11 @@ rules // record type
   fdeclOk(s_bnd, s_ctx, FDecl(x, t)) :- {T}
     typeOfType(s_ctx, t) == T,
     declareVar(s_bnd, x, T).
-  
-  typeOfType(s, RecT(fdecls)) = REC(s_rec) :-
-    new s_rec,
-    fdeclsOk(s_rec, s, fdecls).
     
-rules // records construction
+rules // record construction
   
   typeOfExp(s, New(x, fbinds)) = REC(s_rec) :- {p d}
-    lookupType(s, x) == REC(s_rec),
+    typeOfTypeRef(s, x) == REC(s_rec),
     fbindsOk(s, REC(s_rec), fbinds).
     
   typeOfExp(s, Cns(x, fbinds)) = typeOfExp(s, New(x, fbinds)).
@@ -70,7 +70,7 @@ rules // record projection
     proj(S, x) == T.
     
   proj(REC(s_rec), x) = T :- 
-    lookupVar(s_rec, x) == T.
+    typeOfVar(s_rec, x) == T.
     
 rules // with record value
 
@@ -78,6 +78,8 @@ rules // with record value
     typeOfExp(s, e1) == REC(s_rec),
     new s_with, s_with -P-> s, s_with -R-> s_rec,
     typeOfExp(s_with, e2) == T. 
+    
+rules // Null
     
   typeOfExp(s, Null()) = NULL().
   
