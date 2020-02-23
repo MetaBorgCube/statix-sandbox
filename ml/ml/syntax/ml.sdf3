@@ -1,0 +1,139 @@
+module ml
+
+imports Common
+
+context-free start-symbols Program
+
+context-free syntax
+  
+  Program.Program = <
+    prog 
+      <StructComp*> 
+    end
+  >
+
+context-free syntax
+
+  StructComp.ValDef = <
+    let <ID> = <Exp>
+  >
+  
+  StructComp.TypeDef = <
+    type (<TVAR*>)<ID> = <Type>
+  >
+  StructComp.TypeDef = <
+    type <ID> = <Type>
+  >
+  
+  StructComp.ModuleDef = <
+    module 
+      <ID> = <ModExp>
+  >
+  StructComp.FunctorDef = <
+    module <ID>(<ID> : <ModType>) = <ModExp>
+  >
+  // desugars to module <ID> = functor(<ID> : <ModType>) <ModExp> 
+  
+  ModExp = <<ModPath>>
+  
+  ModExp.ModConstr = <(<ModExp> : <ModType>)> 		
+  
+  ModExp.FunctorApp = <<ModExp>(<ModExp>)> 		
+  	
+  ModExp.Functor = <
+    functor(<ID> : <ModType>) <ModExp>
+  >	
+  
+  ModExp.Struct  = <
+    struct 
+      <StructComp*> 
+    end
+  >
+  
+context-free syntax 
+  
+  ModType.Sig  = <sig <SigComp*> end>
+  
+  ModType.FunctorType = <
+    functor (<ID> : <ModType>) <ModType>
+  >
+  
+  SigComp.ValDec     = <val <ID> : <Scheme>>
+  
+  SigComp.ManTypeDec = <type (<{TVAR ","}*>)<ID> = <Type>>
+  
+  SigComp.ManTypeDec = <type <ID> = <Type>>
+  
+  SigComp.AbsTypeDec = <type (<{TVAR ","}*>)<ID>>
+  
+  SigComp.AbsTypeDec = <type <ID>>
+  
+  SigComp.ModuleDec = <
+    module 
+      <ID> : <ModType>
+  >
+  
+  SigComp.FunctorDec = <
+    module <ID>(<ID> : <ModType>): <ModType>
+  >
+  
+context-free syntax
+
+  Exp.Const = <<Const>>
+  Exp       = <<VarPath>>
+  Exp.Fix   = <Y>
+  Exp.App   = <<Exp> <Exp>> {left}
+  Exp.Fun   = <\\<ID>.<Exp>>
+  Exp.Let   = <
+    let <ID> = <Exp>
+     in <Exp>
+  >
+  
+  Const.Int = <<INT>>
+  
+context-free priorities 
+  
+  Exp.App > Exp.Fun > Exp.Let
+  
+context-free syntax 
+
+  VarPath.Var  = <<VID>>
+  VarPath.Proj = <<ModPath>.<VID>>
+  
+  TypePath = VarPath
+
+  ModPath.ModVar  = <<MID>>
+  ModPath.ModProj = <<ModPath>.<MID>>
+  ModPath.FuncApp = <<ModPath>(<ModPath>)>
+                    // static check: 
+                    // FuncApp should only occur in type expressions
+  
+  Scheme.TScheme = <[<ID*>]<Type>>
+  Scheme.TScheme = <<Type>>
+  
+  Type.VarT = <<TVAR>>
+  
+  Type.FunT = [[Type] -> [Type]] {right}
+  
+  Type.TypeApp  = <(<{Type ","}*>)<TypePath>>
+  Type.TypeApp1 = <<Type> <TypePath>>
+  Type.TypeApp0 = <<TypePath>>
+  
+lexical syntax
+
+  TVAR = [\'][a-z][a-z0-9]
+  
+  MID = [A-Z][A-Za-z0-9]*
+  VID = [a-z][A-Za-z0-9]*
+  
+  
+template options
+
+  VID = keyword {reject}
+  MID = keyword {reject}
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]
+  
+  
+  
+  

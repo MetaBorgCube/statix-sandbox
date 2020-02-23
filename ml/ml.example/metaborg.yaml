@@ -1,0 +1,10 @@
+---
+id: org.example:ml.example:0.1.0-SNAPSHOT
+name: ml
+dependencies:
+  compile:
+  - org.example:ml:0.1.0-SNAPSHOT
+debug:
+  typesmart: false
+build:
+  useBuildSystemSpec: true
