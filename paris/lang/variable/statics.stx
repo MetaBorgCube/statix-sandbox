@@ -3,81 +3,39 @@ module lang/variable/statics
 imports lang/base/statics
 
 signature
-  constructors // variables
-    Var       : ID -> Exp
-    Let       : ID * Exp * Exp -> Exp
-    LetSeq    : list(Bind) * Exp -> Exp
-    LetPar    : list(Bind) * Exp -> Exp
-    LetRec    : list(Bind) * Exp -> Exp
-    Def       : Bind -> Decl
-    Bind      : ID * Exp -> Bind
-    BindTyped : ID * Type * Exp -> Bind
-    TBind     : ID * Type * Exp -> Bind      
-  namespaces
-    Var  : string
-  name-resolution
-    resolve Var  filter P* (R* | I*) min $ < I, $ < P, I < P, R < P  
-
-rules  // variables 
+  constructors
+    Var   : ID -> Exp
+    Def   : Bind -> Decl 
+    Bind  : ID * Exp -> Bind
+    BindT : ID * Type * Exp -> Bind
     
-  typeOfExp(s, Var(x)) = lookupVar(s, x).
+rules
+    
+  typeOfExp(s, Var(x)) = typeOfVar(s, x).
     
 rules
 
   declOk(s, Def(bind)) :- 
     bindOk(s, s, bind).
     
-rules // let bindings 
-
-  typeOfExp(s, Let(x, e1, e2)) = T :- {S s_let}
-     typeOfExp(s, e1) == S,
-     new s_let, s_let -P-> s,
-     declareVar(s_let, x, S),
-     typeOfExp(s_let, e2) == T.
-   
-  typeOfExp(s, LetSeq(binds, e)) = T :- {s_let}
-    new s_let,
-    sbindsOk(s, s_let, binds),
-    typeOfExp(s_let, e) == T.
-    
-  typeOfExp(s, LetPar(binds, e)) = T :- {s_let}
-    new s_let, s_let -P-> s,
-    bindsOk(s_let, s, binds),
-    typeOfExp(s_let, e) == T.
-    
-  typeOfExp(s, LetRec(binds, e)) = T :- {s_let}
-    new s_let, s_let -P-> s,
-    bindsOk(s_let, s_let, binds),
-    typeOfExp(s_let, e) == T.
-    
-rules // bindings 
+rules
 
   bindOk(s_bnd, s_ctx, Bind(x, e)) :- {T}
     typeOfExp(s_ctx, e) == T,
     declareVar(s_bnd, x, T).
     
-  bindOk(s_bnd, s_ctx, BindTyped(x, t, e)) :- {T1 T2}
+  bindOk(s_bnd, s_ctx, BindT(x, t, e)) :- {T1 T2}
     typeOfType(s_ctx, t) == T1,
     declareVar(s_bnd, x, T1),
     typeOfExp(s_ctx, e) == T2,
-    subtype(e, T2, T1) | error $[type of expression [T2] does not match expected type [T1]].
-    
-rules  
+    subtype(e, T2, T1) 
+    | error $[type of expression [T2] does not match expected type [T1]].
 
-  sbindsOk : scope * scope * list(Bind)
-  
-  sbindsOk(s, s_fin, []) :-
-    s_fin -P-> s.
-    
-  sbindsOk(s, s_fin, [bind | binds]) :- {s_mid}
-    new s_mid, s_mid -P-> s,
-    bindOk(s_mid, s, bind),
-    sbindsOk(s_mid, s_fin, binds).
-    
+ 
 rules // variable binding 
 
   declareVar : scope * string * TYPE
-  lookupVar : scope * string -> TYPE
+  typeOfVar  : scope * string -> TYPE
     
   declareVar(s, x, T) :-   
     s -> Var{x} with typeOfDecl T, 
@@ -85,9 +43,60 @@ rules // variable binding
              | error $[Duplicate definition of variable [x]].
                // declaration is distinct
   
-  lookupVar(s, x) = T :- {x'}
+  typeOfVar(s, x) = T :- {x'}
     typeOfDecl of Var{x} in s |-> [(_, (Var{x'}, T))|_] 
              | error $[Variable [x] not defined],
                // permissive lookup to cope with double declaration 
     @x.ref := x'.
+    
+signature    
+  namespaces
+    Var : string
+  name-resolution
+    resolve Var 
+      filter P* (R* | I*) 
+      min $ < I, $ < P, I < P, R < P 
+      
+//signature    
+//  namespaces
+//    Var : string
+//  name-resolution
+//    resolve Var 
+//      filter (P | I)*
+//      min $ < I, $ < P , I < P, R < P 
+      
+//signature    
+//  namespaces
+//    Var : string
+//  name-resolution
+//    resolve Var filter P* R* min $ < P, R < P
+    
+//signature    
+//  namespaces
+//    Var : string
+//  name-resolution
+//    resolve Var filter P* min $ < P
+    
+//signature    
+//  namespaces
+//    Var : string
+//  name-resolution
+//    resolve Var filter P* 
+    
+//signature    
+//  namespaces
+//    Var : string
+//  name-resolution
+//    resolve Var filter e
+      
+//rules // variable binding 
+//
+//  declareVar : scope * string * TYPE
+//  typeOfVar  : scope * string -> TYPE
+//    
+//  declareVar(s, x, T) :-   
+//    s -> Var{x} with typeOfDecl T.
+//  
+//  typeOfVar(s, x) = T :- {x'}
+//    typeOfDecl of Var{x} in s |-> [(_, (Var{x'}, T))].
     
