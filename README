@@ -1,4 +1,0 @@
-This repository is a collection of experiments of language definition with the Spoofax language workbench, primarily to test the Statix meta-language for static semantics definition.
-
-- Scope graphs: http://pl.ewi.tudelft.nl/research/projects/scope-graphs/
-- Type Checkers from Declarative Type System Specifications in Statix: https://eelcovisser.org/talks/2020/02/20/type-checkers-in-statix/
