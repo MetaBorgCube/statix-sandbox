@@ -1,28 +1,16 @@
-module lang/module/statics
+module lang/module-simple/statics
 
 imports lang/base/statics
 imports lang/variable/statics
 
 signature
-  sorts Path
-  constructors // modules
+  constructors
     MOD      : scope -> TYPE
     Module   : ID * list(Decl) -> Decl
-    Import   : Path -> Decl
-    Path     : list(ID) -> Path
-    ModRef   : Path * ID -> Exp   
-           
-rules // module reference
-        
-  typeOfExp(s, ModRef(p, x)) = T :- {s_p}
-    resolvePathRef(s, p) == s_p,
-    typeOfVar(s_p, x) == T. 
-    // TODO: x could also refer to a type?
+    Import   : ID -> Decl
+    ModRef   : ID * ID -> Exp 
     
-  proj(MOD(s_mod), x) = T :- {p d}
-    typeOfVar(s_mod, x) == T.
-    
-rules // modules 
+rules 
 
   declOk(s, Module(m, decls)) :- {s_mod}
     new s_mod, s_mod -P-> s,
@@ -30,39 +18,42 @@ rules // modules
     declsOk(s_mod, decls).
         
   declOk(s, Import(p)) :- {s_mod s_end} 
-    resolvePathImp(s, p) == s_end,
-    s -I-> s_end.
+    typeOfModRef(s, p) == MOD(s_mod),
+    s -I-> s_mod.  
+           
+rules // module reference
+        
+  typeOfExp(s, ModRef(m, x)) = T :- {s_mod}
+    typeOfModRef(s, m) == MOD(s_mod),
+    typeOfVar(s_mod, x) == T. 
     
-rules
-
-  resolvePathImp : scope * Path -> scope 
-  resolvePathRef : scope * Path -> scope 
+  proj(MOD(s_mod), x) = T :- {p d}
+    typeOfVar(s_mod, x) == T.
+   
+//signature
+//  namespaces
+//    Mod  : string 
+//  name-resolution
+//    resolve Mod 
+//      filter P P* I* 
+//      min $ < I, $ < P, I < P, R < P  
+   
+//signature
+//  namespaces
+//    Mod  : string 
+//  name-resolution
+//    resolve Mod 
+//      filter P* I* 
+//      min $ < I, $ < P, I < P, R < P  
   
-  resolvePathImp(s, Path([x | xs])) = s_end :- {s_mod} 
-    typeOfModPar(s, x) == MOD(s_mod),
-    resolvePathL(s_mod, xs) == s_end.
-  
-  resolvePathRef(s, Path([x | xs])) = s_end :- {s_mod} 
-    typeOfModRef(s, x) == MOD(s_mod),
-    resolvePathL(s_mod, xs) == s_end.
-    
-  resolvePathL : scope * list(ID) -> scope
-  
-  resolvePathL(s, []) = s.
-  
-  resolvePathL(s, [x | xs]) = s_end :- {s_mod}
-    typeOfModMember(s, x) == MOD(s_mod),
-    resolvePathL(s_mod, xs) == s_end. 
-    
-    
 signature
   namespaces
     Mod  : string 
   name-resolution
     resolve Mod 
-      filter P P* I* 
-      min $ < I, $ < P, I < P, R < P  
-    
+      filter P P* I*
+      min $ < I, $ < P, I < P, R < P 
+           
 rules // module binding 
 
   declareMod      : scope * string * TYPE
@@ -74,18 +65,24 @@ rules // module binding
   declareMod(s, x, T) :-   
     s -> Mod{x} with typeOfDecl T,   
     query typeOfDecl
-      filter P* I* and { Mod{ y @_ } :- y == x }
+      filter P*  and { Mod{ y @_ } :- y == x }
           min $ < I, $ < P, I < P, R < P and { _, _ :- true }
           in s |-> [(_, (Mod{ x }, T))] 
           | error $[Duplicate definition of module [x]].
-     
+       
   typeOfModRef(s, x) = T :- {x'}
-    query typeOfDecl
-      filter P* I* and { Mod{ y @_ } :- y == x }
-          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
-          in s |-> [(_, (Mod{ x' }, T))|_] 
-      | error $[Module [x] not defined],
+    typeOfDecl of Mod{x} in s |-> [(_, (Mod{x'}, T))|_] 
+             | error $[Module [x] not defined],
+               // permissive lookup to cope with double declaration 
     @x.ref := x'.
+
+//  typeOfModRef(s, x) = T :- {x'}
+//    query typeOfDecl
+//      filter P P* I* and { Mod{ y @_ } :- y == x }
+//          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+//          in s |-> [(_, (Mod{ x' }, T))|_] 
+//      | error $[Module [x] not defined],
+//    @x.ref := x'.
     
   typeOfModPar(s, x) = T :- {x'}
     query typeOfDecl
