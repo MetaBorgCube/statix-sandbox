@@ -6,7 +6,7 @@ context-free start-symbols Program
 
 context-free syntax
   
-  Program.Program = <<Term*>>
+  Program.Program = <<Term*>> 
 
   Term.List = <(<{Term " "}*>)>
   

@@ -1,5 +1,7 @@
 module static-semantics
 
+// Macro definitions can be mutually recursive | top-level definition should be single scope
+
 signature
   sorts Program Term MacroDef
   constructors
@@ -10,8 +12,10 @@ signature
     Num     : int -> Term
     Str     : string -> Term
     
-    Macro   : list(Term) * Term -> Term
+    Macro   : scope * list(Term) * Term -> Term
     Occ     : occurrence -> Term
+    
+    SymClos : scope * string -> Term
     
   name-resolution
     labels P 
@@ -26,9 +30,17 @@ signature
 
 rules // top-level 
 
-  programOK : Program -> Program
+  programOK : Program 
+   
+   
+  programOK(p).
+   
+//  programOK(p) :- {p'}
+//    elaborate(p) == p'.
+  
+  elaborate : Program -> Program
 
-  programOK(Program(trms)) = Program(trms') :- {s}
+  elaborate(Program(trms)) = Program(trms') :- {s}
     new s,
     defsOk(s, trms) == trms'.
     
@@ -51,9 +63,14 @@ rules // definitions
     s2 -> Var{x@x} with instOf Occ(Var{x@x}).
   
   defOk(s1, s2, List([Sym("macro"), List([Sym(m) | pats]), trm])) = List([]) :- 
-    s2 -> Var{m@m} with instOf Macro(pats, trm).
+    s2 -> Var{m@m} with instOf Macro(s1, pats, trm).
   
   defOk(s1, s2, trm) = trm' :- termOk(s1, trm) == trm'.
+  
+  // probably separate substitution from elaboration
+  // termOk interleaves these
+  
+  // macros should close over lexical environment 
   
 rules // terms 
     
@@ -91,8 +108,8 @@ rules // macro application
   match(s, trm, trms) = List([trm | trms']) :-
     termsOk(s, trms) == trms'.
     
-  match(s, Macro(pats, trm), trms) = trm' :- {s_m}
-    new s_m, s_m -P-> s, 
+  match(s, Macro(s_lex, pats, trm), trms) = trm' :- {s_m}
+    new s_m, s_m -P-> s_lex, 
     matchPats(s_m, pats, trms),
     termOk(s_m, trm) == trm'.
     
