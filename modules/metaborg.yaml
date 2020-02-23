@@ -20,10 +20,13 @@ language:
   sdf:
     pretty-print: modules
     sdf2table: java
+    check-priorities: false
+    check-overlap: false
     placeholder:
       prefix: "$"
   stratego:
-    format: ctree
+    format: jar
+    build: incremental
     args:
     - -la
     - stratego-lib

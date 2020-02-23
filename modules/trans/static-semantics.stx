@@ -14,6 +14,7 @@ signature
     Module   : ID * list(Decl) -> Decl
     Import   : list(ID) -> Decl
     Record   : ID * list(FDecl) -> Decl
+    TypeDef  : ID * Type -> Decl
     
   sorts FDecl constructors 
     FDecl    : ID * Type -> FDecl
@@ -22,8 +23,9 @@ signature
     IntT     : Type
     BoolT    : Type
     StringT  : Type
-    RecT     : ID -> Type
+    RecT     : list(FDecl) -> Type
     FunT     : Type * Type -> Type
+    TypeRef  : ID -> Type
     
   sorts Bind constructors
     Bind     : ID * Exp -> Bind
@@ -80,11 +82,15 @@ signature
     MOD    : scope -> TYPE
     
   namespaces
-    Var : string
-    Mod : string
+    Var  : string
+    Mod  : string
+    Type : string
     
   name-resolution
     labels P I R
+     
+    resolve Type filter pathMatch[P* (R* | I*)] 
+                min pathLt[$ < I, $ < P, I < P, R < P] // check
      
     resolve Var filter pathMatch[P* (R* | I*)] 
                 min pathLt[$ < I, $ < P, I < P, R < P] 
@@ -145,13 +151,19 @@ rules // modules
 //                     min pathLt[$ < I, $ < P, I < P, R < P] and true
 //       in s |-> [(_, (_, MOD(s_mod)))],
 //    s -I-> s_mod.
+
+rules // type declaration
+
+  declOk(s, TypeDef(x, t)) :- {T}
+    s -> Type{x@x} with typeOfDecl T,
+    typeOfType(s, t) == T.
   
 rules // record type
 
   declOk(s, Record(x, fdecls)) :- {s_rec}
      new s_rec,
      fdeclsOk(s_rec, s, fdecls),
-     s -> Var{x@x} with typeOfDecl REC(s_rec).
+     s -> Type{x@x} with typeOfDecl REC(s_rec).
   
   fdeclOk : scope * scope * FDecl
   fdeclsOk maps fdeclOk(*, *, list(*))
@@ -173,7 +185,7 @@ rules // bindings
   bindOk(s_bnd, s_ctx, TBind(x, t, e)) :- {T}
     typeOfType(s_ctx, t) == T,
     typeOfExp(s_ctx, e) == T,
-    s_bnd -> Var{x@x} with typeOfDecl T.
+    s_bnd -> Var{x@x} with typeOfDecl T. 
     
   sbindsOk : scope * scope * list(Bind)
   
@@ -194,10 +206,14 @@ rules // types
   
   typeOfType(s, BoolT()) = BOOL().
   
+  typeOfType(s, RecT(fdecls)) = REC(s_rec) :-
+    new s_rec,
+    fdeclsOk(s_rec, s, fdecls).
+  
   typeOfType(s, FunT(t1, t2)) = FUN(typeOfType(s, t1), typeOfType(s, t2)).
   
-  typeOfType(s, RecT(x)) = REC(s_rec) :- {p d}
-    typeOfDecl of Var{x@x} in s |-> [(p, (d, REC(s_rec)))].
+  typeOfType(s, TypeRef(x)) = T :- {p d}
+    typeOfDecl of Type{x@x} in s |-> [(p, (d, T))].
   
 rules // expressions 
 
@@ -223,6 +239,7 @@ rules  // arithmetic
     typeOfExp(s, e1) == T,
     typeOfExp(s, e2) == T.
     
+  
    
 rules // strings 
 

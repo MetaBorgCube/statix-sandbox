@@ -20,6 +20,8 @@ context-free syntax // declarations
   Decl.Import = <import <{ID "."}+>>
   
   Decl.Def = <def <Bind>>
+  
+  Decl.TypeDef = <type <ID> = <Type>>
 
   Decl.Record = <
     record <ID> { 
@@ -42,8 +44,10 @@ context-free syntax // types
   Type.IntT    = <Int>
   Type.BoolT   = <Bool>
   Type.StringT = <String>
-  Type.RecT    = <<ID>>
+  Type.RecT    = <{<{FDecl "\n"}*>}>
+  Type.UnionT  = <<Type> | <Type>>
   Type.FunT    = [[Type] -> [Type]] {right}
+  Type.TypeRef = <<ID>>
 
 context-free syntax // modules
 
@@ -80,6 +84,11 @@ context-free syntax // functions
 
   Exp.Fun = <
     fun(<ID> : <Type>) { 
+      <Exp> 
+    }
+  >
+  Exp.FunU = <
+    fun(<{ID ","}*>) { 
       <Exp> 
     }
   >
