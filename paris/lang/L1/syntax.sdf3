@@ -14,13 +14,17 @@ imports lang/record/syntax
 imports lang/function/syntax
 
 imports lang/variable/syntax
+imports lang/let/syntax
 imports lang/type/syntax
-imports lang/module/syntax
+//imports lang/module/syntax
+//imports lang/module-simple/syntax
+imports lang/module-seq/syntax
 
 imports lang/file/syntax
 
 context-free priorities 
 
-  Exp.Ascr > Exp.Proj > Exp.App > Exp.Mul,
-  
-  Exp.Eq > Exp.If > {Exp.LetSeq Exp.LetPar Exp.LetRec Exp.With }
+  Exp.Ascr > Exp.Not > Exp.Proj > Exp.App
+  > Exp.Mul > {left: Exp.Add Exp.Sub} >   
+  Exp.Eq > Exp.If 
+  > {Exp.LetSeq Exp.LetPar Exp.LetRec Exp.With }
