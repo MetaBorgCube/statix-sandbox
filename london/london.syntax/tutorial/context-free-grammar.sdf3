@@ -1,0 +1,76 @@
+module context-free-grammar
+//imports lang/base/lexical
+//
+//lexical sorts ID
+//
+//
+//
+//lexical sorts ID
+//lexical syntax
+//  ID = [a-zA-Z] [a-zA-Z0-9]* 
+//lexical restrictions
+//  ID -/- [a-zA-Z0-9\_]
+//  
+//lexical sorts INT
+//lexical syntax
+//  INT = [\-]? [0-9]+ 
+//lexical restrictions
+//  INT -/- [0-9]
+//context-free restrictions 
+//  "-" -/- [0-9]  
+//
+//lexical sorts STRING
+//lexical syntax
+//  STRING         = "\"" StringChar* "\"" 
+//  StringChar     = ~[\"\n] 
+//  StringChar     = "\\\"" 
+//  StringChar     = BackSlashChar 
+//  BackSlashChar  = "\\" 
+//lexical restrictions
+//  BackSlashChar -/- [\"] // Backslash chars in strings may not be followed by "
+//  
+//  
+//lexical syntax
+//  LAYOUT         = [\ \t\n\r] 
+//  
+//  CommentChar    = [\*] 
+//  LAYOUT         = "/*" InsideComment* "*/" 
+//  InsideComment  = ~[\*] 
+//  InsideComment  = CommentChar 
+//  
+//  LAYOUT         = "//" ~[\n\r]* NewLineEOF 
+//  NewLineEOF     = [\n\r] 
+//  NewLineEOF     = EOF 
+//  EOF            =  
+//lexical restrictions
+//  CommentChar -/- [\/]
+//  EOF -/- ~[] // EOF may not be followed by any char
+//
+//context-free restrictions
+//  // Ensure greedy matching for comments
+//  LAYOUT? -/- [\ \t\n\r]
+//  LAYOUT? -/- [\/].[\/]
+//  LAYOUT? -/- [\/].[\*]
+//  
+//  
+//sorts Program Prog Decl Path Bind Exp 
+//context-free syntax
+//  Program = Decl* 
+//
+//  Decl = "module" ID "{" Decl* "}" 
+//  Decl = "import" Path 
+//  Path = {ID "."}+ 
+//    
+//  Decl = "def" Bind 
+//  Bind = ID "=" Exp 
+//  
+//  Exp = "(" Exp ")" 
+//  Exp = ID 
+//  Exp = INT 
+//  Exp = Exp "+" Exp 
+//  Exp = Exp "*" Exp   
+//  Exp = "true" 
+//  Exp = "false" 
+//  Exp = "!" Exp 
+//  Exp = "if" Exp "then" Exp "else" Exp 
+//  Exp = "if" Exp "then" Exp 

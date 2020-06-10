@@ -1,0 +1,1 @@
+run take 1 $ filter even [1 .. 10]

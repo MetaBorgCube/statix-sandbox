@@ -1,0 +1,11 @@
+let 
+
+  inc = functon(x) x + 1
+
+  map = function(f, xs) 
+          match xs with 
+            nil -> nil
+          | cons y ys -> cons (f y) (map f ys)
+            
+in 
+  map inc (cons 1 (cons 2 nil)) 

@@ -1,0 +1,13 @@
+module lang/string/syntax
+
+imports lang/base/syntax
+
+context-free syntax // types 
+
+  Type.StringT = <String>
+  Exp.Str      = <<STRING>>  
+  
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

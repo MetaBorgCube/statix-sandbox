@@ -1,0 +1,1 @@
+def someNumbers = function x -> take 1 $ filter even [x + 1 .. x + 10] 

@@ -1,0 +1,59 @@
+module analysis
+
+imports
+
+  statixruntime
+  statix/api 
+
+  pp
+  injections/-
+  injections/lang/base/syntax-injections
+  
+rules // Analysis
+
+  // see README.md for details on how to switch to multi-file analysis
+
+  // single-file analysis
+  //editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "programOk")
+  
+  // multi-file analysis
+  editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
+
+  pre-analyze  = explicate-injections-london
+  post-analyze = id /* strip-annos; implicate-injections-london */ 
+
+rules // Editor Services
+
+  editor-resolve = stx-editor-resolve
+
+  editor-hover = my-stx-editor-hover
+  
+  my-stx-editor-hover = my-stx--editor-hover(strip-annos; write-to-string | "type")
+  my-stx-editor-hover(|prop) = my-stx--editor-hover(strip-annos; write-to-string | prop)
+  my-stx-editor-hover(pp | prop) = my-stx--editor-hover(pp | prop)
+  
+  
+  my-stx--editor-hover(pp | prop):
+      (node, position, ast, path, project-path) -> label
+    where
+      a       := <stx-get-ast-analysis> node
+    ; propval := <stx-get-ast-property(|a, prop)> node
+    with
+      label := <pp> propval
+
+rules // Debugging
+
+  // Prints the abstract syntax ATerm of a selection.
+  debug-show-aterm: (selected, _, _, path, project-path) -> (filename, result)
+    with filename := <guarantee-extension(|"aterm")> path
+       ; result   := selected
+
+  // Prints the pre-analyzed abstract syntax ATerm of a selection.
+  debug-show-pre-analyzed: (selected, _, _, path, project-path) -> (filename, result)
+    with filename := <guarantee-extension(|"pre-analyzed.aterm")> path
+       ; result   := <pre-analyze> selected
+
+  // Prints the analyzed annotated abstract syntax ATerm of a selection.
+  debug-show-analyzed: (selected, _, _, path, project-path) -> (filename, result)
+    with filename := <guarantee-extension(|"analyzed.aterm")> path
+       ; result   := selected

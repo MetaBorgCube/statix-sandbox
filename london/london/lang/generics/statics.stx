@@ -1,0 +1,60 @@
+module lang/generics/statics
+
+imports lang/base/statics
+imports lang/type/statics
+imports lang/function/statics
+imports lang/arithmetic/statics
+imports lang/booleans/statics
+imports signatures/lang/generics/syntax-sig
+
+signature
+  constructors
+    TVAR : occurrence -> TYPE   
+    ALL  : occurrence * TYPE -> TYPE  
+    
+//    AbsT : ID * Type -> Type  
+//    AppT : Type * Type -> Exp 
+//    
+//    AbsE : ID * Exp -> Exp
+//    AppE : Exp * Type -> Exp 
+    
+rules 
+
+  typeOfType(s, AbsT(x, t)) = ALL(Type{x}, T) :- {s_all}
+    new s_all, s_all -P-> s,
+    declareType(s_all, x, TVAR(Type{x})),
+    typeOfType(s_all, t) == T.
+
+  typeOfType(s, AppT(t1, t2)) = T3 :- {T1 T2}
+    typeOfType(s, t1) == T1,
+    typeOfType(s, t2) == T2,
+    appT(T1, T2) == T3.
+
+  typeOfExp(s, AbsE(x, e)) = ALL(Type{x}, T) :- {s_abs}
+    new s_abs, s_abs -P-> s,
+    declareType(s_abs, x, TVAR(Type{x})),
+    typeOfExp(s_abs, e) == T.
+
+  typeOfExp(s, AppE(e, t)) = T3 :- {T1 T2}
+    typeOfExp(s, e) == T1,
+    typeOfType(s, t) == T2,
+    appT(T1, T2) == T3.
+    
+rules 
+    
+  appT : TYPE * TYPE -> TYPE
+  
+  appT(ALL(x, T), S) = subst(x, S, T).
+  
+  subst : occurrence * TYPE * TYPE -> TYPE
+  
+  subst(x, S, TVAR(x)) = S.
+  
+  subst(x, S, FUN(T1, T2)) = FUN(subst(x, S, T1), subst(x, S, T2)).
+  
+  subst(x, S, BOOL()) = BOOL().
+  
+  subst(x, S, INT()) = INT().
+  
+  
+  

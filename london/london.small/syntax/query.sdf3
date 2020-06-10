@@ -1,0 +1,32 @@
+module query
+
+imports Common
+
+context-free syntax
+
+  Query.Query = <
+    select <QID*> from <QID*> where <Cond>
+  >
+  
+  Cond.And = <<Cond> and <Cond>> {left}
+  Cond.Eq = <<Cond> == <Cond>> {non-assoc}
+  
+context-free priorities
+
+  Cond.Eq > Cond.And
+  
+lexical syntax
+
+  QID = [a-zA-Z][a-zA-Z0-9]*
+
+lexical restrictions
+
+  QID -/- [a-zA-Z0-9]
+   
+//lexical syntax
+//
+//  ID = "select" {reject}
+  
+template options
+  QID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

@@ -1,0 +1,16 @@
+module lang/type/syntax
+
+imports lang/base/syntax
+
+context-free syntax
+
+  //Bind.TBind   = <<ID> = <Type>>
+  Type.TypeRef = <<ID>>
+  Decl.TypeDef = <type <ID> = <Type>>  
+  
+  Exp.Ascr = <<Exp> : <Type>>
+  
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

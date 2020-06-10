@@ -1,0 +1,20 @@
+module lang/variable/syntax
+
+imports lang/base/syntax
+imports lang/base/lexical
+
+//sorts BindT
+context-free syntax
+
+  Exp.Var    = <<ID>>
+
+  Bind.Bind  = <<ID> = <Exp>>
+  
+  Bind.BindT = <<ID> : <Type> = <Exp>>
+
+  Decl.Def   = <def <Bind>> 
+  
+template options
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]
+  

@@ -1,0 +1,39 @@
+module lang/arithmetic/statics
+
+imports lang/base/statics
+//imports lang/booleans/statics
+imports signatures/lang/arithmetic/syntax-sig
+
+//signature
+//  constructors
+//    IntT : Type
+//    Int  : INT -> Exp
+//    Add  : Exp * Exp -> Exp
+//    Sub  : Exp * Exp -> Exp
+//    Mul  : Exp * Exp -> Exp
+
+signature
+  constructors
+    INT : TYPE
+    
+rules
+
+  typeOfType(s, IntT()) = INT().
+  
+rules
+  
+  typeOfExp(s, Int(i)) = INT().
+    
+  typeOfExp(s, Add(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  typeOfExp(s, Sub(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  typeOfExp(s, Mul(e1, e2)) = INT() :-
+    typeOfExp(s, e1) == INT(),
+    typeOfExp(s, e2) == INT().
+    
+  

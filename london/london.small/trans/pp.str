@@ -1,0 +1,49 @@
+module pp
+
+imports
+
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/editor/refactoring/-
+  pp/london-parenthesize
+  pp/london-pp
+
+rules
+
+  editor-format:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[pp.[ext]])> path
+    ; result   := <pp-debug> node
+
+rules
+  
+  pp-london-string = 
+    parenthesize-london 
+    ; prettyprint-london-start-symbols
+    ; !V([], <id>)
+    ; box2text-string(|120)
+      
+  pp-partial-london-string =
+    parenthesize-london
+    ; prettyprint-london
+    ; !V([], <id>)
+    ; box2text-string(|120)
+    
+  pp-partial-london-string(|sort) =
+    parenthesize-london
+    ; prettyprint-london(|sort)
+    ; !V([], <id>)
+    ; box2text-string(|120)  
+      
+  pp-debug :
+    ast -> result
+    with
+       result := <pp-london-string> ast
+    <+ <bottomup(try(not(is-string); not(is-list); not(pp-london-string); debug(!"cannot pp ")))> ast
+    ;  result := ""
+
+rules
+  
+  construct-textual-change = construct-textual-change(pp-partial-london-string, parenthesize, override-reconstruction, resugar)

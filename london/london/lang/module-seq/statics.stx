@@ -1,0 +1,133 @@
+module lang/module-seq/statics
+
+imports lang/base/statics
+imports lang/variable/statics
+imports lang/arithmetic/statics
+imports signatures/lang/module-seq/syntax-sig
+
+signature
+  sorts DecGroups
+  constructors
+    MOD : scope -> TYPE
+//    Module   : ID * DecGroups -> Decl
+//    Import   : ID -> Decl
+//    ModRef   : ID * ID -> Exp 
+//    
+//    Decs     : list(Decl) -> DecGroups
+//    Seq      : list(Decl) * DecGroups -> DecGroups
+    
+rules 
+
+  declOk(s, Module(m, decls)) :- {s_mod s_end}
+    new s_mod, s_mod -P-> s,
+    declareMod(s, m, MOD(s_end)),
+    decGroupsOk(s_mod, decls) == s_end.
+   
+  decGroupsOk : scope * Decls -> scope
+  
+  decGroupsOk(s, Decs(decls)) = s:- 
+    declsOk(s, decls).
+    
+  decGroupsOk(s1, Seq(decls1, decls2)) = s_end :- {s2}
+    new s2, s2 -P-> s1,
+    declsOk(s1, decls1),
+    decGroupsOk(s2, decls2) == s_end.
+ 
+  declOk(s, Import(p)) :- {s_mod s_end} 
+    typeOfModRef(s, p) == MOD(s_mod),
+    s -I-> s_mod.
+ 
+// permission to extend
+//  declOk(s, Import(p)) :- {s_mod s_end} 
+//    typeOfModRef(s, p) == MOD(s_mod),
+//    s -I-> s_mod,
+//    declareVar(s_mod, "x", INT()).
+    
+  
+           
+rules // module reference
+        
+  typeOfExp(s, ModRef(m, x)) = T :- {s_mod}
+    typeOfModRef(s, m) == MOD(s_mod),
+    typeOfVar(s_mod, x) == T. 
+    
+  proj(MOD(s_mod), x) = T :- {p d}
+    typeOfVar(s_mod, x) == T.
+   
+//signature
+//  namespaces
+//    Mod  : string 
+//  name-resolution
+//    resolve Mod 
+//      filter P P* I* 
+//      min $ < I, $ < P, I < P, R < P  
+   
+//signature
+//  namespaces
+//    Mod  : string 
+//  name-resolution
+//    resolve Mod 
+//      filter P* I* 
+//      min $ < I, $ < P, I < P, R < P  
+  
+signature
+  namespaces
+    Mod  : string 
+  name-resolution
+    resolve Mod 
+      filter P P* I*
+      min $ < I, $ < P, I < P, R < P 
+           
+rules // module binding 
+
+  declareMod      : scope * string * TYPE
+  declareModRaw   : scope * string * TYPE
+  typeOfModRef    : scope * string -> TYPE
+  typeOfModPar    : scope * string -> TYPE
+  typeOfModMember : scope * string -> TYPE
+  
+  declareMod(s, x, T) :-   
+    s -> Mod{x} with typeOfDecl T,   
+    query typeOfDecl
+      filter P*  and { Mod{ y @_ } :- y == x }
+          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+          in s |-> [(_, (Mod{ x }, T))] 
+          | error $[Duplicate definition of module [x]].
+       
+  typeOfModRef(s, x) = T :- {x'}
+    typeOfDecl of Mod{x} in s |-> [(_, (Mod{x'}, T))|_] 
+             | error $[Module [x] not defined],
+               // permissive lookup to cope with double declaration 
+    @x.ref := x'.
+
+//  typeOfModRef(s, x) = T :- {x'}
+//    query typeOfDecl
+//      filter P P* I* and { Mod{ y @_ } :- y == x }
+//          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+//          in s |-> [(_, (Mod{ x' }, T))|_] 
+//      | error $[Module [x] not defined],
+//    @x.ref := x'.
+    
+  typeOfModPar(s, x) = T :- {x'}
+    query typeOfDecl
+      filter P P* I* and { Mod{ y @_ } :- y == x }
+          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+          in s |-> [(_, (Mod{ x' }, T))|_] 
+      | error $[Module [x] not defined],
+    @x.ref := x'.
+    
+  typeOfModMember(s, x) = T :- {x'}
+    query typeOfDecl
+      filter e and { Mod{ y @_ } :- y == x }
+          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+          in s |-> [(_, (Mod{ x' }, T))|_] 
+      | error $[Module [x] not defined],
+    @x.ref := x'.
+          
+         
+//  lookupMod       : scope * string -> TYPE
+//  lookupMod(s, x) = T :- {x'}
+//    typeOfDecl of Mod{x} in s |-> [(_, (Mod{x'}, T))|_] 
+//             | error $[Module [x] not defined], 
+//               // permissive lookup to cope with double declaration 
+//    @x.ref := x'.

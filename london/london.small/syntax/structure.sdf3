@@ -1,0 +1,21 @@
+module structure
+
+//imports Common
+//
+//context-free start-symbols Exp
+//
+//context-free syntax
+//  
+//  Exp.Var = ID
+//  
+//  Exp.Int = INT
+//  
+//  Exp.Add = Exp "+" Exp
+//  
+//  Exp.Fun = "function" "(" {ID ","}* ")" "{" Exp "}"  
+//
+//  Exp.App = Exp "(" {Exp ","}* ")"
+//
+//  Exp.Let = "let" Bnd* "in" Exp "end"
+//  
+//  Bnd.Bnd = ID "=" Exp

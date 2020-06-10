@@ -1,0 +1,4 @@
+
+fun lookup x []              -> error  
+         | x ((y, v) :: env) -> if(x == y) v else lookup x env
+         

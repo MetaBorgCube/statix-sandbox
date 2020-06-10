@@ -1,0 +1,12 @@
+module arithmetic/syntax
+
+language paris
+
+test number [[
+  > 2
+]] parse succeeds
+
+test addition [[
+  > 2 + 3
+]] parse succeeds
+

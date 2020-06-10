@@ -1,0 +1,50 @@
+module lang/arithmetic/dynamics
+
+imports signatures/lang/base/syntax-sig
+imports signatures/lang/arithmetic/syntax-sig
+
+imports lang/booleans/dynamics
+
+signature 
+  constructors
+    IntV : Int -> Val
+
+rules
+
+  eval(|f) :
+    Int(i) -> IntV(i)
+    
+  eval(|f) :
+    Add(e1, e2) -> IntV(<addS>(i, j))
+    with <eval(|f)> e1 => IntV(i)
+    with <eval(|f)> e2 => IntV(j)
+    
+  eval(|f) :
+    Sub(e1, e2) -> IntV(<subtS>(i, j))
+    with <eval(|f)> e1 => IntV(i)
+    with <eval(|f)> e2 => IntV(j)
+    
+  eval(|f) :
+    Mul(e1, e2) -> IntV(<mulS>(i, j))
+    with <eval(|f)> e1 => IntV(i)
+    with <eval(|f)> e2 => IntV(j)
+
+    
+    
+//imports signatures/lang/booleans/syntax-sig
+//
+//rules
+//
+//  eval(|f) = {e, v 
+//              : ?Not(e)
+//              ; with(<eval(|f)> e => v)
+//              ; !v
+//              ; notb}
+//          <+ {e1, e2, i, j 
+//              : ?Add(e1, e2)  
+//              ; with(<eval(|f)> e1 => IntV(i))
+//              ; with(<eval(|f)> e2 => IntV(j))
+//              ; !IntV(<addS>(i, j))}
+              
+              
+              

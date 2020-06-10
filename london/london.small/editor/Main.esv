@@ -1,0 +1,11 @@
+module Main
+
+imports
+
+  Syntax
+language
+
+  extensions : london
+
+  provider : target/metaborg/stratego.ctree
+  provider : target/metaborg/stratego.jar

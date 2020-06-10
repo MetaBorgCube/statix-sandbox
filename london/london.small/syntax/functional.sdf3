@@ -1,0 +1,56 @@
+module functional
+
+imports Common
+
+context-free start-symbols Exp
+
+context-free syntax
+  Exp        = <(<Exp>)> {bracket}
+  
+  Exp.Int    = INT
+  Exp.Var    = ID
+  Exp.Add    = <<Exp> + <Exp>> {left}
+  
+  Exp.Fun    = <
+    function(<{ID ","}*>) 
+      <Exp>
+  >  
+  Exp.App = <<Exp> <Exp>> {left}
+
+  Exp.Let = <
+    let 
+      <Bnd*> 
+    in 
+      <Exp>  
+  >
+  
+  Bnd.Bnd = <<ID> = <Exp>>
+   
+  Exp.If = <
+    if(<Exp>) 
+      <Exp>
+  >
+  Exp.IfElse = <
+    if(<Exp>) 
+      <Exp> 
+    else 
+      <Exp>
+  > 
+  
+  Exp.Match  = <
+    match <Exp> 
+    with <{Case "|\n"}+>
+  > {longest-match}
+  
+  Case.Case = [[Pat] -> [Exp]]
+  
+  Pat.PVar = ID
+  Pat.PApp = <<Pat> <Pat>> {left}
+  
+context-free priorities
+  Exp.App > Exp.Add > Exp.IfElse > Exp.If 
+  > Exp.Match > Exp.Let > Exp.Fun
+ 
+template options
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

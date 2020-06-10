@@ -1,0 +1,66 @@
+module lang/booleans/dynamics
+
+imports signatures/lang/base/syntax-sig
+imports signatures/lang/booleans/syntax-sig
+
+rules
+ 
+  eval(|f) :
+    True() -> BoolV(True())
+
+  eval(|f) :
+    False() -> BoolV(False())
+    
+  eval(|f) :
+    Not(e) -> <notb>v
+    with <eval(|f)> e => v
+    
+  eval(|f) :
+    And(e1, e2) -> <andb(|f)>(v1, e2)
+    with <eval(|f)> e1 => v1
+    with <eval(|f)> e2 => v2
+    
+  eval(|f) :
+    Or(e1, e2) -> <orb(|f)>(v1, v2)
+    with <eval(|f)> e1 => v1
+    with <eval(|f)> e2 => v2
+    
+  eval(|f) :
+    If(e1, e2, e3) -> v
+    with <eval(|f)> e1 => v1
+    with <ifb(|f)> (v1, e2, e3) => v
+    
+  eval(|f) :
+    Eq(e1, e2) -> v
+    with <eval(|f)> e1 => v1
+    with <eval(|f)> e2 => v2
+    with <eqb> (e1, e2) => v
+    
+rules
+
+  notb : BoolV(True()) -> BoolV(False())
+  notb : BoolV(False()) -> BoolV(True())
+  
+  andb(|f) : (BoolV(True()), e) -> <eval(|f)> e
+  andb(|f) : (BoolV(False()), e) -> BoolV(False())
+  
+  orb(|f)  : (BoolV(True()), e) -> BoolV(True())
+  orb(|f)  : (BoolV(False()), e) -> <eval(|f)> e
+  
+  ifb(|f)  : (BoolV(True()), e1, e2) -> <eval(|f)> e1
+  ifb(|f)  : (BoolV(False()), e1, e2) -> <eval(|f)> e2
+  
+  eqb : (i, i) -> BoolV(True())
+  eqb : (i, j) -> BoolV(False())
+  
+//signature
+//  constructors
+//    BoolV : Bool -> Val
+//    False : Bool
+//    True  : Bool
+
+
+
+              
+              
+              

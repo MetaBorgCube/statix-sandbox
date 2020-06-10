@@ -1,0 +1,12 @@
+module arithmetic/syntax 
+
+language paris
+
+test function inc [[
+  def inc = fun(x) { x + 1 }
+]] parse succeeds
+
+test number [[  
+  def inc : Int -> Int = fun(x : Int) { x + 1 }
+]] parse succeeds
+

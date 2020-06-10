@@ -1,0 +1,26 @@
+module london
+
+imports
+  
+  completion/completion
+  pp
+  outline
+  analysis
+  lang/base/dynamics 
+  lang/L1/dynamics 
+
+rules // Debugging
+  
+  debug-show-aterm:
+    (node, _, _, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path
+    ; result   := node
+
+rules // Debugging
+  
+  eval-pp:
+    (node, _, _, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"val.mod")> path
+    ; result   := <eval; pp-london-string> node

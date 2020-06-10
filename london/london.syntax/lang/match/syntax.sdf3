@@ -1,0 +1,35 @@
+module lang/match/syntax
+
+imports lang/base/syntax
+
+context-free syntax
+  Exp.Lst   = <[<{Exp ","}*>]> 
+  Exp.Cns   = <<Exp> :: <Exp>> {right}
+  Exp.Rng   = <<Exp> .. <Exp>> {non-assoc}
+
+context-free syntax
+  Exp.Function = [function [{FCase "\n |"}*]] {longest-match}
+  Exp.Match    = [match [{Exp ", "}*] with [{MCase "\n|"}*]] {longest-match} 
+  
+sorts FCase MCase
+context-free syntax
+  FCase.FCase = [[Pat*] -> [Exp]]
+  MCase.MCase = [[{Pat ","}+] -> [Exp]]  
+
+sorts Pat
+context-free syntax
+  Pat.PVar = ID 
+  Pat.PInt = INT 
+  Pat.PCns = <<Pat> :: <Pat>> {right}
+  Pat.PApp = <<Pat> <Pat>> {left}
+  Pat.PLst = <[<{Pat ", "}*>]> 
+  Pat.PTup = <(<Pat>, <{Pat ","}+>)> 
+  Pat      = <(<Pat>)> {bracket}
+context-free priorities
+  Pat.PApp > Pat.PCns,
+  Pat+ = Pat      <0>   .> {Pat.PApp Pat.PCns},
+  Pat+ = Pat+ Pat <0,1> .> {Pat.PApp Pat.PCns} 
+  
+template options
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

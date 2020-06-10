@@ -1,0 +1,47 @@
+module Common
+
+lexical sorts ID
+lexical syntax
+  ID = [a-zA-Z] [a-zA-Z0-9]* 
+lexical restrictions
+  ID -/- [a-zA-Z0-9\_]
+  
+lexical sorts INT
+lexical syntax
+  INT = [\-]? [0-9]+ 
+lexical restrictions
+  INT -/- [0-9]
+context-free restrictions 
+  "-" -/- [0-9]  
+
+lexical sorts STRING
+lexical syntax
+  STRING         = "\"" StringChar* "\"" 
+  StringChar     = ~[\"\n] 
+  StringChar     = "\\\"" 
+  StringChar     = BackSlashChar 
+  BackSlashChar  = "\\" 
+lexical restrictions
+  BackSlashChar -/- [\"] 
+  // Backslash chars in strings may not be followed by "
+  
+lexical syntax
+  LAYOUT         = [\ \t\n\r] 
+  
+  CommentChar    = [\*] 
+  LAYOUT         = "/*" InsideComment* "*/" 
+  InsideComment  = ~[\*] 
+  InsideComment  = CommentChar 
+  
+  LAYOUT         = "//" ~[\n\r]* NewLineEOF 
+  NewLineEOF     = [\n\r] 
+  NewLineEOF     = EOF 
+  EOF            =  
+lexical restrictions
+  CommentChar -/- [\/]
+  EOF -/- ~[] // EOF may not be followed by any char
+context-free restrictions
+  // Ensure greedy matching for comments
+  LAYOUT? -/- [\ \t\n\r]
+  LAYOUT? -/- [\/].[\/]
+  LAYOUT? -/- [\/].[\*]

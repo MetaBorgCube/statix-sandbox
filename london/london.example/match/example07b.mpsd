@@ -1,0 +1,43 @@
+data Exp = Int int 
+         | Var string
+         | Plus Exp Exp
+         | Lam string Exp
+         | App Exp Exp
+        
+data Val = IntV int 
+         | ClosV string Exp Env
+         
+type Env = [(string, Val)]
+      
+def lookup = function 
+      x [] -> error "lookup in empty list"
+    | x ((y, v) :: env) -> if(x == y) v else lookup x env
+
+def eval = function e env -> 
+	match e with
+	  Int i      -> IntV i
+	| Var x      -> lookup x env
+	| Plus e1 e2 -> (match eval e1 env, eval e2 env with 
+	                   IntV i, IntV j -> IntV (i + j)
+	                 | _, _ -> error "type error")
+	| Lam x e    -> ClosV x e env
+	| App e1 e2  -> match eval e1 env, eval e2 env with 
+	                  ClosV x e env, v -> eval e ((x, v) :: env)
+                
+def test1 = eval (Plus (Int 2) (Int 40)) []
+
+def map = function 
+    f [] -> []
+  | f (x :: xs) -> f x :: map f xs
+      
+def filter = function
+    p [] -> []
+  | p (x :: xs) -> if(p x) x :: filter p xs 
+                          else filter p xs
+run test1
+                 
+def fac = function 
+    0 -> 1
+  | n -> n * (fac (n - 1))
+
+

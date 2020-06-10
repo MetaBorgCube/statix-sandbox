@@ -1,0 +1,8 @@
+let 
+  inc = function(x) { x + 1 } 
+ in
+  // function application
+  inc /* function position */ (
+    3 // argument list
+  )
+end

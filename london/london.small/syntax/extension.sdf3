@@ -1,0 +1,14 @@
+module extension
+
+imports functional query
+
+context-free start-symbols Exp
+
+context-free syntax
+  
+  Exp = Query 
+  Cond = Exp
+  
+context-free priorities
+
+//  Exp.Add > Query.Query > Exp.IfElse

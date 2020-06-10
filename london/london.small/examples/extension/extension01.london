@@ -1,0 +1,6 @@
+let 
+  select = 1
+  fs = select f from A where test f == select
+ in
+  print fs 
+  

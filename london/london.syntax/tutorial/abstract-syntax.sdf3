@@ -1,0 +1,25 @@
+module abstract-syntax
+
+//lexical sorts ID INT
+//
+//sorts Program Prog Decl Path Bind Exp 
+//context-free syntax
+//  Program.Program = Decl* 
+//
+//  Decl.Module = "module" ID "{" Decl* "}" 
+//  Decl.Import = "import" Path 
+//  Path.Path   = {ID "."}+ 
+//    
+//  Decl.Def    = "def" Bind 
+//  Bind.Bind   = ID "=" Exp 
+//  
+//  Exp         = "(" Exp ")" {bracket}
+//  Exp.Var     = ID 
+//  Exp.Int     = INT 
+//  Exp.Add     = Exp "+" Exp 
+//  Exp.Mul     = Exp "*" Exp   
+//  Exp.True    = "true" 
+//  Exp.False   = "false" 
+//  Exp.Not     = "!" Exp 
+//  Exp.If      = "if" Exp "then" Exp "else" Exp 
+//  Exp.IfT     = "if" Exp "then" Exp 

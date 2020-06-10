@@ -1,0 +1,9 @@
+module lang/base/dynamics 
+
+imports signatures/lang/base/syntax-sig
+
+rules 
+
+  eval(|f) = fail 
+  
+  

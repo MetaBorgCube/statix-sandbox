@@ -1,0 +1,19 @@
+module lang/file/dynamics
+
+imports signatures/lang/base/syntax-sig
+imports signatures/lang/file/syntax-sig
+
+rules
+
+  eval(|f) : 
+    Program(Decls(decl*)) -> Program(Value(v))
+    with 
+      <map(eval(|f)); last> decl* => v
+
+  eval(|f) : 
+    Program(Value(v)) -> Program(Value(v))
+      
+  eval(|f) :
+    Exp(e) -> v
+    with <eval(|f)> e => v 
+  

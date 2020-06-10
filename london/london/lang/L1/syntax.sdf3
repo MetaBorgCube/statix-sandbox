@@ -1,0 +1,31 @@
+module lang/L1/syntax
+
+imports lang/base/syntax
+
+imports lang/arithmetic/syntax
+imports lang/booleans/syntax
+imports lang/string/syntax
+imports lang/unit/syntax
+//imports lang/union/syntax
+
+//imports lang/generics/syntax
+
+imports lang/record/syntax
+imports lang/function/syntax
+
+imports lang/variable/syntax
+imports lang/let/syntax
+imports lang/type/syntax
+//imports lang/module/syntax
+//imports lang/module-simple/syntax
+imports lang/module-seq/syntax
+
+imports lang/file/syntax
+
+context-free priorities 
+
+  Exp.Ascr > Exp.Not > Exp.Proj > Exp.App
+  > Exp.Mul > {left: Exp.Add Exp.Sub} >   
+  Exp.Eq > Exp.If 
+  > {Exp.LetSeq Exp.LetPar Exp.LetRec Exp.With }
+  , Exp.App <1> .> Exp.Min

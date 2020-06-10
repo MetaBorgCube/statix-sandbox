@@ -1,0 +1,53 @@
+module lang/base/statics
+
+imports signatures/lang/base/syntax-sig
+
+//signature
+//  sorts 
+//    ID     = string
+//    INT    = string 
+//    STRING = string
+//   
+//  sorts 
+//    Type   // syntactic types
+//    Exp    // expressions
+//    Decl   // declarations
+//    Bind   // binding
+//    Val    // values
+ 
+signature
+  sorts
+    TYPE   // semantic types
+rules // type of ...
+
+  typeOfType : scope * Type -> TYPE
+  typeOfExp  : scope * Exp  -> TYPE
+ 
+rules // well-typedness of ...
+
+  declOk : scope * Decl 
+  declsOk maps declOk(*, list(*))
+
+  bindOk : scope * scope * Bind  
+  bindsOk maps bindOk(*, *, list(*))
+  
+rules // operations on types
+
+  subtype  : Exp * TYPE * TYPE
+  equitype : TYPE * TYPE 
+  lub      : TYPE * TYPE -> TYPE
+  
+  subtype(_, T, T).
+  equitype(T, T).
+  lub(T, T) = T.
+  
+rules
+
+  proj : TYPE * ID -> TYPE
+  
+signature
+  name-resolution
+    labels P I R
+    
+  relations 
+    typeOfDecl : occurrence -> TYPE 

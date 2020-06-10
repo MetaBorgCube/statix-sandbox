@@ -1,0 +1,9 @@
+---
+id: org.example:london.example:0.1.0-SNAPSHOT
+name: london
+dependencies:
+  compile:
+  #- org.example:london.syntax:0.1.0-SNAPSHOT
+  - org.example:london:0.1.0-SNAPSHOT
+build:
+  useBuildSystemSpec: true

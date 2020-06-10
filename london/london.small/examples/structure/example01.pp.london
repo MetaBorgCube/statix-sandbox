@@ -1,0 +1,7 @@
+let
+  inc = function(x){
+    x + 1 
+  }
+ in
+  inc(3)
+end
