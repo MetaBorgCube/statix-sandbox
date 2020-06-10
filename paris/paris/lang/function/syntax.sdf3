@@ -24,7 +24,7 @@ context-free syntax // functions
 //      <Exp> 
 //    }
 //  >
-  Exp.App   = <<Exp><Exp>> {left}
+  Exp.App   = <<Exp> <Exp>> {left}
   
   Exp.FunUT = <
     fun(<ID>) { 

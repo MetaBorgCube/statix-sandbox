@@ -6,6 +6,6 @@ def p = Point{x = 1, y = 2}
 
 def y = true
 
-> with p do y
+> with p  do y
 
 }

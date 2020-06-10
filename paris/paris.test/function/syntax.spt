@@ -1,4 +1,4 @@
-module arithmetic/syntax
+module arithmetic/syntax 
 
 language paris
 

@@ -19,7 +19,7 @@ debug:
 language:
   sdf:
     pretty-print: paris
-    sdf2table: c
+    sdf2table: dynamic
     placeholder:
       prefix: "$"
   stratego:

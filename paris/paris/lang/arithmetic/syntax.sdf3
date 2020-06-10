@@ -1,4 +1,4 @@
-module lang/arithmetic/syntax
+module lang/arithmetic/syntax 
 
 imports lang/base/syntax 
 
@@ -16,7 +16,7 @@ context-free syntax
 context-free priorities
 
   Exp.Mul > {left: Exp.Add Exp.Sub}
-  
+   
 template options
 
   ID = keyword {reject}

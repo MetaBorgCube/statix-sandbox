@@ -1,7 +1,7 @@
 module lang/function/statics
 
 imports lang/base/statics
-imports lang/variable/statics
+imports lang/variable/statics 
 
 signature
   constructors 
@@ -35,7 +35,7 @@ rules  // functions
     new s_fun, s_fun -P-> s,
     declareVar(s_fun, x, T),
     typeOfExp(s_fun, e) == S.
-    
+     
   typeOfExp(s, App(e1, e2)) = T2 :- {T1 S}
     typeOfExp(s, e1) == FUN(T1, T2),
     typeOfExp(s, e2) == S,
