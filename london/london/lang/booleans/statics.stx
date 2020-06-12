@@ -1,13 +1,8 @@
 module lang/booleans/statics
 
 imports lang/base/statics
-imports lang/unit/statics
 imports signatures/lang/booleans/syntax-sig
-    
-signature
-  constructors
-    BOOL : TYPE
-    
+ 
 rules
   
   typeOfType(s, BoolT()) = BOOL().
@@ -35,10 +30,6 @@ rules
     typeOfExp(s, e3) == T2,
     equitype(T1, T2)
     | error $[Types [T1] and [T2] are not comparable].
-  
-  typeOfExp(s, IfT(e1, e2)) = UNIT() :- {T}
-    typeOfExp(s, e1) == BOOL(),
-    typeOfExp(s, e2) == T.
     
   typeOfExp(s, Eq(e1, e2)) = BOOL() :- {T1 T2}
     typeOfExp(s, e1) == T1,

@@ -6,24 +6,14 @@ imports lang/type/statics
 imports signatures/lang/record/syntax-sig
 
 signature  
-//  sorts FDecl FBind 
   constructors 
-//    RecT     : list(FDecl) -> Type
-//    FDecl    : ID * Type -> FDecl
-    REC      : scope -> TYPE
-    NULL     : TYPE
-//    Record   : ID * list(FDecl) -> Decl
-//    
-//    New      : ID * list(FBind) -> Exp
-//    Cns      : ID * list(FBind) -> Exp
-//    FBind    : ID * Exp -> FBind
-//    With     : Exp * Exp -> Exp
-//    Proj     : Exp * ID -> Exp
-//    Null     : Exp
+    REC  : scope -> TYPE
+    NULL : TYPE
     
 rules
 
   subtype(_, NULL(), REC(_)).
+  
   equitype(NULL(), REC(_)).
   equitype(REC(_), NULL()).
   
@@ -32,14 +22,15 @@ rules
   
 rules // record type
   
-  typeOfType(s, RecT(fdecls)) = REC(s_rec) :-
+  typeOfType(s, t@RecT(fdecls)) = REC(s_rec) :-
     new s_rec,
-    fdeclsOk(s_rec, s, fdecls).
+    fdeclsOk(s_rec, s, fdecls),
+    @t.type := REC(s_rec).
 
   declOk(s, Record(x, fdecls)) :- {s_rec}
-     new s_rec,
-     fdeclsOk(s_rec, s, fdecls),
-     declareType(s, x, REC(s_rec)).
+    new s_rec,
+    fdeclsOk(s_rec, s, fdecls),
+    declareType(s, x, REC(s_rec)).
   
   fdeclOk : scope * scope * FDecl
   fdeclsOk maps fdeclOk(*, *, list(*))
@@ -50,7 +41,7 @@ rules // record type
     
 rules // record construction
   
-  typeOfExp(s, New(x, fbinds)) = REC(s_rec) :- {p d}
+  typeOfExp(s, e@New(x, fbinds)) = REC(s_rec) :- {p d}
     typeOfTypeRef(s, x) == REC(s_rec),
     fbindsOk(s, REC(s_rec), fbinds).
     
@@ -66,18 +57,17 @@ rules // record construction
     
 rules // record projection
 
-  typeOfExp(s, Proj(e, x)) = T :- {p d s_rec S}
-    typeOfExp(s, e) == S,
-    proj(S, x) == T.
+  typeOfExp(s, Proj(e, x)) = proj(typeOfExp(s, e), x).
     
-  proj(REC(s_rec), x) = T :- 
-    typeOfVar(s_rec, x) == T.
+  proj(REC(s_rec), x) = typeOfVar(s_rec, x).
     
 rules // with record value
 
   typeOfExp(s, With(e1, e2)) = T :- {s_with s_rec}
     typeOfExp(s, e1) == REC(s_rec),
-    new s_with, s_with -P-> s, s_with -R-> s_rec,
+    new s_with, 
+    s_with -P-> s, 
+    s_with -R-> s_rec,
     typeOfExp(s_with, e2) == T. 
     
 rules // Null

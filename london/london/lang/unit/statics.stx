@@ -1,8 +1,0 @@
-module lang/unit/statics
-
-imports lang/base/statics
-imports signatures/lang/union/syntax-sig
-
-signature
-  constructors
-    UNIT : TYPE

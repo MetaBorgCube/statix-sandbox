@@ -14,9 +14,8 @@ rules
     
 rules
 
-  bindOk(s_bnd, s_ctx, Bind(x, e)) :- {T}
-    typeOfExp(s_ctx, e) == T,
-    declareVar(s_bnd, x, T).
+  bindOk(s_bnd, s_ctx, Bind(x, e)) :- 
+    declareVar(s_bnd, x, typeOfExp(s_ctx, e)).
     
   bindOk(s_bnd, s_ctx, BindT(x, t, e)) :- {T1 T2}
     typeOfType(s_ctx, t) == T1,
@@ -34,14 +33,16 @@ rules // variable binding
   declareVar(s, x, T) :-   
     s -> Var{x} with typeOfDecl T, 
     typeOfDecl of Var{x} in s |-> [(_, (_, T))] 
-             | error $[Duplicate definition of variable [x]].
+             | error $[Duplicate definition of variable [x]],
+    @x.type := T.
                // declaration is distinct
   
   typeOfVar(s, x) = T :- {x'}
     typeOfDecl of Var{x} in s |-> [(_, (Var{x'}, T))|_] 
              | error $[Variable [x] not defined],
                // permissive lookup to cope with double declaration 
-    @x.ref := x'.
+    @x.ref := x',
+    @x.type := T.
     
 signature    
   namespaces

@@ -19,14 +19,8 @@ rules // Analysis
   // multi-file analysis
   editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
 
-//<<<<<<< HEAD
-//  pre-analyze  = explicate-injections-london
-//  post-analyze = implicate-injections-london
-//  //post-analyze = id /* strip-annos; implicate-injections-london */ 
-//=======
   pre-analyze  = explicate-injections-london-Program
   post-analyze = implicate-injections-london-Program
-//>>>>>>> ca3684bc9a9c17ee970bb3a94040704b6ee74097
 
 rules // Editor Services
 

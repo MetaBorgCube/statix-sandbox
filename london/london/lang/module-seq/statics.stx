@@ -9,12 +9,6 @@ signature
   sorts DecGroups
   constructors
     MOD : scope -> TYPE
-//    Module   : ID * DecGroups -> Decl
-//    Import   : ID -> Decl
-//    ModRef   : ID * ID -> Exp 
-//    
-//    Decs     : list(Decl) -> DecGroups
-//    Seq      : list(Decl) * DecGroups -> DecGroups
     
 rules 
 

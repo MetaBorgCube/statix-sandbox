@@ -3,10 +3,6 @@ module lang/arithmetic/statics
 imports lang/base/statics
 imports signatures/lang/arithmetic/syntax-sig
 
-signature
-  constructors
-    INT : TYPE
-    
 rules
 
   typeOfType(s, IntT()) = INT().

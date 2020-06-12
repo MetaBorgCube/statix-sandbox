@@ -4,6 +4,7 @@ imports lang/base/syntax
 
 context-free syntax // booleans
   Type.BoolT = <Bool>
+  TYPE.BOOL  = <Bool>
 
   Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
   
@@ -19,14 +20,10 @@ context-free syntax // booleans
     else 
       <Exp>
   > 
-  
-  Exp.IfT = <
-    if <Exp> then 
-      <Exp>
-  >
+
 context-free priorities
   Exp.Not > Exp.Eq > Exp.And 
-  > Exp.Or > Exp.IfT > Exp.If
+  > Exp.Or > Exp.If
   
 sorts BoolV
 context-free syntax

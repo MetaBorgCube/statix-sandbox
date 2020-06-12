@@ -7,29 +7,24 @@ imports signatures/lang/module-simple/syntax-sig
 signature
   constructors
     MOD      : scope -> TYPE
-//    Module   : ID * list(Decl) -> Decl
-//    Import   : ID -> Decl
-//    ModRef   : ID * ID -> Exp 
     
 rules 
 
   declOk(s, Module(m, decls)) :- {s_mod}
-    new s_mod, s_mod -P-> s,
+    new s_mod, 
+    s_mod -P-> s,
     declareMod(s, m, MOD(s_mod)),
     declsOk(s_mod, decls).
         
-  declOk(s, Import(p)) :- {s_mod s_end} 
+  declOk(s, Import(p)) :- {s_mod} 
     typeOfModRef(s, p) == MOD(s_mod),
     s -I-> s_mod.  
            
 rules // module reference
         
-  typeOfExp(s, ModRef(m, x)) = T :- {s_mod}
-    typeOfModRef(s, m) == MOD(s_mod),
-    typeOfVar(s_mod, x) == T. 
+  typeOfExp(s, ModRef(m, x)) = proj(typeOfModRef(s, m), x).
     
-  proj(MOD(s_mod), x) = T :- {p d}
-    typeOfVar(s_mod, x) == T.
+  proj(MOD(s_mod), x) = typeOfVar(s_mod, x).
    
 //signature
 //  namespaces

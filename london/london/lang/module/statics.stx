@@ -15,13 +15,13 @@ rules // module reference
     typeOfVar(s_p, x) == T. 
     // TODO: x could also refer to a type?
     
-  proj(MOD(s_mod), x) = T :- {p d}
-    typeOfVar(s_mod, x) == T.
+  proj(MOD(s_mod), x) = typeOfVar(s_mod, x).
     
 rules // modules 
 
   declOk(s, Module(m, decls)) :- {s_mod}
-    new s_mod, s_mod -P-> s,
+    new s_mod, 
+    s_mod -P-> s,
     declareMod(s, m, MOD(s_mod)),
     declsOk(s_mod, decls).
         
@@ -68,7 +68,8 @@ rules // module binding
   typeOfModMember : scope * string -> TYPE
   
   declareMod(s, x, T) :-   
-    s -> Mod{x} with typeOfDecl T,   
+    s -> Mod{x} with typeOfDecl T,
+    @x.type := T,   
     query typeOfDecl
       filter P* I* and { Mod{ y @_ } :- y == x }
           min $ < I, $ < P, I < P, R < P and { _, _ :- true }
@@ -81,7 +82,8 @@ rules // module binding
           min $ < I, $ < P, I < P, R < P and { _, _ :- true }
           in s |-> [(_, (Mod{ x' }, T))|_] 
       | error $[Module [x] not defined],
-    @x.ref := x'.
+    @x.ref := x',
+    @x.type := T.
     
   typeOfModPar(s, x) = T :- {x'}
     query typeOfDecl
@@ -89,7 +91,8 @@ rules // module binding
           min $ < I, $ < P, I < P, R < P and { _, _ :- true }
           in s |-> [(_, (Mod{ x' }, T))|_] 
       | error $[Module [x] not defined],
-    @x.ref := x'.
+    @x.ref := x',
+    @x.type := T.
     
   typeOfModMember(s, x) = T :- {x'}
     query typeOfDecl
@@ -97,6 +100,7 @@ rules // module binding
           min $ < I, $ < P, I < P, R < P and { _, _ :- true }
           in s |-> [(_, (Mod{ x' }, T))|_] 
       | error $[Module [x] not defined],
-    @x.ref := x'.
+    @x.ref := x',
+    @x.type := T.
           
         

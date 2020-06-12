@@ -3,18 +3,6 @@ module lang/file/statics
 imports lang/base/statics
 imports signatures/lang/file/syntax-sig
 
-//signature
-//  
-//  sorts Program Prog
-//  
-//  constructors
-//    Program  : Prog -> Program 
-//    Decls    : list(Decl) -> Prog
-//    Value    : Val -> Prog
-//    
-//  constructors
-//    Exp : Exp -> Decl
-
 rules
 
   programOK : scope * Program 
