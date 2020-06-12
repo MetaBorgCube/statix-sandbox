@@ -8,7 +8,7 @@ imports
   pp
   injections/-
   injections/lang/base/syntax-injections
-  
+  injections/lang/file/syntax-injections
 rules // Analysis
 
   // see README.md for details on how to switch to multi-file analysis
@@ -19,28 +19,21 @@ rules // Analysis
   // multi-file analysis
   editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
 
-  pre-analyze  = explicate-injections-london
-  post-analyze = implicate-injections-london
-  //post-analyze = id /* strip-annos; implicate-injections-london */ 
+//<<<<<<< HEAD
+//  pre-analyze  = explicate-injections-london
+//  post-analyze = implicate-injections-london
+//  //post-analyze = id /* strip-annos; implicate-injections-london */ 
+//=======
+  pre-analyze  = explicate-injections-london-Program
+  post-analyze = implicate-injections-london-Program
+//>>>>>>> ca3684bc9a9c17ee970bb3a94040704b6ee74097
 
 rules // Editor Services
 
   editor-resolve = stx-editor-resolve
 
-  editor-hover = my-stx-editor-hover
-  
-  my-stx-editor-hover = my-stx--editor-hover(strip-annos; write-to-string | "type")
-  my-stx-editor-hover(|prop) = my-stx--editor-hover(strip-annos; write-to-string | prop)
-  my-stx-editor-hover(pp | prop) = my-stx--editor-hover(pp | prop)
-  
-  
-  my-stx--editor-hover(pp | prop):
-      (node, position, ast, path, project-path) -> label
-    where
-      a       := <stx-get-ast-analysis> node
-    ; propval := <stx-get-ast-property(|a, prop)> node
-    with
-      label := <pp> propval
+  editor-hover = stx-editor-hover
+
 
 rules // Debugging
 
