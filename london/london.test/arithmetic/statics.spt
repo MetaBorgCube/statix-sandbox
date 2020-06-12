@@ -1,6 +1,6 @@
-module arithmetic/syntax
+module arithmetic/statics
 
-language paris
+language london
 
 test number [[
   > 2

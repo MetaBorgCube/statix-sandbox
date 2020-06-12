@@ -1,11 +1,11 @@
 module arithmetic/syntax
 
-language paris
+language london
 
 test number [[
   > 2
 ]] analysis succeeds
-
+ 
 test number [[
   > 2 + 3
 ]] analysis succeeds 
