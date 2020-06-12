@@ -3,7 +3,7 @@ module ImportSelf {
 def c = true
 def d = 2
 module A {
-  //import A
+  import A
   //import A.A
   def a = 1
   def b = a + c + d
