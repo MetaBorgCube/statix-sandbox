@@ -3,21 +3,9 @@ module lang/base/statics
 imports signatures/lang/base/syntax-sig
 
 //signature
-//  sorts 
-//    ID     = string
-//    INT    = string 
-//    STRING = string
-//   
-//  sorts 
-//    Type   // syntactic types
-//    Exp    // expressions
-//    Decl   // declarations
-//    Bind   // binding
-//    Val    // values
- 
-signature
-  sorts
-    TYPE   // semantic types
+//  sorts
+//    TYPE // semantic types
+    
 rules // type of ...
 
   typeOfType : scope * Type -> TYPE
@@ -38,8 +26,13 @@ rules // operations on types
   lub      : TYPE * TYPE -> TYPE
   
   subtype(_, T, T).
-  equitype(T, T).
   lub(T, T) = T.
+  
+  
+  equitype(T, T).
+  
+//  equitype(T1, T2) :- 
+//    false | error $[Types [T1] and [T2] are not comparable].
   
 rules
 
@@ -51,3 +44,4 @@ signature
     
   relations 
     typeOfDecl : occurrence -> TYPE 
+    

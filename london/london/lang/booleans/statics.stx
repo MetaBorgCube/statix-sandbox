@@ -3,19 +3,6 @@ module lang/booleans/statics
 imports lang/base/statics
 imports lang/unit/statics
 imports signatures/lang/booleans/syntax-sig
-
-//signature
-//  constructors
-//    BoolT    : Type
-//    BOOL     : TYPE
-//    True     : Exp
-//    False    : Exp
-//    Not      : Exp -> Exp
-//    And      : Exp * Exp -> Exp
-//    Or       : Exp * Exp -> Exp
-//    IfT      : Exp * Exp -> Exp
-//    If       : Exp * Exp * Exp -> Exp
-//    Eq       : Exp * Exp -> Exp
     
 signature
   constructors
@@ -35,8 +22,8 @@ rules
     typeOfExp(s, e) == BOOL().
   
   typeOfExp(s, And(e1, e2)) = BOOL() :-
-    typeOfExp(s, e1) == BOOL(),
-    typeOfExp(s, e2) == BOOL().
+    typeOfExp(s, e1) == BOOL() | error $[Type Bool expected],
+    typeOfExp(s, e2) == BOOL() | error $[Type Bool expected].
   
   typeOfExp(s, Or(e1, e2)) = BOOL() :-
     typeOfExp(s, e1) == BOOL(),
@@ -46,7 +33,8 @@ rules
     typeOfExp(s, e1) == BOOL(),
     typeOfExp(s, e2) == T1,
     typeOfExp(s, e3) == T2,
-    equitype(T1, T2).
+    equitype(T1, T2)
+    | error $[Types [T1] and [T2] are not comparable].
   
   typeOfExp(s, IfT(e1, e2)) = UNIT() :- {T}
     typeOfExp(s, e1) == BOOL(),
@@ -55,5 +43,6 @@ rules
   typeOfExp(s, Eq(e1, e2)) = BOOL() :- {T1 T2}
     typeOfExp(s, e1) == T1,
     typeOfExp(s, e2) == T2,
-    equitype(T1, T2).
+    equitype(T1, T2) 
+    | error $[Types [T1] and [T2] are not comparable].
     

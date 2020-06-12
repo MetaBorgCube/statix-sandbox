@@ -16,8 +16,8 @@ imports lang/function/statics
 imports lang/variable/statics
 imports lang/let/statics
 imports lang/type/statics
-//imports lang/module/statics
+imports lang/module/statics
 //imports lang/module-simple/statics
-imports lang/module-seq/statics
+//imports lang/module-seq/statics
 
 imports lang/file/statics

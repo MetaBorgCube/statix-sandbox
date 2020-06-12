@@ -5,13 +5,8 @@ imports lang/variable/statics
 imports signatures/lang/module/syntax-sig
 
 signature
-//  sorts Path
   constructors // modules
     MOD : scope -> TYPE
-//    Module   : ID * list(Decl) -> Decl
-//    Import   : Path -> Decl
-//    Path     : list(ID) -> Path
-//    ModRef   : Path * ID -> Exp   
            
 rules // module reference
         
@@ -104,10 +99,4 @@ rules // module binding
       | error $[Module [x] not defined],
     @x.ref := x'.
           
-         
-//  lookupMod       : scope * string -> TYPE
-//  lookupMod(s, x) = T :- {x'}
-//    typeOfDecl of Mod{x} in s |-> [(_, (Mod{x'}, T))|_] 
-//             | error $[Module [x] not defined], 
-//               // permissive lookup to cope with double declaration 
-//    @x.ref := x'.
+        

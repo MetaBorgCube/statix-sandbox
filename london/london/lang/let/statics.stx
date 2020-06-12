@@ -7,9 +7,6 @@ imports signatures/lang/let/syntax-sig
 signature
   constructors
     Let : ID * Exp * Exp -> Exp
-//    LetSeq : list(Bind) * Exp -> Exp
-//    LetPar : list(Bind) * Exp -> Exp
-//    LetRec : list(Bind) * Exp -> Exp
     
 rules
 

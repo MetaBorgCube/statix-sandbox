@@ -16,9 +16,9 @@ imports lang/function/syntax
 imports lang/variable/syntax
 imports lang/let/syntax
 imports lang/type/syntax
-//imports lang/module/syntax
+imports lang/module/syntax
 //imports lang/module-simple/syntax
-imports lang/module-seq/syntax
+//imports lang/module-seq/syntax
 
 imports lang/file/syntax
 

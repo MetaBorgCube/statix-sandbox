@@ -2,13 +2,6 @@ module lang/variable/statics
 
 imports lang/base/statics
 imports signatures/lang/variable/syntax-sig
-
-//signature
-//  constructors
-//    Var   : ID -> Exp
-//    Def   : Bind -> Decl 
-//    Bind  : ID * Exp -> Bind
-//    BindT : ID * Type * Exp -> Bind
     
 rules
     
