@@ -20,7 +20,8 @@ rules // Analysis
   editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
 
   pre-analyze  = explicate-injections-london
-  post-analyze = id /* strip-annos; implicate-injections-london */ 
+  post-analyze = implicate-injections-london
+  //post-analyze = id /* strip-annos; implicate-injections-london */ 
 
 rules // Editor Services
 
