@@ -1,0 +1,46 @@
+module functions 
+
+language london
+start symbol Start
+
+test function literal [[
+  fun(x) x
+]] parse to Expression(FunUT("x",Var("x"))) 
+
+test function literal typed argument [[
+  fun(x : Int) x
+]] parse to Expression(Fun("x",IntT(),Var("x"))) 
+
+test function literal return type [[
+  fun(x : Int): Int x
+]] parse to  Expression(FunRT("x",IntT(),IntT(),Var("x")))
+
+test no return type without arg type [[
+  fun(x): Int x
+]] parse fails
+
+test function literal longest match [[
+  x fun(x) y z 
+]] parse to [[ x (fun(x) (y z))  ]]
+
+test function literal longest match - typed arg [[
+  x fun(x: Int) y z 
+]] parse to [[ x (fun(x: Int) (y z))  ]]
+
+test function literal longest match - return type [[
+  x fun(x: Int): Int y z 
+]] parse to [[ x (fun(x: Int): Int (y z))  ]]
+
+test function application [[
+  x y
+]] parse to Expression(App(Var("x"),Var("y")))
+
+test function application longest match [[
+  abc efg
+]] parse to Expression(App(Var("abc"),Var("efg")))
+
+test function application is left associative [[
+  abc efg hij
+]] parse to [[ (abc efg) hij ]]
+
+

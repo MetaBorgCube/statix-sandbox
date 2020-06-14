@@ -1,0 +1,90 @@
+module variables
+
+language london
+start symbol Start
+
+test identifier [[
+  x
+]] parse succeeds
+
+test identifier [[
+  x10
+]] parse succeeds
+
+test identifier [[
+  long_identifier
+]] parse fails
+
+test identifier [[
+  longIdentifier
+]] parse succeeds
+
+test definition [[
+  def a = 1
+]] parse to Program(Decls([Def(Bind("a",Int("1")))])) 
+
+test binding expression [[
+  def a = 1 + b
+]] parse to Program(Decls([Def(Bind("a",Add(Int("1"),Var("b"))))]))
+
+
+test let [[
+  let x = a in b
+]] parse to Expression(LetSeq([Bind("x",Var("a"))],Var("b")))
+  
+test let [[
+  let x = a + b in x - 3
+]] parse to [[
+  let x = (a + b) in (x - 3)
+]]
+
+test let [[
+  a + let x = b in c * d
+]] parse to [[
+  a + (let x = b in (c * d))
+]]
+
+test sequential let [[
+  let 
+    x = a; 
+    y = x 
+  in x + y
+]] parse succeeds
+
+test require separator [[
+  let 
+    x = a
+    y = x 
+  in x + y
+]] parse fails
+
+test parallel let [[
+  letpar x = a; y = b in x
+]] parse to 
+   Expression(LetPar([Bind("x",Var("a")),Bind("y",Var("b"))],Var("x")))
+   
+test parallel let [[
+  letpar 
+    x = 1; 
+    y = a 
+  in x + y 
+]] parse succeeds
+
+test recursive let [[
+  letrec x = a; y = b in x
+]] parse to 
+   Expression(LetRec([Bind("x",Var("a")),Bind("y",Var("b"))],Var("x")))
+
+test recursive let [[
+  a + letrec 
+    x = if false then y else a; 
+    y = x + 3 
+  in x + y
+]] parse to [[
+  a + (letrec 
+    x = if false then y else a; 
+    y = x + 3 
+  in (x + y))
+]]
+
+
