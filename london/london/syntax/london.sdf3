@@ -1,6 +1,6 @@
 module london
 
-imports lang/L1/syntax
-imports lang/file/syntax
+imports  L1 
+imports  file 
 
-context-free start-symbols Program
+context-free start-symbols Start 

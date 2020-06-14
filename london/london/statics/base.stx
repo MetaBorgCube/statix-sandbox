@@ -1,0 +1,43 @@
+module statics/base
+
+imports signatures/base-sig
+    
+rules // type of ...
+
+  typeOfType : scope * Type -> TYPE
+  typeOfExp  : scope * Exp  -> TYPE
+ 
+rules // well-typedness of ...
+
+  declOk : scope * Decl 
+  declsOk maps declOk(*, list(*))
+
+  bindOk : scope * scope * Bind  
+  bindsOk maps bindOk(*, *, list(*))
+  
+rules // operations on types
+
+  subtype  : Exp * TYPE * TYPE
+  equitype : TYPE * TYPE 
+  lub      : TYPE * TYPE -> TYPE
+  
+  subtype(_, T, T).
+  lub(T, T) = T.
+  
+  
+  equitype(T, T).
+  
+//  equitype(T1, T2) :- 
+//    false | error $[Types [T1] and [T2] are not comparable].
+  
+rules
+
+  proj : TYPE * ID -> TYPE
+  
+signature
+  name-resolution
+    labels P I R
+    
+  relations 
+    typeOfDecl : occurrence -> TYPE 
+    

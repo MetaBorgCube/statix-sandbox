@@ -1,0 +1,23 @@
+module mod
+
+imports base
+imports lex
+
+sorts Path
+context-free syntax 
+
+  Decl.Module = <
+    module <ID> {
+      <{Decl "\n"}*>
+    }
+  >
+  
+  Decl.Import = <import <Path>>
+  
+  Path.Path = <<{ID "."}+>>
+  
+  Exp.ModRef = <<Path>@<ID>>
+   
+template options
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

@@ -1,7 +1,7 @@
 module statics
 
-imports lang/L1/statics
-imports lang/file/statics
+imports statics/L1
+imports statics/file
 
 rules // multi-file entry point
 
@@ -9,6 +9,6 @@ rules // multi-file entry point
 
   projectOk(s).
   
-  fileOk : scope * Program 
+  fileOk : scope * Start 
   
-  fileOk(s, p) :- programOK(s, p). 
+  fileOk(s, p) :- programOk(s, p). 

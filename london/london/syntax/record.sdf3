@@ -1,0 +1,38 @@
+module record
+
+imports base
+
+sorts FDecl
+context-free syntax // record types
+
+  Type.RecT = <{<{FDecl ",\n"}*>}>
+
+  Decl.Record = <
+    record <ID> { 
+      <{FDecl ",\n"}*> 
+    }
+  >
+  
+  FDecl.FDecl = <<ID> : <Type>>
+  
+sorts FBind  
+context-free syntax // record expressions
+
+  Exp.New = <new <ID> { <{FBind ","}*> }>
+  
+  Exp.Cns = <<ID> { <{FBind ","}*> }>
+  
+  FBind.FBind = <<ID> = <Exp>>
+  
+  Exp.Proj = <<Exp>.<ID>>  
+    
+  Exp.With = <
+    with <Exp> do 
+      <Exp>
+  >
+  
+  Exp.Null = <null>
+  
+template options
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

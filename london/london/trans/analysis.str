@@ -7,8 +7,8 @@ imports
 
   pp
   injections/-
-  injections/lang/base/syntax-injections
-  injections/lang/file/syntax-injections
+  injections/base-injections
+  injections/file-injections
 rules // Analysis
 
   // see README.md for details on how to switch to multi-file analysis
@@ -19,8 +19,8 @@ rules // Analysis
   // multi-file analysis
   editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
 
-  pre-analyze  = explicate-injections-london-Program
-  post-analyze = implicate-injections-london-Program
+  pre-analyze  = explicate-injections-london-Start
+  post-analyze = implicate-injections-london-Start
 
 rules // Editor Services
 

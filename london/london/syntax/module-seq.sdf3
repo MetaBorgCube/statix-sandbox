@@ -1,0 +1,30 @@
+module module-seq 
+
+imports base 
+
+sorts Decls Path
+context-free syntax 
+
+  Decl.Module = <
+    module <ID> {
+      <Decls>
+    }
+  >
+  
+  Decls.Decs = <<{Decl "\n"}*>>
+  
+  Decls.Seq   = <
+    <{Decl "\n"}*>; 
+    <Decls>
+  > {right} 
+  
+  Decl.Import = <import <ID>>
+  
+  Path.Path = <<{ID "."}+>>
+  
+  Exp.ModRef = <<ID>@<ID>>
+   
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

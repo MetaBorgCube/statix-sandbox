@@ -1,0 +1,29 @@
+module L1
+
+imports base
+
+imports numbers 
+imports booleans 
+
+imports record  
+imports function 
+
+imports variable 
+imports let 
+imports type 
+//imports module 
+//imports module-simple 
+imports module-seq 
+
+imports file 
+
+context-free priorities 
+
+  Exp.Ascr > Exp.Not > Exp.Proj > Exp.App
+  > Exp.Mul 
+  > {left: Exp.Add Exp.Sub}   
+  > {non-assoc: Exp.Eq Exp.Gt}
+  > Exp.If 
+  > {Exp.LetSeq Exp.LetPar Exp.LetRec Exp.With }
+  > {Exp.Fun Exp.FunRT Exp.FunUT }
+  , Exp.App <1> .> Exp.Min
