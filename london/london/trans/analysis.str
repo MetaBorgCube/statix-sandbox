@@ -6,9 +6,10 @@ imports
   statix/api 
 
   pp
-  injections/-
   injections/base-injections
   injections/file-injections
+  injections/london-injections
+  
 rules // Analysis
 
   // see README.md for details on how to switch to multi-file analysis
