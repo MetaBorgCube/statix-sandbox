@@ -1,7 +1,0 @@
-module test
-
-language london
-
-test parse [[
-
-]] parse succeeds
