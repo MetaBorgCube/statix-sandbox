@@ -1,0 +1,45 @@
+module module-var 
+
+imports base variable record type
+
+sorts Members Path
+context-free syntax 
+
+  Decl.Module = <
+    module <ID> {
+      <Members>
+    }
+  >
+  
+  Members.Members = <<{Decl "\n"}*>>
+  
+  Members.Seq   = <
+    <Members>; 
+    <Members>
+  > {right} 
+  
+  Decl.Import = <import <Path>>
+  
+  Path.PVar = <<ID>>
+  Path.Path = <<Path>.<ID>>
+  
+  Exp.PExp = <<Path>>
+  
+  Type.PType = <<Path>> 
+  
+  Decl.ExtendRemote = <
+    def <Exp>.<ID> := <Exp>
+  >
+  
+context-free priorities
+
+  Exp.Proj <0> .> { Exp.PExp Exp.Var },
+  
+  Exp.PExp <0> .> Path.PVar,
+  
+  Type.PType <0> .> { Type.TypeRef Path.PVar }
+   
+template options
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

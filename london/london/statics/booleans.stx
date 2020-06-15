@@ -3,7 +3,7 @@ module statics/booleans
 imports statics/base
 imports signatures/booleans-sig
  
-rules
+rules 
   
   typeOfType(s, BoolT()) = BOOL().
 

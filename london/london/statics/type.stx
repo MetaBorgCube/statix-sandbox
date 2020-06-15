@@ -13,7 +13,7 @@ rules
   typeOfExp(s, e1@Ascr(e, t)) = T :- {S}
     typeOfExp(s, e) == S,
     typeOfType(s, t) == T,
-    subtype(e, S, T),
+    subtype(S, T),
     @e1.type := T.
     
 signature 

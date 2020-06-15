@@ -14,21 +14,22 @@ rules
     
 rules
 
-  bindOk(s_bnd, s_ctx, Bind(x, e)) :- 
-    declareVar(s_bnd, x, typeOfExp(s_ctx, e)).
+  bindOk(s_bnd, s_ctx, Bind(x, e)) :- {T}
+    typeOfExp(s_ctx, e) == T,
+    declareVar(s_bnd, x, T).
     
   bindOk(s_bnd, s_ctx, BindT(x, t, e)) :- {T1 T2}
     typeOfType(s_ctx, t) == T1,
     declareVar(s_bnd, x, T1),
     typeOfExp(s_ctx, e) == T2,
-    subtype(e, T2, T1) 
+    subtype(T2, T1) 
     | error $[type of expression [T2] does not match expected type [T1]].
 
  
 rules // variable binding 
  
-  declareVar : scope * string * TYPE
-  typeOfVar  : scope * string -> TYPE
+  declareVar   : scope * string * TYPE
+  typeOfVar    : scope * string -> TYPE
     
   declareVar(s, x, T) :-   
     s -> Var{x} with typeOfDecl T, 
@@ -43,6 +44,10 @@ rules // variable binding
                // permissive lookup to cope with double declaration 
     @x.ref := x',
     @x.type := T.
+  
+//  typeOfVarRaw : scope * string -> list((path * (occurrence * TYPE)))
+//  typeOfVarRaw(s, x) = p :-
+//    typeOfDecl of Var{x} in s |-> p.
     
 signature    
   namespaces
@@ -52,46 +57,5 @@ signature
       filter P* (R* | I*) 
       min $ < I, $ < P, I < P, R < P 
       
-//signature    
-//  namespaces
-//    Var : string
-//  name-resolution
-//    resolve Var 
-//      filter (P | I)*
-//      min $ < I, $ < P , I < P, R < P 
-      
-//signature    
-//  namespaces
-//    Var : string
-//  name-resolution
-//    resolve Var filter P* R* min $ < P, R < P
-    
-//signature    
-//  namespaces
-//    Var : string
-//  name-resolution
-//    resolve Var filter P* min $ < P
-    
-//signature    
-//  namespaces
-//    Var : string
-//  name-resolution
-//    resolve Var filter P* 
-    
-//signature    
-//  namespaces
-//    Var : string
-//  name-resolution
-//    resolve Var filter e
-      
-//rules // variable binding 
-//
-//  declareVar : scope * string * TYPE
-//  typeOfVar  : scope * string -> TYPE
-//    
-//  declareVar(s, x, T) :-   
-//    s -> Var{x} with typeOfDecl T.
-//  
-//  typeOfVar(s, x) = T :- {x'}
-//    typeOfDecl of Var{x} in s |-> [(_, (Var{x'}, T))].
+
     

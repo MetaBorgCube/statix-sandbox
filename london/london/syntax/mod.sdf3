@@ -17,6 +17,8 @@ context-free syntax
   Path.Path = <<{ID "."}+>>
   
   Exp.ModRef = <<Path>@<ID>>
+  
+  Decl.ExtendRemote = <def <Path> := <Exp>>
    
 template options
   ID = keyword {reject}

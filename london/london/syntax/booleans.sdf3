@@ -5,7 +5,7 @@ imports base
 context-free syntax // booleans
   Type.BoolT = <Bool>
   TYPE.BOOL  = <Bool>
-
+  
   Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
   Exp.Gt    = [[Exp] > [Exp]] {non-assoc}
   
@@ -22,16 +22,10 @@ context-free syntax // booleans
       <Exp>
   > 
  
-
 context-free priorities
-  Exp.Not > Exp.Eq > Exp.And 
+  Exp.Not > {non-assoc: Exp.Eq Exp.Gt} > Exp.And 
   > Exp.Or > Exp.If
   
-sorts BoolV
-context-free syntax
-  Val.BoolV = <<BoolV>>
-  BoolV.TrueV = <true>
-  BoolV.FalseV = <false>
   
 template options
   ID = keyword {reject}

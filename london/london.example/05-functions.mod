@@ -12,7 +12,9 @@ def xor = fun(x: Bool) fun(y: Bool) : Bool x && !y || !x && y
 
 $ xor (1 == 2) (1 > 2)
 
-def lt : Int -> Int -> Bool = fun(x) fun(y) !(x > y)  
+type Ord = Int -> Int -> Bool
+
+def lt : Ord = fun(x) fun(y) !(x > y)   
 
 $ if lt 1 4 then false else true
 

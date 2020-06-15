@@ -13,6 +13,7 @@ imports statics/let
 imports statics/type
 //imports statics/module
 //imports statics/module-simple
-imports statics/module-seq
+//imports statics/module-seq
+imports statics/module-var
 
 imports statics/file

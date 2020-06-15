@@ -18,11 +18,11 @@ context-free syntax
     <Decls>
   > {right} 
   
-  Decl.Import = <import <ID>>
+  Decl.Import = <import <Path>>
   
   Path.Path = <<{ID "."}+>>
   
-  Exp.ModRef = <<ID>@<ID>>
+  Exp.ModRef = <<Path>@<ID>>
    
 template options
 

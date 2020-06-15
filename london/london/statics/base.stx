@@ -17,13 +17,12 @@ rules // well-typedness of ...
   
 rules // operations on types
 
-  subtype  : Exp * TYPE * TYPE
+  subtype  : TYPE * TYPE
   equitype : TYPE * TYPE 
   lub      : TYPE * TYPE -> TYPE
   
-  subtype(_, T, T).
+  subtype(T, T).
   lub(T, T) = T.
-  
   
   equitype(T, T).
   

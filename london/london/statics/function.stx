@@ -8,9 +8,9 @@ rules
 
   typeOfType(s, FunT(t1, t2)) = FUN(typeOfType(s, t1), typeOfType(s, t2)).
   
-  subtype(e, FUN(T1, T2), FUN(S1, S2)) :- 
-    subtype(e, S1, T1),
-    subtype(e, T2, S2).
+  subtype(FUN(T1, T2), FUN(S1, S2)) :- 
+    subtype(S1, T1),
+    subtype(T2, S2).
  
 rules  // functions 
     
@@ -20,7 +20,7 @@ rules  // functions
     new s_fun, s_fun -P-> s,
     declareVar(s_fun, x, T1),
     typeOfExp(s_fun, e) == S,
-    subtype(e, S, T2).
+    subtype(S, T2).
     
   typeOfExp(s, Fun(x, t, e)) = FUN(T, S) :- {s_fun}
     typeOfType(s, t) == T,
@@ -31,7 +31,7 @@ rules  // functions
   typeOfExp(s, App(e1, e2)) = T2 :- {T1 S}
     typeOfExp(s, e1) == FUN(T1, T2),
     typeOfExp(s, e2) == S,
-    subtype(e2, S, T1) | error $[expression of type [T1] expected],
+    subtype(S, T1) | error $[expression of type [T1] expected],
     @e1.type := FUN(T1, T2).
     
   typeOfExp(s, FunUT(x, e)) = FUN(T, S) :- {s_fun}
