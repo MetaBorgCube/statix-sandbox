@@ -1,0 +1,21 @@
+module functions 
+
+language london
+start symbol Start
+
+test type definition [[
+  type Num = Int
+]] analysis succeeds
+
+test type definition [[
+  type Num = Int
+  def x : Num = 1
+]] analysis succeeds
+
+test typed binding [[
+  type Num = Int
+  $ let a : Num = 1 in a
+]] analysis succeeds
+
+
+

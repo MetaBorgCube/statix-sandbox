@@ -1,0 +1,55 @@
+module functions 
+ 
+language london
+start symbol Start
+
+test function literal [[
+  $ fun(x) x
+]] analysis succeeds 
+
+test function literal typed argument [[
+  $ fun(x : Int) x + 1
+]] analysis succeeds 
+
+test function literal return type [[
+  $ fun(x : Int): Int x + 1
+]] analysis succeeds 
+
+test function literal return type : type mismatch [[
+  $ fun(x : Int): Int true
+]] analysis fails 
+
+test function literal : free variable [[
+  $ (fun(x) 1) x
+]] analysis fails 
+
+
+test function literal longest match [[
+  $ let f = fun(y) y 3 
+     in f fun(x) x + 2 
+]] analysis succeeds 
+
+
+
+test function application [[
+  $ let f = fun(x) x + 1 in f 3
+]] analysis succeeds 
+
+
+test function application is left associative [[
+  $ let f = fun(x) fun(y) x + 1 in f 3 4
+]] analysis succeeds 
+
+
+
+test function type [[
+  type Unary = Int -> Int
+  def f : Unary = fun(x) x + 1
+]] analysis succeeds 
+
+test function type is right associative [[
+  type Binary = Int -> Int -> Int
+  def g : Binary = fun(x) fun(y) x * y
+]] analysis succeeds 
+
+

@@ -1,0 +1,97 @@
+module records 
+ 
+language london
+start symbol Start
+
+test record type [[
+  type Point = { x : Int, y : Int }
+]] analysis succeeds
+
+test record type alternative [[
+  record List { hd : Int, tl : List }
+]] analysis succeeds
+
+test record creation [[
+  type Point = { x : Int, y : Int, z : Bool }
+  def p : Point = Point{ x = 0, y = 0, z = true }
+]] analysis succeeds
+
+test record creation [[
+  type Point = { [[x]] : Int, y : Int }
+  def p : Point = Point{ [[x]] = 0, y = 0 }
+]] resolve #2 to #1
+
+test record creation : too many fields initialized [[
+  type Point = { x : Int, y : Int }
+  def p : Point = Point{ x = 0, y = 0, z = true }
+]] analysis fails
+
+test record creation : all fields initialized [[
+  type Point = { x : Int, y : Int }
+  def p : Point = Point{ x = 0 }
+]] analysis fails
+
+test record projection [[
+  type Point = { x : Int, y : Int }
+  def p : Point = Point{ x = 0, y = 0 }
+  $ p.x + 1
+]] analysis succeeds
+
+test record projection [[
+  type Point = { x : Int, y : Int }
+  def p : Point = Point{ x = 0, y = 0 }
+  $ p.z
+]] analysis fails
+
+test record with [[
+  type Point = { x : Int, y : Int }
+  def p : Point = Point{ x = 0, y = 0 }
+  $ let x = true in with p do x + 1
+]] analysis succeeds
+
+test record with : both branches reachable [[
+  type Point = { x : Bool, y : Int }
+  def p : Point = Point{ x = false, y = 0 }
+  $ let z = true in with p do !z && x
+]] analysis succeeds
+
+test null [[
+  null
+]] analysis succeeds
+
+test null [[
+  type Point = { x : Int, y : Int }
+  def p : Point = null
+  $ p.x  
+]] analysis succeeds
+
+test null type [[ 
+  def a : Null = null
+  $ a.x
+]] analysis fails
+
+test record integration test 1 [[ 
+  record List { hd : Int, tl : List }
+
+  def nil = null
+  def cons = fun(x) fun(xs: List) 
+    List{hd = x, tl = xs}
+  
+  $ (cons 1 (cons 2 null)).tl.tl == null
+]] analysis succeeds
+
+test record integration test 2 [[ 
+  record List { hd : Int, tl : List }
+
+  def nil = null
+  def cons = fun(x) fun(xs: List) 
+    List{hd = x, tl = xs}
+
+  def map = fun(f) fun(xs: List) 
+    if xs == null then null else cons(f xs.hd)(map f xs.tl)
+  
+  $ map (fun(x) x + 1) (cons 1 (cons 2 null))
+]] analysis succeeds
+
+
+

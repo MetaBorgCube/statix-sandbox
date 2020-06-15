@@ -1,0 +1,176 @@
+module variables
+
+language london
+start symbol Start
+
+test free variable [[
+  $ x
+]] analysis fails
+
+test definition [[
+  def a = 1
+]] analysis succeeds
+
+test definition before use [[
+  def [[b]] = 2 
+  def a = 1 + [[b]]
+]] resolve #2 to #1
+
+test use before definition [[
+  def a = 1 + [[b]]
+  def [[b]] = 2 
+]] resolve #1 to #2
+
+test free variable [[
+  def a = 1 + b
+]] analysis fails
+
+test let [[
+$ let a = 1 in 
+  let x = a in 
+      a + x
+]] analysis succeeds
+
+test let [[
+$ let [[a]] = 1 in 
+  let x = a in 
+      [[a]] + x
+]] resolve #2 to #1
+  
+test let [[
+$ let a = 1 in 
+  let [[a]] = a in 
+      [[a]] + 1
+]] resolve #2 to #1
+
+test let [[
+  $ 1 + let x = 2 in x * 3
+]] analysis succeeds
+
+test let types [[
+  $ 1 + let x = 2 in x * false
+]] analysis fails
+
+
+test sequential let [[
+ $ let 
+    x = 1; 
+    y = x 
+  in x + y
+]] analysis succeeds
+
+test sequential let : binding [[
+$ let 
+    [[x]] = 1; 
+    y = [[x]] 
+  in x + y
+]] resolve #2 to #1
+
+test sequential let : use before definition [[
+$ let  
+    y = x; 
+    x = 1
+  in x + y
+]] analysis fails
+
+test sequential let : use before definition [[
+$ let [[x]] = 0 
+  in let  
+    y = [[x]]; 
+    x = 1
+  in x + y
+]] resolve #2 to #1
+
+
+
+test parallel let [[
+  letpar 
+    x = 1; 
+    y = x 
+  in x + y
+]] analysis fails
+
+test parallel let [[
+  letpar 
+    x = 1; 
+    y = 2; 
+    x = 3
+  in x + y
+]] analysis fails
+
+test parallel let : binding [[
+  let [[x]] = 0 in 
+  letpar 
+    x = 1; 
+    y = [[x]] 
+  in x + y
+]] resolve #2 to #1
+
+test parallel let : use before definition [[
+  letpar  
+    y = x; 
+    x = 1
+  in x + y
+]] analysis fails
+
+test parallel let : use before definition [[
+  letpar [[x]] = 0 
+  in let  
+    y = [[x]]; 
+    x = 1
+  in x + y
+]] resolve #2 to #1
+
+
+
+
+test recursive let [[
+  letrec 
+    x = 1; 
+    y = x; 
+    x = 3
+  in x + y
+]] analysis fails
+
+test recursive let [[
+  letrec 
+    x = 1; 
+    y = 2; 
+    x = 3
+  in x + y
+]] analysis fails
+
+test recursive let : binding [[
+  let x = 0 in 
+  letrec 
+    [[x]] = 1; 
+    y = [[x]] 
+  in x + y
+]] resolve #2 to #1
+
+test recursive let : use before definition [[
+  letrec  
+    y = x; 
+    x = 1
+  in x + y
+]] analysis succeeds
+
+test recursive let : use before definition [[
+  letrec [[x]] = 0 
+  in let  
+    y = [[x]]; 
+    x = 1
+  in x + y
+]] resolve #2 to #1
+
+
+
+test recursive let [[
+  let a = 1 
+   in a + letrec 
+            x = if false then y else a; 
+            y = x + 3 
+          in x + y
+]] analysis succeeds
+
+
