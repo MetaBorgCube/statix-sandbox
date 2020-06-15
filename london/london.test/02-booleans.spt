@@ -4,47 +4,47 @@ language london
 start symbol Start
 
 test true [[
-  true
+  $ true
 ]] analysis succeeds
  
 test false [[
-  false
+  $ false
 ]] analysis succeeds
 
 test eq [[
-  1 == 2
+  $ 1 == 2
 ]] analysis succeeds
 
 test eq [[
-  false == true 
+  $ false == true 
 ]] analysis succeeds
 
 test not eq [[
-  ! false
+  $ ! false
 ]] analysis succeeds
 
 test not eq [[
-  ! 1 == 2
+  $ ! 1 == 2
 ]] analysis succeeds
 
 test or [[
-  false || true 
+  $ false || true 
 ]] analysis succeeds
 
 test and [[ 
-  false && true 
+  $ false && true 
 ]] analysis succeeds
 
 test if then else [[ 
-  if 1 == 2 then false else true
+  $ if 1 == 2 then false else true
 ]] analysis succeeds
 
 test if then else [[
-  if 1 == 2 then false else if 1 == 2 then false else true
+  $ if 1 == 2 then false else if 1 == 2 then false else true
 ]] analysis succeeds
  
 test if then else [[
-  if 1 == 2 then false else 1 == 2 || 1 == 1
+  $ if 1 == 2 then false else 1 == 2 || 1 == 1
 ]] analysis succeeds
 
 
