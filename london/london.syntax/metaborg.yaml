@@ -1,5 +1,5 @@
 ---
-id: org.example:london.syntax:0.1.0-SNAPSHOT
+id: org.example:london:0.1.0-SNAPSHOT
 name: london
 dependencies:
   compile:

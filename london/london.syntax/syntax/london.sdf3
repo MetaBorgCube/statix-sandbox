@@ -1,6 +1,17 @@
 module london
 
-imports lang/L1/syntax
-imports lang/file/syntax
+imports lex
 
-context-free start-symbols Program
+context-free start-symbols Start
+
+sorts Exp Program
+context-free syntax
+
+  Start.Expression = <<Exp>>
+  
+  Start.Program = <<Decl+>> 
+  
+  Decl.Exp = <$ <Exp>>
+  
+  Exp.Int = <<INT>>  
+  
