@@ -32,7 +32,7 @@ rules
       | error $[Duplicate definition of type [x]], 
     @x.type := T.
     
-  resolveType(s, x) = ps :- {x'}
+  resolveType(s, x) = ps :-
     query type
       filter P* (R* | I*) 
          and { x' :- x' == x }
@@ -45,30 +45,3 @@ rules
       | error $[Type [x] not defined],
     @x.type := T, @x.ref := x'.
     
-//signature 
-//  namespaces
-//    Type : string
-//  name-resolution   
-//    resolve Type 
-//     filter P* (R* | I*) 
-//        min $ < I, $ < P, I < P, R < P  
-//        
-//rules
-//
-//  declareType : scope * string * TYPE
-//  typeOfTypeRef : scope * string -> TYPE
-//    
-//  declareType(s, x, T) :-   
-//    s -> Type{x} with typeOfDecl T,
-//    @x.type := T, 
-//    typeOfDecl of Type{x} in s |-> [(_, (_, T))] 
-//             | error $[Duplicate definition of type [x]].
-//               // declaration is distinct
-//  
-//  typeOfTypeRef(s, x) = T :- {x'}
-//    typeOfDecl of Type{x} in s |-> [(_, (Type{x'}, T))|_] 
-//             | error $[Type [x] not defined], 
-//               // permissive lookup to cope with double declaration 
-//    @x.ref := x',
-//    @x.type := T.
-               

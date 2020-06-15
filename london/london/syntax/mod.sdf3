@@ -1,25 +1,45 @@
 module mod
 
-imports base
-imports lex
+imports base variable record type
 
-sorts Path
+sorts Members Path
 context-free syntax 
 
   Decl.Module = <
     module <ID> {
-      <{Decl "\n"}*>
+      <Members>
     }
   >
   
+  Members.Members = <<{Decl "\n"}*>>
+  
+  Members.Seq = <
+    <Members>; 
+    <Members>
+  > {right} 
+  
   Decl.Import = <import <Path>>
   
-  Path.Path = <<{ID "."}+>>
+  Path.PVar = <<ID>>
+  Path.Path = <<Path>.<ID>>
   
-  Exp.ModRef = <<Path>@<ID>>
+  Exp.PExp = <<Path>>
   
-  Decl.ExtendRemote = <def <Path> := <Exp>>
+  Type.PType = <<Path>> 
+  
+  Decl.ExtendRemote = <
+    def <Exp>.<ID> := <Exp>
+  >
+  
+context-free priorities
+
+  Exp.Proj <0> .> { Exp.PExp Exp.Var },
+  
+  Exp.PExp <0> .> Path.PVar,
+  
+  Type.PType <0> .> { Type.TypeRef Path.PVar }
    
 template options
+
   ID = keyword {reject}
   keyword -/- [a-zA-Z0-9]

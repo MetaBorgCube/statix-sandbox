@@ -1,76 +1,30 @@
-module statics/module-seq
-//
+module statics-alt/module-simple
+
 //imports statics/base
 //imports statics/variable
-//imports statics/numbers
-//imports signatures/module-seq-sig 
+//imports signatures/module-simple-sig
 //
 //signature
-//  sorts DecGroups
 //  constructors
 //    MOD : scope -> TYPE
-//     
+//    
 //rules 
 //
-//  declOk(s, Module(m, decls)) :- {s_mod s_end}
-//    new s_mod, s_mod -P-> s,
-//    declareMod(s, m, MOD(s_end)),
-//    decGroupsOk(s_mod, decls) == s_end.
-//   
-//  decGroupsOk : scope * Decls -> scope
-//  
-//  decGroupsOk(s, Decs(decls)) = s:- 
-//    declsOk(s, decls).
-//    
-//  decGroupsOk(s1, Seq(decls1, decls2)) = s_end :- {s2}
-//    new s2, s2 -P-> s1,
-//    declsOk(s1, decls1),
-//    decGroupsOk(s2, decls2) == s_end.
-// 
-//  declOk(s, Import(p)) :- {s_mod s_end} 
-//    typeOfPathRef(s, p) == MOD(s_mod),
-//    s -I-> s_mod.
-//    
-//    
-////  declOk(s, ExtendRemote(p, e)) :- false.
-// 
-//// permission to extend
-////  declOk(s, Import(p)) :- {s_mod s_end} 
-////    typeOfModRef(s, p) == MOD(s_mod),
-////    s -I-> s_mod,
-////    declareVar(s_mod, "x", INT()).
-//    
-//  
+//  declOk(s, Module(m, decls)) :- {s_mod}
+//    new s_mod, 
+//    s_mod -P-> s,
+//    declareMod(s, m, MOD(s_mod)),
+//    declsOk(s_mod, decls).
+//        
+//  declOk(s, Import(p)) :- {s_mod} 
+//    typeOfModRef(s, p) == MOD(s_mod),
+//    s -I-> s_mod.  
 //           
 //rules // module reference
 //        
-//  typeOfExp(s, ModRef(p, x)) = T :- {s_mod}
-//    typeOfPathRef(s, p) == MOD(s_mod),
-//    typeOfVar(s_mod, x) == T. 
+//  typeOfExp(s, ModRef(m, x)) = proj(typeOfModRef(s, m), x).
 //    
-//  proj(MOD(s_mod), x) = T :- {p d}
-//    typeOfVar(s_mod, x) == T.
-//  
-//rules
-//
-//  typeOfPathImp : scope * Path -> TYPE 
-//  typeOfPathRef : scope * Path -> TYPE 
-//  
-//  resolvePathImp(s, Path([x | xs])) = s_end :- {s_mod} 
-//    typeOfModPar(s, x) == MOD(s_mod),
-//    resolvePathList(s_mod, xs) == s_end.
-//  
-//  typeOfPathRef(s, Path([x | xs])) = s_end :- {s_mod} 
-//    typeOfModRef(s, x) == MOD(s_mod),
-//    resolvePathList(s_mod, xs) == s_end.
-//    
-//  resolvePathList : scope * list(ID) -> scope
-//  
-//  resolvePathList(s, []) = s.
-//  
-//  resolvePathList(s, [x | xs]) = s_end :- {s_mod}
-//    typeOfModMember(s, x) == MOD(s_mod),
-//    resolvePathList(s_mod, xs) == s_end. 
+//  proj(MOD(s_mod), x) = typeOfVar(s_mod, x).
 //  
 //signature
 //  namespaces
@@ -126,10 +80,10 @@ module statics/module-seq
 //      | error $[Module [x] not defined],
 //    @x.ref := x'.
 //          
-//         
-////  lookupMod       : scope * string -> TYPE
-////  lookupMod(s, x) = T :- {x'}
-////    typeOfDecl of Mod{x} in s |-> [(_, (Mod{x'}, T))|_] 
-////             | error $[Module [x] not defined], 
-////               // permissive lookup to cope with double declaration 
-////    @x.ref := x'.
+         
+//  lookupMod       : scope * string -> TYPE
+//  lookupMod(s, x) = T :- {x'}
+//    typeOfDecl of Mod{x} in s |-> [(_, (Mod{x'}, T))|_] 
+//             | error $[Module [x] not defined], 
+//               // permissive lookup to cope with double declaration 
+//    @x.ref := x'.

@@ -11,10 +11,7 @@ imports function
 imports variable 
 imports let 
 imports type 
-//imports mod
-//imports module-simple 
-//imports module-seq 
-imports module-var
+imports mod
 
 imports file 
 

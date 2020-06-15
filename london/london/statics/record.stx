@@ -74,16 +74,16 @@ rules // Null
     
   typeOfExp(s, Null()) = NULL().
   
-rules
-
-  allFields : scope -> list((path * (occurrence * TYPE)))
-  
-  allFields(s) = ds :-
-    query typeOfDecl
-      filter e and { Var{ y @_ } :- y == _ }
-          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
-          in s |-> ds.
-
+//rules
+//
+//  allFields : scope -> list((path * (occurrence * TYPE)))
+//  
+//  allFields(s) = ds :-
+//    query typeOfDecl
+//      filter e and { Var{ y @_ } :- y == _ }
+//          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
+//          in s |-> ds.
+//
 //  subtype(e, REC(s1), REC(s2)) :- {ps}
 //    allFields(s2) == ps,
 //    fieldsInScope(e, ps, s1).
