@@ -16,30 +16,59 @@ rules
     subtype(S, T),
     @e1.type := T.
     
-signature 
-  namespaces
-    Type : string
-  name-resolution   
-    resolve Type 
-     filter P* (R* | I*) 
-        min $ < I, $ < P, I < P, R < P  
-        
+signature
+  relations 
+    type : ID -> TYPE
+    
 rules
 
-  declareType : scope * string * TYPE
-  typeOfTypeRef : scope * string -> TYPE
-    
-  declareType(s, x, T) :-   
-    s -> Type{x} with typeOfDecl T,
-    @x.type := T, 
-    typeOfDecl of Type{x} in s |-> [(_, (_, T))] 
-             | error $[Duplicate definition of type [x]].
-               // declaration is distinct
+  declareType : scope * ID * TYPE
+  resolveType : scope * ID -> list((path * (ID * TYPE)))
+  typeOfTypeRef  : scope * ID -> TYPE
   
-  typeOfTypeRef(s, x) = T :- {x'}
-    typeOfDecl of Type{x} in s |-> [(_, (Type{x'}, T))|_] 
-             | error $[Type [x] not defined], 
-               // permissive lookup to cope with double declaration 
-    @x.ref := x',
+  declareType(s, x, T) :- 
+    !type[x, T] in s,
+    resolveType(s, x) == [(_, (_, T))] 
+      | error $[Duplicate definition of type [x]], 
     @x.type := T.
+    
+  resolveType(s, x) = ps :- {x'}
+    query type
+      filter P* (R* | I*) 
+         and { x' :- x' == x }
+         min $ < I, $ < P, I < P, R < P
+         and true
+          in s |-> ps.
+  
+  typeOfTypeRef(s, x) = T :- {x'} 
+    resolveType(s, x) == [(_,(x', T))|_]
+      | error $[Type [x] not defined],
+    @x.type := T, @x.ref := x'.
+    
+//signature 
+//  namespaces
+//    Type : string
+//  name-resolution   
+//    resolve Type 
+//     filter P* (R* | I*) 
+//        min $ < I, $ < P, I < P, R < P  
+//        
+//rules
+//
+//  declareType : scope * string * TYPE
+//  typeOfTypeRef : scope * string -> TYPE
+//    
+//  declareType(s, x, T) :-   
+//    s -> Type{x} with typeOfDecl T,
+//    @x.type := T, 
+//    typeOfDecl of Type{x} in s |-> [(_, (_, T))] 
+//             | error $[Duplicate definition of type [x]].
+//               // declaration is distinct
+//  
+//  typeOfTypeRef(s, x) = T :- {x'}
+//    typeOfDecl of Type{x} in s |-> [(_, (Type{x'}, T))|_] 
+//             | error $[Type [x] not defined], 
+//               // permissive lookup to cope with double declaration 
+//    @x.ref := x',
+//    @x.type := T.
                

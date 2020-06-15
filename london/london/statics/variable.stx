@@ -24,38 +24,68 @@ rules
     typeOfExp(s_ctx, e) == T2,
     subtype(T2, T1) 
     | error $[type of expression [T2] does not match expected type [T1]].
-
- 
-rules // variable binding 
- 
-  declareVar   : scope * string * TYPE
-  typeOfVar    : scope * string -> TYPE
     
-  declareVar(s, x, T) :-   
-    s -> Var{x} with typeOfDecl T, 
-    typeOfDecl of Var{x} in s |-> [(_, (_, T))] 
-             | error $[Duplicate definition of variable [x]],
-    @x.type := T.
-               // declaration is distinct
+signature
+  relations 
+    var : ID -> TYPE
+    
+rules
+
+  declareVar : scope * ID * TYPE
+  resolveVar : scope * ID -> list((path * (ID * TYPE)))
+  typeOfVar  : scope * ID -> TYPE
   
-  typeOfVar(s, x) = T :- {x'}
-    typeOfDecl of Var{x} in s |-> [(_, (Var{x'}, T))|_] 
-             | error $[Variable [x] not defined],
-               // permissive lookup to cope with double declaration 
-    @x.ref := x',
+  declareVar(s, x, T) :- 
+    !var[x, T] in s,
+    resolveVar(s, x) == [(_, (_, T))] 
+      | error $[Duplicate definition of variable [x]], 
     @x.type := T.
+    
+  resolveVar(s, x) = ps :- {x'}
+    query var
+      filter P* (R* | I*) 
+         and { x' :- x' == x }
+         min $ < I, $ < P, I < P, R < P
+         and true
+          in s |-> ps.
+  
+  typeOfVar(s, x) = T :- {x'} 
+    resolveVar(s, x) == [(_,(x', T))|_]
+      | error $[Variable [x] not defined],
+    @x.type := T, @x.ref := x'.
+    
+//signature    
+//  namespaces
+//    Var : string
+//  name-resolution
+//    resolve Var 
+//      filter P* (R* | I*) 
+//      min $ < I, $ < P, I < P, R < P 
+//      
+//rules // variable binding 
+// 
+//  declareVar   : scope * string * TYPE
+//  typeOfVar    : scope * string -> TYPE
+//    
+//  declareVar(s, x, T) :-   
+//    s -> Var{x} with typeOfDecl T, 
+//    typeOfDecl of Var{x} in s |-> [(_, (_, T))] 
+//             | error $[Duplicate definition of variable [x]],
+//    @x.type := T.
+//               // declaration is distinct
+//  
+//  typeOfVar(s, x) = T :- {x'}
+//    typeOfDecl of Var{x} in s |-> [(_, (Var{x'}, T))|_] 
+//             | error $[Variable [x] not defined],
+//               // permissive lookup to cope with double declaration 
+//    @x.ref := x',
+//    @x.type := T.
   
 //  typeOfVarRaw : scope * string -> list((path * (occurrence * TYPE)))
 //  typeOfVarRaw(s, x) = p :-
 //    typeOfDecl of Var{x} in s |-> p.
     
-signature    
-  namespaces
-    Var : string
-  name-resolution
-    resolve Var 
-      filter P* (R* | I*) 
-      min $ < I, $ < P, I < P, R < P 
+
       
 
     
