@@ -1,54 +1,35 @@
-module functions 
+module records 
  
 language london
 start symbol Start
 
-test function literal [[
-  fun(x) x
-]] parse to Expression(FunUT("x",Var("x"))) 
+test record type [[
+  type Point = { x : Int, y : Int }
+]] parse to  Program(Decls([TypeDef("Point",RecT([FDecl("x",IntT()),FDecl("y",IntT())]))]))
 
-test function literal typed argument [[
-  fun(x : Int) x
-]] parse to Expression(Fun("x",IntT(),Var("x"))) 
+test record type alternative [[
+  record List { hd : Int, tl : List }
+]] parse to Program(Decls([Record("List",[FDecl("hd",IntT()),FDecl("tl",TypeRef("List"))])]))
 
-test function literal return type [[
-  fun(x : Int): Int x
-]] parse to  Expression(FunRT("x",IntT(),IntT(),Var("x")))
+test record creation [[
+  Point{x = 0, y = 0}
+]] parse to Expression(New("Point",[FBind("x",Int("0")),FBind("y",Int("0"))]))
 
-test no return type without arg type [[
-  fun(x): Int x
-]] parse fails
+test record projection [[
+  p.x
+]] parse to Expression(PExp(Path(PVar("p"),"x"))) 
 
-test function literal longest match [[
-  x fun(x) y z 
-]] parse to [[ x (fun(x) (y z))  ]]
+test record with [[
+  with q do x
+]] parse to Expression(With(Var("q"),Var("x"))) 
 
-test function literal longest match - typed arg [[
-  x fun(x: Int) y z 
-]] parse to [[ x (fun(x: Int) (y z))  ]]
+test null [[
+  null
+]] parse to Expression(Null())
 
-test function literal longest match - return type [[
-  x fun(x: Int): Int y z 
-]] parse to [[ x (fun(x: Int): Int (y z))  ]]
+test null type [[ 
+  type N = Null
+]] parse to Program(Decls([TypeDef("N",NullT())]))
 
-test function application [[
-  x y
-]] parse to Expression(App(Var("x"),Var("y")))
-
-test function application longest match [[
-  abc efg
-]] parse to Expression(App(Var("abc"),Var("efg")))
-
-test function application is left associative [[
-  abc efg hij
-]] parse to [[ (abc efg) hij ]]
-
-test function type [[
-  type Unary = Int -> Int
-]] parse to Program(Decls([TypeDef("Unary",FunT(IntT(),IntT()))]))
-
-test function type is right associative [[
-  type Binary = Int -> Int -> Int
-]] parse to [[ type Binary = Int -> (Int -> Int) ]]
 
 

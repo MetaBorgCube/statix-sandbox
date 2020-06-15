@@ -1,0 +1,35 @@
+module mod 
+ 
+language london
+start symbol Start
+
+test module definition [[
+  module A { def a = 1 }
+]] parse to Program(Decls([Module("A",Members([Def(Bind("a",Int("1")))]))]))
+
+test module members sequential composition [[
+  module A { def a = 1 ; def b = 2 }
+]] parse to  Program(Decls([Module("A",Seq(Members([Def(Bind("a",Int("1")))]),Members([Def(Bind("b",Int("2")))])))]))
+
+test import [[
+  import BCD
+]] parse to Program(Decls([Import(PVar("BCD"))]))
+
+test import path [[
+  import B.C.D
+]] parse to Program(Decls([Import(Path(Path(PVar("B"),"C"),"D"))]))
+
+test path expression [[
+  B.C.D
+]] parse to Expression(PExp(Path(Path(PVar("B"),"C"),"D")))
+
+test path type [[
+  type BCD = B.C.D
+]] parse to Program(Decls([TypeDef("BCD",PType(Path(Path(PVar("B"),"C"),"D")))]))
+
+test extend remote [[ 
+  def A.b := 3
+]] parse to Program(Decls([ExtendRemote(PVar("A"),"b",Int("3"))]))
+
+
+
