@@ -1,0 +1,18 @@
+module file
+
+imports base
+
+sorts Start Program
+context-free syntax
+
+  Start.Program = <<Program>>
+  
+  Start.Expression = <<Exp>>
+
+  Program.Decls = <<{Decl "\n\n"}*>> 
+    
+  Decl.Exp = [$ [Exp]] 
+  
+template options
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

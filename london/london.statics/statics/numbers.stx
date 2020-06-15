@@ -1,0 +1,64 @@
+module statics/numbers
+
+imports statics/base
+imports signatures/numbers-sig
+
+rules
+
+  typeOfType(s, IntT()) = INT().
+  
+rules
+  
+  typeOfExp(s, Int(i)) = INT().
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+//  typeOfExp(s, Min(e)) = INT() :-
+//    typeOfExp(s, e) == INT().
+    
+//  typeOfExp(s, Add(e1, e2)) = INT() :-
+//    typeOfExp(s, e1) == INT(),
+//    typeOfExp(s, e2) == INT().
+    
+//  typeOfExp(s, Sub(e1, e2)) = INT() :-
+//    typeOfExp(s, e1) == INT(),
+//    typeOfExp(s, e2) == INT().
+//    
+//  typeOfExp(s, Mul(e1, e2)) = INT() :-
+//    typeOfExp(s, e1) == INT(),
+//    typeOfExp(s, e2) == INT().
+    
+  

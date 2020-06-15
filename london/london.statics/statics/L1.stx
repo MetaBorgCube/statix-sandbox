@@ -1,0 +1,16 @@
+module statics/L1
+
+imports statics/base
+
+imports statics/numbers
+imports statics/booleans
+imports statics/variable
+
+imports statics/record
+imports statics/function
+
+imports statics/let
+imports statics/type
+imports statics/mod
+
+imports statics/file

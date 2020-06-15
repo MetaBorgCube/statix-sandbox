@@ -1,0 +1,19 @@
+module statics/file
+
+imports statics/base
+imports signatures/file-sig
+
+rules
+
+  programOk : scope * Start 
+
+  programOk(s, Program(Decls(decls))) :- 
+    declsOk(s, decls).
+    
+  programOk(s, Expression(e)) :- {T} 
+    typeOfExp(s, e) == T.
+  
+  declOk(s, Exp(e)) :- {T}
+    typeOfExp(s, e) == T.
+    
+    
