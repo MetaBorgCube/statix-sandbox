@@ -17,10 +17,8 @@ context-free syntax // record types
   
 sorts FBind  
 context-free syntax // record expressions
-
-  Exp.New = <new <ID> { <{FBind ","}*> }>
   
-  Exp.Cns = <<ID> { <{FBind ","}*> }>
+  Exp.New = <<ID> { <{FBind ","}*> }>
   
   FBind.FBind = <<ID> = <Exp>>
   
@@ -31,7 +29,9 @@ context-free syntax // record expressions
       <Exp>
   >
   
-  Exp.Null = <null>
+  Exp.Null   = <null>
+  Type.NullT = <Null>
+  TYPE.NULL  = <Null>
   
 template options
   ID = keyword {reject}

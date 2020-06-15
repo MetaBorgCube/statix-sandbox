@@ -8,7 +8,6 @@ imports signatures/record-sig
 signature  
   constructors 
     REC  : scope -> TYPE
-    NULL : TYPE
     
 rules
 
@@ -41,11 +40,9 @@ rules // record type
     
 rules // record construction
   
-  typeOfExp(s, e@New(x, fbinds)) = REC(s_rec) :- {p d}
+  typeOfExp(s, New(x, fbinds)) = REC(s_rec) :- {p d}
     typeOfTypeRef(s, x) == REC(s_rec),
     fbindsOk(s, REC(s_rec), fbinds).
-    
-  typeOfExp(s, Cns(x, fbinds)) = typeOfExp(s, New(x, fbinds)).
     
   fbindOk : scope * TYPE * FBind
   fbindsOk maps fbindOk(*, *, list(*))
@@ -73,6 +70,8 @@ rules // with record value
 rules // Null
     
   typeOfExp(s, Null()) = NULL().
+  
+  typeOfType(s, NullT()) = NULL().
   
 //rules
 //

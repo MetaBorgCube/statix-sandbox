@@ -28,7 +28,7 @@ context-free syntax
   Type.PType = <<Path>> 
   
   Decl.ExtendRemote = <
-    def <Exp>.<ID> := <Exp>
+    def <Path>.<ID> := <Exp>
   >
   
 context-free priorities

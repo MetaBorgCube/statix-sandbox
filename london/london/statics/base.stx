@@ -26,9 +26,6 @@ rules // operations on types
   
   equitype(T, T).
   
-//  equitype(T1, T2) :- 
-//    false | error $[Types [T1] and [T2] are not comparable].
-  
 rules
 
   proj : TYPE * ID -> TYPE
