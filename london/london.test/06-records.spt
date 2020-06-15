@@ -11,7 +11,7 @@ test record type alternative [[
   record List { hd : Int, tl : List }
 ]] analysis succeeds
 
-test record creation [[
+test record creation [[ 
   type Point = { x : Int, y : Int, z : Bool }
   def p : Point = Point{ x = 0, y = 0, z = true }
 ]] analysis succeeds
@@ -26,11 +26,11 @@ test record creation : too many fields initialized [[
   def p : Point = Point{ x = 0, y = 0, z = true }
 ]] analysis fails
 
-test record creation : all fields initialized [[
+test record creation : all fields initialized [[ 
   type Point = { x : Int, y : Int }
   def p : Point = Point{ x = 0 }
-]] analysis fails
-
+]] analysis fails 
+ 
 test record projection [[
   type Point = { x : Int, y : Int }
   def p : Point = Point{ x = 0, y = 0 }
@@ -70,28 +70,28 @@ test null type [[
   $ a.x
 ]] analysis fails
 
-test record integration test 1 [[ 
-  record List { hd : Int, tl : List }
-
-  def nil = null
-  def cons = fun(x) fun(xs: List) 
-    List{hd = x, tl = xs}
-  
-  $ (cons 1 (cons 2 null)).tl.tl == null
-]] analysis succeeds
-
-test record integration test 2 [[ 
-  record List { hd : Int, tl : List }
-
-  def nil = null
-  def cons = fun(x) fun(xs: List) 
-    List{hd = x, tl = xs}
-
-  def map = fun(f) fun(xs: List) 
-    if xs == null then null else cons(f xs.hd)(map f xs.tl)
-  
-  $ map (fun(x) x + 1) (cons 1 (cons 2 null))
-]] analysis succeeds
+//test record integration test 1 [[ 
+//  record List { hd : Int, tl : List }
+//
+//  def nil = null
+//  def cons = fun(x) fun(xs: List) 
+//    List{hd = x, tl = xs}
+//  
+//  $ (cons 1 (cons 2 null)).tl.tl == null
+//]] analysis succeeds
+//
+//test record integration test 2 [[ 
+//  record List { hd : Int, tl : List }
+//
+//  def nil = null
+//  def cons = fun(x) fun(xs: List) 
+//    List{hd = x, tl = xs}
+//
+//  def map = fun(f) fun(xs: List) 
+//    if xs == null then null else cons(f xs.hd)(map f xs.tl)
+//  
+//  $ map (fun(x) x + 1) (cons 1 (cons 2 null))
+//]] analysis succeeds
 
 
 

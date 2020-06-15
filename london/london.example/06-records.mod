@@ -2,16 +2,18 @@ type Point = { x : Int, y : Int }
 
 def p = Point{x = 0, y = 0}
 
-def mkPoint = fun(x) fun(y) Point{x = x, y = y}
+def mkPoint = fun(x) fun(y) Point{x = x, y = y} 
 
 def add = fun(p: Point) fun(q: Point) 
   Point{ x = p.x + q.x, y = p.y + q.y } 
   
-def q = add p Point{x = 1, y = 3} 
+def q = add p Point{x = 1, y = 3}//, y = true}   
 
-$ let x = 4; b = 4 in x + with q do x + y + b
+//def z = Point{x = 1}
+
+$ let x = 4; b = 4 in x + with q do x + y + b 
           
-record List { hd : Int, tl : List }
+record List { hd : Int, tl : List } 
 
 def nil = null
 def cons = fun(x) fun(xs: List) 
@@ -20,4 +22,4 @@ def cons = fun(x) fun(xs: List)
 def map = fun(f) fun(xs: List) 
   if xs == null then null else cons(f xs.hd)(map f xs.tl)
   
-$ map (fun(x) x + 1) (cons 1 (cons 2 null))
+$ map (fun(x) x + 1) (cons 1 (cons 2 null))    

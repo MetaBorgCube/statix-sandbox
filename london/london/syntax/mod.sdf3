@@ -18,7 +18,7 @@ context-free syntax
     <Members>
   > {right} 
   
-  Decl.Import = <import <Path>>
+  Decl.Import = <import <Path>> 
   
   Path.PVar = <<ID>>
   Path.Path = <<Path>.<ID>>
