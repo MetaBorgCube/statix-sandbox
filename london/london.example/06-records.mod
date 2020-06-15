@@ -7,9 +7,11 @@ def mkPoint = fun(x) fun(y) Point{x = x, y = y}
 def add = fun(p: Point) fun(q: Point) 
   Point{ x = p.x + q.x, y = p.y + q.y } 
   
-$ add p Point{x = 1, y = 3}
+def q = add p Point{x = 1, y = 3} 
+
+$ let x = 4; b = 4 in x + with q do x + y + b
           
-type List = {hd : Int, tl : List}
+record List { hd : Int, tl : List }
 
 def nil = null
 def cons = fun(x) fun(xs: List) 

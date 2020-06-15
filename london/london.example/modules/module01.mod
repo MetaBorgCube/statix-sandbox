@@ -1,4 +1,4 @@
-
+module Module01 {
 
 module A1 {
   //import B1.B2
@@ -17,14 +17,14 @@ module B1 {
     module C {
       //import b
       def c = a1 + 1 
-      def d : Bool = 1
+      //def d : Bool = 1
     }
   }
   import B1.B2.C
   def d = c
 } 
 
-def a = B1.B2
+//def a = B1.B2
 
 module D2 {
   def d = 3
@@ -34,9 +34,9 @@ module E3 {
   import D2
   def e = d + 4 
   def m = (fun(x) a) 1
-  def m = (fun(x) a).a1 + 1
-  def l = m.C
-  def k = a.C.c
+//  def n = (fun(x) a).a1 + 1
+//  def l = m.C
+//  def k = a.C.c
 }
 
-
+}

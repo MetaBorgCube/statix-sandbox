@@ -6,12 +6,14 @@ $ let x = a + b in x - 3
 
 $ let 
     x = a; 
-    y = x 
+    y = x;
+    x = 3
   in x + y
 
 $ letpar 
     x = 1; 
-    y = a 
+    y = a
+    //; x = 3
   in x + y 
 
 $ letrec 

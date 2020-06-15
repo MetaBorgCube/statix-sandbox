@@ -1,6 +1,6 @@
 module Types {
   type A = Int
-  def a = 1 + b
+  def a = 1 + b 
   def b = 3
 }
 
