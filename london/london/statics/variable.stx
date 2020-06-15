@@ -1,7 +1,7 @@
 module statics/variable
 
 imports statics/base
-imports signatures/variable-sig
+imports signatures/variable-sig 
     
 rules
     
@@ -31,15 +31,17 @@ signature
     
 rules
 
-  declareVar : scope * ID * TYPE
-  resolveVar : scope * ID -> list((path * (ID * TYPE)))
-  typeOfVar  : scope * ID -> TYPE
+  declareVar  : scope * ID * TYPE
+  resolveVar  : scope * ID -> list((path * (ID * TYPE)))
+  visibleVar  : scope      -> list((path * (ID * TYPE)))
+  varsInScope : scope      -> list((path * (ID * TYPE)))
+  typeOfVar   : scope * ID -> TYPE
   
   declareVar(s, x, T) :- 
     !var[x, T] in s,
     resolveVar(s, x) == [(_, (_, T))] 
-      | error $[Duplicate definition of variable [x]], 
-    @x.type := T.
+      | error $[Duplicate definition of variable [x]].
+    //@x.type := T.
     
   resolveVar(s, x) = ps :- 
     query var
@@ -53,6 +55,22 @@ rules
     resolveVar(s, x) == [(_,(x', T))|_]
       | error $[Variable [x] not defined],
     @x.type := T, @x.ref := x'.
+    
+  visibleVar(s) = ps :- 
+    query var
+      filter P* (R* | I*) 
+         and true
+         min $ < I, $ < P, I < P, R < P
+         and { x, y :- x == y }
+          in s |-> ps.
+    
+  varsInScope(s) = ps :- 
+    query var
+      filter e
+         and true
+         min 
+         and { x, y :- x == y }
+          in s |-> ps.
 
     
 

@@ -40,17 +40,33 @@ rules // record type
     
 rules // record construction
   
-  typeOfExp(s, New(x, fbinds)) = REC(s_rec) :- {p d}
-    typeOfTypeRef(s, x) == REC(s_rec),
-    fbindsOk(s, REC(s_rec), fbinds).
+  typeOfExp(s, New(x, fbinds)) = REC(s1_rec) :- {p d s2_rec}
+    typeOfTypeRef(s, x) == REC(s1_rec),
+    new s2_rec,
+    fbindsOk(s, s2_rec, fbinds),
+    subtype(REC(s2_rec), REC(s1_rec)).
     
-  fbindOk : scope * TYPE * FBind
+  fbindOk : scope * scope * FBind
   fbindsOk maps fbindOk(*, *, list(*))
   
-  fbindOk(s, T_rec, FBind(x, e)) :- {T1 T2}
+  fbindOk(s, s_rec, FBind(x, e)) :- {T1 T2}
     typeOfExp(s, e) == T1,
-    proj(T_rec, x) == T2,
-    subtype(T1, T2).
+    declareVar(s_rec, x, T1).
+
+//  typeOfExp(s, New(x, fbinds)) = REC(s1_rec) :- {p d s2_rec}
+//    typeOfTypeRef(s, x) == REC(s1_rec),
+//    new s2_rec,
+//    fbindsOk(s, s2_rec, REC(s1_rec), fbinds),
+//    subtype(REC(s2_rec), REC(s1_rec)).
+//    
+//  fbindOk : scope * scope * TYPE * FBind
+//  fbindsOk maps fbindOk(*, *, *, list(*))
+//  
+//  fbindOk(s, s_rec, T_rec, FBind(x, e)) :- {T1 T2}
+//    typeOfExp(s, e) == T1,
+//    declareVar(s_rec, x, T1), 
+//    proj(T_rec, x) == T2,
+//    subtype(T1, T2).
     
 rules // record projection
 
@@ -73,23 +89,15 @@ rules // Null
   
   typeOfType(s, NullT()) = NULL().
   
-//rules
-//
-//  allFields : scope -> list((path * (occurrence * TYPE)))
-//  
-//  allFields(s) = ds :-
-//    query typeOfDecl
-//      filter e and { Var{ y @_ } :- y == _ }
-//          min $ < I, $ < P, I < P, R < P and { _, _ :- true }
-//          in s |-> ds.
-//
-//  subtype(e, REC(s1), REC(s2)) :- {ps}
-//    allFields(s2) == ps,
-//    fieldsInScope(e, ps, s1).
-//    
-//  fieldInScope : Exp * (path * (occurrence * TYPE)) * scope 
-//  fieldsInScope maps fieldInScope(*, list(*), *) 
-//
-//  fieldInScope(e, (_, (Var{x}, T)), s) :- {S}
-//    lookupVar(s, x) == S | error $[field [x] not in subtype],
-//    subtype(e, S, T).
+rules
+
+  subtype(REC(s1), REC(s2)) :- {ps}
+    varsInScope(s2) == ps,
+    fieldsInScope(ps, s1).
+    
+  fieldInScope : (path * (ID * TYPE)) * scope 
+  fieldsInScope maps fieldInScope(list(*), *) 
+
+  fieldInScope((_, (x, T)), s) :- {S}
+    typeOfVar(s, x) == S | error $[field [x] not in subtype],
+    subtype(S, T).

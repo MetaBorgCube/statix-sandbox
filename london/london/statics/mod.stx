@@ -12,7 +12,7 @@ signature
      
 rules // module definitions
 
-  declOk(s, Module(m, ms)) :- {s_mod s_end}
+  declOk(s, Module(m, ms)) :- {s_mod s_end} 
     new s_mod, s_mod -P-> s, 
     declareMod(s, m, MOD(s_end)),
     membersOk(s_mod, ms) == s_end.
@@ -99,7 +99,7 @@ rules // disambiguate names based on name resolution
   typeOfRefDisamb(s, x, []) = typeOfVar(s, x).
   
   typeOfRefDisamb(s, x, [(_,(x',T))|_]) = T :-
-    @x.ref := x',
+    @x.ref := x', 
     @x.type := T.
     
 rules 
