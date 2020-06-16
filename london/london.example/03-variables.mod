@@ -1,11 +1,15 @@
+module Variables {
+
 def a = 1 
 
 def b = a + 23 * 4 
 
 $ let x = a + b in x - 3
 
+def x = 3
+
 $ let 
-    x = a; 
+    x = x; 
     y = x;
     x = 3
   in x + y
@@ -21,4 +25,5 @@ $ letrec
     y = x + 3 
   in x + y
   
+}
   

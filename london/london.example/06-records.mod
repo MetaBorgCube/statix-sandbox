@@ -2,7 +2,7 @@ type Point = { x : Int, y : Int }
 
 def p = Point{x = 0, y = 0}
 
-def mkPoint = fun(x) fun(y) Point{x = x, y = y} 
+def mkPoint = fun(x) fun(y) Point{y = 1, x = x} 
 
 def add = fun(p: Point) fun(q: Point) 
   Point{ x = p.x + q.x, y = p.y + q.y } 

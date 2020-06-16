@@ -5,7 +5,7 @@ module Extend {
   }
 
   module Client1 {
-    def Library.inc := fun(x) x + 1
+    //def Library.inc := fun(x) x + 1
   }
   
   module Client2 {
