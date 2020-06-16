@@ -3,11 +3,20 @@ module statics/variable
 imports statics/base
 imports signatures/variable-sig 
     
+rules
+    
+//  typeOfExp(s, Var(x)) = T.
+  
+rules
+
+//  declOk(s, Def(bind)).    
     
     
+rules
+
+//  bindOk(s_bnd, s_ctx, Bind(x, e)).
     
-    
-    
+//  bindOk(s_bnd, s_ctx, BindT(x, t, e)).    
     
     
     
