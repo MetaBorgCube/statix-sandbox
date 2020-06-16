@@ -2,7 +2,7 @@ module statics/mod
 
 imports statics/base
 imports statics/variable
-imports statics/numbers
+imports statics/numbers 
 imports statics/type
 imports signatures/mod-sig 
 
@@ -24,7 +24,7 @@ rules // module definitions
     
   membersOk(s1, Seq(ms1, ms2)) = s_end :- {s2}
     membersOk(s1, ms1) == _,
-    new s2, s2 -P-> s1, 
+    new s2, s2 -M-> s1, 
     membersOk(s2, ms2) == s_end.
  
 rules // imports 
@@ -55,9 +55,11 @@ rules // qualified names
   
 rules // extend remote
 
+// the following code is not valid Statix
+
 //  declOk(s, ExtendRemote(p, x, e)) :- {s_mod T}
-//    typeOfExp(s, p) == MOD(s_mod),
-//    typeOfExp(s, e) == T,
+//    typeOfPath(s, p) == MOD(s_mod),
+//    typeOfExp(s, e) == T, 
 //    declareVar(s_mod, x, T). // no permission to extend
 
 signature
@@ -78,7 +80,7 @@ rules
     
   resolveMod(s, x) = ps :-
     query mod
-      filter P* (R* | I*) 
+      filter P* (R* | I*) M*
          and { x' :- x' == x }
          min $ < I, $ < P, I < P, R < P
          and true
@@ -107,4 +109,4 @@ rules
   scopeOfParent : scope -> scope 
   
   scopeOfParent(s1) = s2 :- {p t}
-    query () filter P+ min $ < P in s1 |-> [(_, s2) | _]. 
+    query () filter (M | P)+ min $ < P, $ < M in s1 |-> [(_, s2) | _]. 

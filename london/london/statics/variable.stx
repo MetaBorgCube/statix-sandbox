@@ -35,7 +35,7 @@ rules
   resolveVar  : scope * ID -> list((path * (ID * TYPE)))
   varsInScope : scope      -> list((path * (ID * TYPE)))
   typeOfVar   : scope * ID -> TYPE
-  
+ 
   declareVar(s, x, T) :- 
     !var[x, T] in s,
     resolveVar(s, x) == [(_, (_, T))] 
@@ -44,16 +44,18 @@ rules
     
   resolveVar(s, x) = ps :- 
     query var
-      filter P* (R* | I*) 
+      filter P* (R* | (M | I)*)
          and { x' :- x' == x }
-         min $ < I, $ < P, I < P, R < P
+         min $ < I, $ < P, $ < M, I < M, I < P, R < P
          and true
           in s |-> ps.
-  
+
   typeOfVar(s, x) = T :- {x'} 
     resolveVar(s, x) == [(_,(x', T))|_]
       | error $[Variable [x] not defined],
     @x.type := T, @x.ref := x'.
+    
+
     
   varsInScope(s) = ps :- 
     query var

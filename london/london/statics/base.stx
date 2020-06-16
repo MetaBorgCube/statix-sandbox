@@ -32,7 +32,7 @@ rules
   
 signature
   name-resolution
-    labels P I R
+    labels P I R M
     
   relations 
     typeOfDecl : occurrence -> TYPE 
