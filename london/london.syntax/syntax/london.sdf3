@@ -7,11 +7,97 @@ context-free start-symbols Start
 sorts Exp Program
 context-free syntax
 
+
   Start.Expression = <<Exp>>
   
   Start.Program = <<Decl+>> 
   
   Decl.Exp = <$ <Exp>>
   
-  Exp.Int = <<INT>>  
+  Exp.Var = <<ID>>
+  Exp.Int = <<INT>>   
+  Exp.Min = [- [Exp]] 
+  Exp.Add = <<Exp> + <Exp>> {left} 
+  Exp.Mul = <<Exp> * <Exp>> {left} 
+  Exp.Sub = <<Exp> - <Exp>> {left} 
+  Exp.Pow = <<Exp> ^ <Exp>> {right} 
+  Exp.Gt = [[Exp] > [Exp]] {non-assoc}  
+  Exp.Eq = [[Exp] == [Exp]] {non-assoc} 
+  Exp    = <(<Exp>)> {bracket}
+  
+  Exp.False = <false>
+  Exp.True  = <true>
+  Exp.Not   = <!<Exp>> 
+  Exp.And   = <<Exp> && <Exp>> {left} 
+  Exp.Or    = <<Exp> || <Exp>> {left} 
+  Exp.If = <
+    if <Exp> then 
+      <Exp> 
+    else 
+      <Exp>
+  >
+  Exp.IfT = <
+   if <Exp> then 
+     <Exp>
+ >  
+ 
+   Exp.App = <<Exp> <Exp>> {left}
+   
+   Exp.Match = <
+     match <Exp> with 
+       <{Case "|"}+>
+   > {longest-match}
+   Case.Case = [[Pat] -> [Exp]]
+   
+   Pat.PVar = <<ID>>
+   Pat.PApp = <<Pat> <Pat>> {left}
+   Pat.POr  = <<Pat> | <Pat>> {left}
+  
+context-free priorities 
+  
+  Exp.App
+  > Exp.Min 
+  > Exp.Pow
+  > Exp.Mul
+  > {left: Exp.Add Exp.Sub}
+  > {non-assoc: Exp.Eq Exp.Gt}
+  > Exp.Not
+  > Exp.And 
+  > Exp.If 
+  > Exp.IfT 
+  > Exp.Match ,
+  
+  Pat.PApp > Pat.POr 
+  
+sorts Query Cond QExp
+context-free syntax
+
+  Query.Query = <from <QID*> select <QID*> where <Cond>>
+  
+
+//  Query.QueryError = <from <QID*> select where <Cond>> {recover}
+  
+  Cond.QEq = <<QExp>>
+  
+  QExp = Exp
+  
+  Exp.QueryExp = <<Query>> 
+  
+lexical syntax
+  QID = [a-zA-Z][a-zA-Z0-9]* 
+lexical restrictions
+  QID -/- [a-zA-Z0-9]
+  
+template options 
+//  ID = keyword {reject} 
+//  QID = keyword {reject} 
+  keyword -/- [a-zA-Z0-9]
+  
+context-free syntax
+  ID = "if" {reject}
+  ID = "from" {reject}
+  QID = "from" {reject}
+  
+  
+  
   
