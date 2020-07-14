@@ -1,0 +1,42 @@
+module whi
+
+imports Common
+
+context-free start-symbols Start
+
+lexical sorts ID INT
+context-free sorts Start  Stat Exp
+
+context-free syntax
+  Start.Program = Stat
+  
+  Stat.Block = <{<Stat>}>
+  
+  Stat.Seq = <<Stat> <Stat>> {right}
+  
+  Stat.If = <if(<Exp>) <Stat> else <Stat>>
+  Stat.While = <while(<Exp>) <Stat>>
+  
+  Stat.Assign = <<ID> := <Exp>;>
+  
+  Stat.VarDecl = <var <ID>;>
+  Stat.Exp = <<Exp>;>
+  
+  Stat.TryCatch = <
+    try <Stat> catch <Stat>
+  >
+  
+  Stat.Throw = <throw ;>
+  
+  Exp.Var = <<ID>>
+  Exp.Num = <<INT>>
+  
+context-free priorities 
+  Stat.TryCatch 
+  > Stat.If 
+  > Stat.While 
+  > Stat.Seq
+
+template options
+  keyword -/- [a-zA-Z0-9]
+  ID = keyword {reject}

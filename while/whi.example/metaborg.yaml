@@ -1,0 +1,8 @@
+---
+id: org.example:whi.example:0.1.0-SNAPSHOT
+name: whi
+dependencies:
+  compile:
+  - org.example:whi:0.1.0-SNAPSHOT
+build:
+  useBuildSystemSpec: true

@@ -1,0 +1,41 @@
+var x;
+x;
+x := 0;
+try {
+  x := 0;
+  x;
+  throw; 
+} catch {
+  x;
+  x := 3;
+}
+x;
+
+var y;
+try {
+  throw;
+  y := 0;
+} catch {
+  y;
+  y := 3;
+}
+y;
+
+var z;
+try {
+  z := 0;
+  throw;
+} catch {
+  z;
+}
+z;
+
+
+var a;
+//throw;
+try {
+  a := 0;
+} catch {
+  a;
+}
+a;

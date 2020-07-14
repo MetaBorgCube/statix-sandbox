@@ -1,0 +1,49 @@
+module pp
+
+imports
+
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/editor/refactoring/-
+  pp/whi-parenthesize
+  pp/whi-pp
+
+rules
+
+  editor-format:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[pp.[ext]])> path
+    ; result   := <pp-debug> node
+
+rules
+  
+  pp-whi-string =
+    parenthesize-whi
+    ; prettyprint-whi-start-symbols
+    ; !V([], <id>)
+    ; box2text-string(|120)
+      
+  pp-partial-whi-string =
+    parenthesize-whi
+    ; prettyprint-whi
+    ; !V([], <id>)
+    ; box2text-string(|120)
+    
+  pp-partial-whi-string(|sort) =
+    parenthesize-whi
+    ; prettyprint-whi(|sort)
+    ; !V([], <id>)
+    ; box2text-string(|120)  
+      
+  pp-debug :
+    ast -> result
+    with
+       result := <pp-whi-string> ast
+    <+ <bottomup(try(not(is-string); not(is-list); not(pp-whi-string); debug(!"cannot pp ")))> ast
+    ;  result := ""
+
+rules
+  
+  construct-textual-change = construct-textual-change(pp-partial-whi-string, parenthesize, override-reconstruction, resugar)

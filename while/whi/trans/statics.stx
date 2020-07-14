@@ -1,0 +1,194 @@
+module statics
+
+// see README.md for details on how to switch to multi-file analysis
+
+imports signatures/whi-sig  
+
+rules // single-file entry point
+ 
+  programOk : Start
+
+  programOk(prog) :- {s}
+    new s,
+    defAssignProgramOk(s, prog).
+
+rules // multi-file entry point
+
+  projectOk : scope
+
+  projectOk(s).
+
+  fileOk : scope * Start
+
+  fileOk(s, prog) :- 
+    defAssignProgramOk(s, prog).
+    
+rules 
+
+  nextCF : scope -> scope
+  mergeCF : scope * scope * scope -> scope
+  
+  nextCF(n1) = n2 :-
+    new n2, n2 -CF-> n1, n2 -P-> n1.
+   
+  mergeCF(n0, n1, n2) = n3 :- 
+    new n3, n3 -CF-> n1, n3 -CF-> n2, n3 -P-> n0.
+    
+  nextP : scope -> scope 
+  nextP(s1) = s2 :- 
+    new s2, s1 -P-> s2.
+    
+rules 
+
+  defAssignProgramOk : scope * Start
+  statOk : scope * Stat -> scope
+  expOk : scope * Exp 
+  
+  defAssignProgramOk(n, Program(stm)) :- {n'}
+    statOk(n, stm) == n'.
+
+  statOk(n1, VarDecl(x)) = n2 :-
+    nextCF(n1) == n2, 
+    declareVar(n2, x, Uninitialized()).
+    
+  statOk(n1, Assign(x, e)) = n2 :- 
+    expOk(n1, e),
+    nextCF(n1) == n2, 
+    defineVar(n2, x, Initialized()).
+     
+  statOk(n1, Seq(stm1, stm2)) = n3 :- {n2}
+    statOk(n1, stm1) == n2,
+    statOk(n2, stm2) == n3.
+        
+  statOk(n1, Block(stm)) = n3 :- {n2}
+    nextCF(n1) == n2, 
+    statOk(n2, stm) == n3.
+    
+  statOk(n0, If(e, stm1, stm2)) = n3 :- {n1 n2} 
+    expOk(n0, e),
+    statOk(n0, stm1) == n1,
+    statOk(n0, stm2) == n2,
+    mergeCF(n0, n1, n2) == n3. 
+    
+  statOk(n1, While(e, stm)) = n_while :- {n2} 
+    expOk(n_while, e),
+    statOk(n_while, stm) == n2,
+    mergeCF(n1, n1, n2) == n_while. 
+    
+rules // try-catch
+
+  statOk(n1, TryCatch(stm1, stm2)) = n_merge :- {n_try n_catch n2 n3}
+    nextCF(n1) == n_try, 
+      statOk(n_try, stm1) == n2, 
+    //nextP(n1) == n_catch,
+    new n_catch, n_catch -P-> n1, 
+      statOk(n_catch, stm2) == n3,
+    resolveThrow(n2, n_catch),
+    mergeCF(n1, n2, n3) == n_merge.
+    
+  statOk(n, stm@Throw()) = n_throw :- 
+    nextCF(n) == n_throw, 
+    !throw[n_throw] in n_throw.
+    
+  resolveThrow : scope * scope 
+  
+  // todo scope for throw
+  
+  resolveThrow(n, n_catch) :- {ps}
+    query throw 
+      filter CF* and true
+         min $ < CF
+         and true
+          in n |-> ps,
+    linkToThrows(n_catch, ps).
+   
+  linkToThrow : scope * (path * scope) 
+  linkToThrows maps linkToThrow(*, list(*))
+   
+  linkToThrow(n_catch, (d, n)) :- 
+    n_catch -CF-> n.
+
+rules // expressions
+
+  statOk(n, Exp(e)) = n :- 
+    expOk(n, e).
+    
+  expOk(n, Var(x)) :-
+    varIsDeclared(n, x), 
+	varIsDefined(n, x) == Initialized()
+      | error $[variable [x] not initialized].
+
+  expOk(n, Num(_)).
+  
+signature  
+  sorts Init
+  constructors
+    Uninitialized : Init
+    Initialized : Init
+  name-resolution
+    labels CF P
+  relations 
+    declared : ID -> scope
+    defined : scope -> Init
+    throw : -> scope
+    
+rules
+
+  declareVar     : scope * ID * Init
+  defineVar      : scope * ID * Init
+  resolveVarDecl : scope * ID -> (string * scope)
+  resolveVarDef  : scope * ID -> list((path * (scope * Init)))
+  varIsDeclared  : scope * ID
+  varIsDefined   : scope * ID -> Init
+ 
+  declareVar(s, x, b) :- {x'}
+    new x',
+    !declared[x, x'] in s, 
+    defineVar(s, x, Uninitialized()). 
+      
+  defineVar(s, x, b) :- {d x'}
+    resolveVarDecl(s, x) == (d, x'),
+    !defined[x', b] in s,
+    @x.ref := d. 
+    
+  resolveVarDef(s, x) = ps :- {x''}
+    resolveVarDecl(s, x) == (_, x''),
+    query defined 
+      filter CF*
+         and { x' :- x' == x'' }
+         min $ < CF
+         and true
+          in s |-> ps.
+          
+  resolveVarDecl(s, x) = (d, x') :-
+    query declared 
+      filter P*
+         and { x'' :- x'' == x }
+         min $ < P
+         and true
+          in s |-> [(_, (d, x')) | _].
+          
+  varIsDeclared(s, x) :- {d x'}
+    resolveVarDecl(s, x) == (d, x')
+      | error $[variable [x] is not declared],
+    @x.ref := d. 
+
+  varIsDefined(s, x) = i :- {ps x'}
+    resolveVarDef(s, x) == ps@[ (_, (x', _)) | _],
+    filterDefinitions(x, ps) == i,
+    @x.type := i.
+    
+  filterDefinitions : ID * list((path * (scope * Init))) -> Init 
+  
+  filterDefinitions(x, []) = Uninitialized().
+  
+  filterDefinitions(x, [(_, (_, i))]) = i.
+
+  filterDefinitions(x, [(_, (_, i)) | ps@[ _ | _]]) = 
+    lub(i, filterDefinitions(_, ps)).
+    
+  lub : Init * Init -> Init
+  
+  lub(Uninitialized(), _ ) = Uninitialized(). 
+  lub(_, Uninitialized()) = Uninitialized().
+  lub(Initialized(), Initialized()) = Initialized().

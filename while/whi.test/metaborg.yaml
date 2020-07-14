@@ -1,0 +1,9 @@
+---
+id: org.example:whi.test:0.1.0-SNAPSHOT
+name: whi
+dependencies:
+  compile:
+  - org.example:whi:0.1.0-SNAPSHOT
+  - org.metaborg:org.metaborg.meta.lang.spt:${metaborgVersion}
+build:
+  useBuildSystemSpec: true

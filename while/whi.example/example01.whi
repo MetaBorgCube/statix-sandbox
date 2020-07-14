@@ -1,0 +1,6 @@
+var x;
+var y;
+x := 1;
+if(x) y := 2; else x;
+y;
+
