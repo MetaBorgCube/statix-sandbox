@@ -1,0 +1,35 @@
+module records 
+ 
+language london
+start symbol Start
+
+test record type [[
+  type Point = { x : Int, y : Int }
+]] parse to  Program(Decls([TypeDef("Point",RecT([FDecl("x",IntT()),FDecl("y",IntT())]))]))
+
+test record type alternative [[
+  record List { hd : Int, tl : List }
+]] parse to Program(Decls([Record("List",[FDecl("hd",IntT()),FDecl("tl",TypeRef("List"))])]))
+
+test record creation [[
+  Point{x = 0, y = 0}
+]] parse to Expression(New("Point",[FBind("x",Int("0")),FBind("y",Int("0"))]))
+
+test record projection [[
+  p.x
+]] parse to Expression(PExp(Path(PVar("p"),"x"))) 
+
+test record with [[
+  with q do x
+]] parse to Expression(With(Var("q"),Var("x"))) 
+
+test null [[
+  null
+]] parse to Expression(Null())
+
+test null type [[ 
+  type N = Null
+]] parse to Program(Decls([TypeDef("N",NullT())]))
+
+
+

@@ -1,0 +1,45 @@
+module numbers
+
+language london
+start symbol Start 
+
+test number literal [[ 
+  $ 1
+]] analysis succeeds
+
+test number literal  [[   
+  $ 1124 
+]] analysis succeeds  
+
+test minus sign [[  
+  $ -3456
+]] analysis succeeds
+
+test unary minus [[
+  $ - 3456
+]] analysis succeeds
+
+test addition [[
+  $ 1 + 2
+]] analysis succeeds
+
+test infix minus [[
+ $ 5 - 6
+]] analysis succeeds
+
+test multiplication [[
+ $ 7 * 8 
+]] analysis succeeds
+
+test brackets [[
+  $ (3 + 4) * 5
+]] analysis succeeds
+
+test multiplication [[
+  $ 9 * 10 + 3  
+]] analysis succeeds
+
+test minuses [[
+  $ 1---3
+]] analysis succeeds
+

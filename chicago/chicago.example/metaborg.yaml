@@ -1,0 +1,8 @@
+---
+id: org.example:chicago.example:0.1.0-SNAPSHOT
+name: chicago
+dependencies:
+  compile:
+  - org.example:chicago:0.1.0-SNAPSHOT
+build:
+  useBuildSystemSpec: true

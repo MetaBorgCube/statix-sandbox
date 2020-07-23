@@ -1,0 +1,136 @@
+module mod 
+ 
+language london
+start symbol Start
+
+test module definition [[
+  module A { 
+    def a = 1 
+  }
+]] analysis succeeds
+
+test module members sequential composition [[
+  module A { 
+    def a = 1 ; 
+    def b = 2 
+  }
+]] analysis succeeds
+
+test import [[
+  module A { 
+    def a = 1 
+  } 
+  module B { 
+    import A 
+    def b = a + 1
+  }
+]] analysis succeeds
+
+test nested module [[
+  module A { 
+    module B {
+      def a = 1
+    } 
+  } 
+  module C { 
+    import A.B
+    def b = a + 1
+  }
+]] analysis succeeds
+
+test nested module : unordered import [[
+  module A { 
+    module B {
+      def a = 1
+    } 
+  } 
+  module C { 
+    import A
+    import B
+    def b = a + 1
+  }
+]] analysis fails
+
+test nested module : ordered import [[
+  module A { 
+    module B {
+      def a = 1
+    } 
+  } 
+  module C { 
+    import A;
+    import B
+    def b = a + 1
+  }
+]] analysis succeeds
+
+test nested module : qualified name [[
+  module A {
+    def a = 0 
+    module B {
+      def [[a]] = 1
+    } 
+  } 
+  def a = 2
+  def b = A.B.[[a]] + 1
+]] resolve #2 to #1
+
+test nested module and records [[
+  module A { 
+    module B {
+      def a = 1
+    } 
+  }
+  record C { a : Int } 
+  def b = A.B.a
+  def c = C{ a = 1 }
+  def d = c.a
+]] analysis succeeds
+
+test extend remote [[ 
+  module A {
+    def a = b + x
+  }
+  module B {
+    def A.b := 2
+  } 
+]] analysis fails
+
+test extend remote [[ 
+  module A {
+    def a = 1;
+    def a = 3
+    def b = 2;
+    def c = 3 + a + b
+  }
+  
+  module B {
+    import A
+    def a = 4;
+    import D
+    def d = a + b + c
+  }
+  
+  module C {
+    import B; 
+    def e = a + b + c + e
+  }
+  
+  module D {
+    def a = 6
+  }
+  
+  module E {
+    module E { 
+      def f = 1
+    }
+  }
+  
+  module G { 
+    import E;
+    import E
+  }
+]] analysis succeeds
+
+
+

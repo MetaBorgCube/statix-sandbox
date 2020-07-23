@@ -1,0 +1,107 @@
+module booleans
+
+language london
+start symbol Start
+
+test true [[
+  $ true
+]] analysis succeeds 
+ 
+test false [[
+  $ false
+]] analysis succeeds
+
+test eq [[
+  $ 1 == 2
+]] analysis succeeds
+
+test eq [[
+  $ false == true 
+]] analysis succeeds
+
+test not eq [[
+  $ ! false
+]] analysis succeeds
+
+test not eq [[
+  $ ! 1 == 2
+]] analysis succeeds
+
+test or [[
+  $ false || true 
+]] analysis succeeds
+
+test and [[ 
+  $ false && true 
+]] analysis succeeds
+
+test if then else [[ 
+  $ if 1 == 2 then false else true
+]] analysis succeeds
+
+test if then else [[
+  $ if 1 == 2 then false else if 1 == 2 then false else true
+]] analysis succeeds
+ 
+test if then else [[
+  $ if 1 == 2 then false else 1 == 2 || 1 == 1
+]] analysis succeeds
+
+
+test not 1 [[
+  $ ! 1 
+]] analysis fails
+
+test type error [[
+  $ false == 134
+]] analysis fails 
+
+test type error [[
+  $ if 1 then 2 else 3
+]] analysis fails 
+ 
+test type error [[
+  $ if true then 2 else false
+]] analysis fails 
+
+test type error [[
+  $ 1 && true
+]] analysis fails 
+
+//test bug in analysis! [[
+//  ! 1 
+//]] analysis fails
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

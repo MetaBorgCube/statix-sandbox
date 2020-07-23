@@ -1,0 +1,20 @@
+module functions 
+
+language london
+start symbol Start
+
+test type definition [[
+  type Num = Int
+]] parse to Program(Decls([TypeDef("Num",IntT())]))
+
+test type definition [[
+  def x : Num = 1
+]] parse to  Program(Decls([Def(BindT("x",TypeRef("Num"),Int("1")))]))
+
+test typed binding [[
+  let a : Num = 1 in a
+]] parse to  Expression(LetSeq([BindT("a",TypeRef("Num"),Int("1"))],Var("a")))
+
+
+
+

@@ -1,0 +1,50 @@
+module booleans
+
+language london
+start symbol Start
+
+test true [[
+  true
+]] parse to Expression(True()) 
+ 
+test false [[ 
+  false
+]] parse to Expression(False())
+
+test eq [[
+  1 == 2
+]] parse to Expression(Eq(Int("1"),Int("2"))) 
+
+test not eq [[ 
+  ! false
+]] parse to Expression(Not(False()))
+
+test not eq [[
+  ! 1 == 2
+]] parse to [[
+  (! 1) == 2
+]]
+
+test or [[
+  false || true 
+]] parse to Expression(Or(False(),True()))
+
+test and [[ 
+  false && true 
+]] parse to Expression(And(False(),True())) 
+
+test if then else [[ 
+  if 1 == 2 then false else true
+]] parse to Expression(If(Eq(Int("1"),Int("2")),False(),True()))
+
+test if then else [[
+  if 1 == 2 then false else if 1 == 2 then false else true
+]] parse to [[
+  if 1 == 2 then false else (if 1 == 2 then false else true)
+]]
+ 
+test if then else [[
+  if 1 == 2 then false else 1 == 2 || 1 == 1
+]] parse to [[
+  if (1 == 2) then false else ((1 == 2) || (1 == 1))
+]]

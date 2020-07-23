@@ -1,0 +1,115 @@
+module statics/mod
+
+imports statics/base
+imports statics/variable
+imports statics/numbers 
+imports statics/type
+imports signatures/mod-sig 
+
+signature
+  constructors
+    MOD : scope -> TYPE
+     
+rules // module definitions
+
+  declOk(s, Module(m, ms)) :- {s_mod s_end} 
+    new s_mod, s_mod -P-> s, 
+    declareMod(s, m, MOD(s_end)),
+    membersOk(s_mod, ms) == s_end.
+   
+  membersOk : scope * Members -> scope
+  
+  membersOk(s, Members(decls)) = s:- 
+    declsOk(s, decls).
+    
+  membersOk(s1, Seq(ms1, ms2)) = s_end :- {s2}
+    membersOk(s1, ms1) == _,
+    new s2, s2 -M-> s1, 
+    membersOk(s2, ms2) == s_end.
+ 
+rules // imports 
+
+  declOk(s, Import(p)):- {s_mod}
+    typeOfPath(parentOfScope(s), p) == MOD(s_mod),
+    s -I-> s_mod.
+ 
+  typeOfPath : scope * Path -> TYPE
+  
+  typeOfPath(s, PVar(m)) = typeOfRef(s, m).
+  
+  typeOfPath(s, Path(p, m)) = T :- {s_mod}
+    typeOfPath(s, p) == MOD(s_mod),
+    typeOfRef(s_mod, m) == T.
+             
+  proj(MOD(s_mod), x) = T :- {p d}
+    typeOfVar(s_mod, x) == T.
+    
+rules // qualified names 
+  
+  typeOfExp(s, PExp(Path(p,x))) = T :- {s_mod}
+  	proj(typeOfPath(s, p), x) == T.
+  
+  typeOfType(s, PType(Path(p,x))) = T :- {s_mod} 
+  	typeOfPath(s, p) == MOD(s_mod),
+  	typeOfTypeRef(s_mod, x) == T.
+  
+signature
+  relations 
+    mod : ID -> scope
+    
+rules 
+
+  parentOfScope : scope -> scope 
+  
+  parentOfScope(s1) = s2 :- {p t}
+    query () filter (M | P)+ min $ < P, $ < M in s1 |-> [(_, s2) | _]. 
+        
+rules
+
+  declareMod : scope * ID * TYPE
+  resolveMod : scope * ID -> list((path * (ID * scope)))
+  typeOfModRef : scope * ID -> TYPE
+  
+  declareMod(s, x, T) :- 
+    !mod[x, withType(T)] in s,
+    resolveMod(s, x) == [(_, (_, _))] 
+      | error $[Duplicate definition of module [x]], 
+    @x.type := T.
+    
+  resolveMod(s, x) = ps :-
+    query mod
+      filter (M | P)* (R* | (M | I)*)
+         and { x' :- x' == x }
+         min $ < I, $ < P, I < P, R < P
+         and true
+          in s |-> ps.
+  
+  typeOfModRef(s, x) = typeOf(T) :- {x'} 
+    resolveMod(s, x) == [(_,(x', T))|_]
+      | error $[Module [x] not defined],
+    @x.type := T, @x.ref := x'.
+    
+rules // disambiguate names based on name resolution
+
+  typeOfRef : scope * string -> TYPE
+  typeOfRefDisamb : scope * string * list((path * (ID * scope))) -> TYPE
+  
+  typeOfRef(s, x) = typeOfRefDisamb(s, x, resolveMod(s, x)).
+    
+  typeOfRefDisamb(s, x, []) = typeOfVar(s, x).
+  
+  typeOfRefDisamb(s, x, [(_,(x',T))|_]) = typeOf(T) :-
+    @x.ref := x', 
+    @x.type := typeOf(T).
+    
+
+
+    rules // extend remote
+
+// the following code is not valid Statix
+
+//  declOk(s, ExtendRemote(p, x, e)) :- {s_mod T}
+//    typeOfPath(s, p) == MOD(s_mod),
+//    typeOfExp(s, e) == T, 
+//    declareVar(s_mod, x, T). // no permission to extend
+    

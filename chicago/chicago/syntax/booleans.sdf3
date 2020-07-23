@@ -1,0 +1,33 @@
+module booleans
+
+imports base
+
+context-free syntax // booleans
+  Type.BoolT = <Bool>
+  TYPE.BOOL  = <Bool>
+  
+  Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
+  Exp.Gt    = [[Exp] > [Exp]] {non-assoc}
+  
+  Exp.True  = <true>
+  Exp.False = <false>  
+  Exp.Not   = <!<Exp>>  
+  Exp.And   = <<Exp> && <Exp>> {left}
+  Exp.Or    = <<Exp> || <Exp>> {left}
+  
+  Exp.If = <
+    if <Exp> then 
+      <Exp> 
+    else 
+      <Exp>
+  >  
+ 
+context-free priorities
+  Exp.Not > {non-assoc: Exp.Eq Exp.Gt} > Exp.And 
+  > Exp.Or > Exp.If
+  
+  
+template options
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]
+  
