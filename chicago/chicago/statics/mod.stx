@@ -19,14 +19,15 @@ rules // module definitions
    
   membersOk : scope * Members -> scope
   
-  membersOk(s, Members(decls)) = s:- 
-    declsOk(s, decls).
-    
+  membersOk(s, Members(decls)) = s_end :-
+    declsOk(s, decls),
+    s == s_end.
+
   membersOk(s1, Seq(ms1, ms2)) = s_end :- {s2}
     membersOk(s1, ms1) == _,
     new s2, s2 -M-> s1, 
     membersOk(s2, ms2) == s_end.
- 
+
 rules // imports 
 
   declOk(s, Import(p)):- {s_mod}
@@ -112,4 +113,4 @@ rules // disambiguate names based on name resolution
 //    typeOfPath(s, p) == MOD(s_mod),
 //    typeOfExp(s, e) == T, 
 //    declareVar(s_mod, x, T). // no permission to extend
-    
+
