@@ -30,7 +30,7 @@ rules // module definitions
 rules // imports 
 
   declOk(s, Import(p)):- {s_mod}
-    typeOfPath(scopeOfParent(s), p) == MOD(s_mod),
+    typeOfPath(parentOfScope(s), p) == MOD(s_mod),
     s -I-> s_mod.
  
   typeOfPath : scope * Path -> TYPE
@@ -53,19 +53,17 @@ rules // qualified names
   	typeOfPath(s, p) == MOD(s_mod),
   	typeOfTypeRef(s_mod, x) == T.
   
-rules // extend remote
-
-// the following code is not valid Statix
-
-//  declOk(s, ExtendRemote(p, x, e)) :- {s_mod T}
-//    typeOfPath(s, p) == MOD(s_mod),
-//    typeOfExp(s, e) == T, 
-//    declareVar(s_mod, x, T). // no permission to extend
-
 signature
   relations 
     mod : ID -> TYPE
     
+rules 
+
+  parentOfScope : scope -> scope 
+  
+  parentOfScope(s1) = s2 :- {p t}
+    query () filter (M | P)+ min $ < P, $ < M in s1 |-> [(_, s2) | _]. 
+        
 rules
 
   declareMod : scope * ID * TYPE
@@ -80,7 +78,7 @@ rules
     
   resolveMod(s, x) = ps :-
     query mod
-      filter P* (R* | I*) M*
+      filter (M | P)* (R* | (M | I)*)
          and { x' :- x' == x }
          min $ < I, $ < P, I < P, R < P
          and true
@@ -104,9 +102,14 @@ rules // disambiguate names based on name resolution
     @x.ref := x', 
     @x.type := T.
     
-rules 
 
-  scopeOfParent : scope -> scope 
-  
-  scopeOfParent(s1) = s2 :- {p t}
-    query () filter (M | P)+ min $ < P, $ < M in s1 |-> [(_, s2) | _]. 
+
+    rules // extend remote
+
+// the following code is not valid Statix
+
+//  declOk(s, ExtendRemote(p, x, e)) :- {s_mod T}
+//    typeOfPath(s, p) == MOD(s_mod),
+//    typeOfExp(s, e) == T, 
+//    declareVar(s_mod, x, T). // no permission to extend
+    
