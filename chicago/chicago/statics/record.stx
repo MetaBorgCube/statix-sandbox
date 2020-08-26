@@ -51,8 +51,8 @@ rules // record construction
   
   fbindOk(s, s_rec, T_rec, FBind(x, e)) :- {T1 T2}
     typeOfExp(s, e) == T1,
-    declareVar(s_rec, x, T1), 
-    //!var[x, withType(T1)] in s_rec,
+    //declareVar(s_rec, x, T1), 
+    !var[x, withType(T1)] in s_rec,
     proj(T_rec, x) == T2,
     subtype(T1, T2).
     

@@ -1,4 +1,4 @@
-module Functions {
+//module Functions {
 
 def inc = fun(x) x + 1
 
@@ -20,4 +20,4 @@ def lt : Ord = fun(x) fun(y) !(x > y)
 
 $ if lt 1 4 then false else true
 
-}
+//}

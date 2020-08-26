@@ -1,4 +1,6 @@
-module Library{
+module Modules {
+
+module Library { 
 
   module Sig {
     type Pred = Int -> Bool
@@ -16,16 +18,18 @@ module Library{
     import Odd
     def even : Sig.Pred = 
         fun(x) if x == 0 then true else odd (x - 1)
-  }
+  } 
 }
 
 module Application {
 
-//  import Library;
+  import Library; 
 //  import Even 
-  import Library.Even
+  //import Library.Even
 //  def alias = Library  // error
 
   $ even 42
-  $ Library.Odd.odd 45  
-}
+//  $ Library.Odd.odd 45  
+}   
+
+}   

@@ -12,3 +12,4 @@ y = 5
 in x + y + 5
 
 type foo = Int
+ 
