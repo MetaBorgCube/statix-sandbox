@@ -1,0 +1,43 @@
+module pattern
+
+imports base  
+
+sorts Pat Case TCase 
+context-free syntax
+
+  Decl.Data = <
+    data <UID> <ID*> = 
+         <TCase*>
+  >
+  
+  TCase.TCase = [| [UID] [Type*]] 
+  
+  Type.TApp = <<Type> <Type>> {left}
+  
+  Type.TConstr = <<UID>>
+  
+  Exp.Match = <
+    match <Exp> with <Case*>
+  > {longest-match}
+  
+  Case.Case = [| [Pat] -> [Exp]]
+  
+  Exp.Constr = <<UID>>
+  
+  Pat.PatVar = <<ID>> 
+  Pat.PatConstr = <<UID>>
+  Pat.PatApp = <<Pat> <Pat>> {left}
+  
+context-free priorities 
+
+  Type+ = Type <0>       .> Type.TApp,
+  Type+ = Type+ Type <1> .> Type.TApp
+  
+context-free syntax
+
+  UID = "Int" {reject}
+
+template options
+  ID = keyword {reject}
+  UID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

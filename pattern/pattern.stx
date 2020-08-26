@@ -1,0 +1,97 @@
+module statics/pattern
+
+imports statics/base
+imports signatures/pattern-sig
+imports statics/type
+imports statics/variable
+imports statics/function
+
+//signature 
+//  sorts KIND
+//  constructors
+//    TP   : KIND
+//    KFUN : KIND * KIND -> KIND
+//    TC   : ID -> TYPE
+//    TAPP : TYPE * TYPE -> TYPE
+//    
+//rules 
+//
+//  declOk(s, Data(tc, xs, tcases)) :- {s_d K}
+//     new s_d, s_d -P-> s,
+//     kindsOfParams(s_d, xs, TC(tc), TP()) == K,
+//     declareTypeCon(s, tc, K),
+//     tcasesOk(s, s_d, DATA(f, []), tcases).
+//    
+//  kindsOfParams : scope * list(ID) * TYPE * KIND -> (TYPE * KIND)
+//  
+//  kindsOfParams(s, [], T, K) = (T, K).
+//  
+//  kindsOfParams(s, [x | xs], T, K1) = (T2, KFUN(K1, K2)) :- {S}
+//    declareType(s, x, S),
+//    kindsOfParams(s, xs, TAPP(T, S), K1) == (T2, K2).
+//  
+//  tcaseOk : scope * scope * TYPE * TCase 
+//  tcasesOk maps tcaseOk(*, *, *, list(*)) 
+//  
+//  tcaseOk(s, s_d, T, TCase(c, ts)) :- {S}
+//    typeOfArgs(s_d, ts, T) == S,
+//    !var[c, S] in s.
+//    
+//  typeOfArgs : scope * list(Type) * TYPE -> TYPE
+//  
+//  typeOfArgs(s, [], T) = T.
+//  
+//  typeOfArgs(s, [t | ts], T) = FUN(typeOfType(s, t), typeOfArgs(s, ts, T)).
+//    
+//rules 
+//  
+//  typeOfExp(s, Match(e, cases)) = T :- {S}
+//    typeOfExp(s, e) == S,
+//    typeOfCases(s, S, cases) == [T | _].
+//  
+//  typeOfCase : scope * TYPE * Case -> TYPE
+//  typeOfCases maps typeOfCase(*, *, list(*)) = list(*)
+//  
+//  typeOfCase(s, S, Case(p, e)) = T :- {s_case}
+//    new s_case, s_case -P-> s, 
+//    typeOfPat(s_case, p) == S,
+//    typeOfExp(s_case, e) == T.
+//  
+//  typeOfPat : scope * Pat -> TYPE
+//  
+//  typeOfPat(s, PatVar(x)) = T :-
+//    declareVar(s, x, T).
+//  
+//  typeOfPat(s, PatConstr(x)) = T.
+//  
+//  typeOfPat(s, PatApp(p1, p2)) = T.
+//  
+//signature
+//  relations
+//    typeCon : ID -> KIND
+//rules
+//
+//  declareTypeCon  : scope * ID * KIND
+//  resolveTypeCon  : scope * ID -> list((path * (ID * KIND)))
+//  kindOfTypeCon   : scope * ID -> KIND
+// 
+//  declareTypeCon(s, x, K) :- 
+//    !typeCon[x, K] in s,
+//    resolveTypeCon(s, x) == [(_, (_, K))] 
+//      | error $[Duplicate definition of type constructor [x]],
+//    @x.type := K. 
+//    
+//  resolveTypeCon(s, x) = ps :- 
+//    query typeCon
+//      filter P* (R* | (M | I)*)
+//         and { x' :- x' == x }
+//         min $ < I, $ < P, $ < M, I < M, I < P, R < P
+//         and true
+//          in s |-> ps.
+//
+//  kindOfTypeCon(s, x) = K :- {x'} 
+//    resolveTypeCon(s, x) == [(_,(x', K))|_]
+//      | error $[Type constructor [x] not defined],
+//    @x.type := K, @x.ref := x'.
+  
+  
