@@ -63,7 +63,7 @@ rules
   parentOfScope : scope -> scope 
   
   parentOfScope(s1) = s2 :- {p t}
-    query () filter (M | P)+ min $ < P, $ < M in s1 |-> [(_, s2) | _]. 
+    query () filter (M | P)+ min $ < P, $ < M and true in s1 |-> [(_, s2)].
         
 rules
 
