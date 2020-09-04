@@ -43,5 +43,6 @@ rules
   typeOfTypeRef(s, x) = typeOf(T) :- {x'} 
     resolveType(s, x) == [(_,(x', T))|_]
       | error $[Type [x] not defined],
-    @x.type := T, @x.ref := x'.
+//    @x.type := typeOf(T),
+    @x.ref := x'.
     

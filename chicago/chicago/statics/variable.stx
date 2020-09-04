@@ -53,7 +53,8 @@ rules
   typeOfVar(s, x) = typeOf(T) :- {x'} 
     resolveVar(s, x) == [(_,(x', T))|_]
       | error $[Variable [x] not defined],
-    @x.type := T, @x.ref := x'.
+//    @x.type := typeOf(T),
+    @x.ref := x'.
     
   varsInScope(s) = ps :- 
     query var

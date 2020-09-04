@@ -88,7 +88,8 @@ rules
   typeOfModRef(s, x) = typeOf(T) :- {x'} 
     resolveMod(s, x) == [(_,(x', T))|_]
       | error $[Module [x] not defined],
-    @x.type := T, @x.ref := x'.
+//    @x.type := typeOf(T),
+    @x.ref := x'.
     
 rules // disambiguate names based on name resolution
 
@@ -100,8 +101,8 @@ rules // disambiguate names based on name resolution
   typeOfRefDisamb(s, x, []) = typeOfVar(s, x).
   
   typeOfRefDisamb(s, x, [(_,(x',T))|_]) = typeOf(T) :-
-    @x.ref := x', 
-    @x.type := typeOf(T).
+//    @x.type := typeOf(T),
+    @x.ref := x'. 
     
 
 
