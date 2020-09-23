@@ -1,9 +1,9 @@
 module booleans
 
-language london
+language chicago
 start symbol Start
 
-test true [[
+test true [[ 
   true
 ]] parse to Expression(True()) 
  

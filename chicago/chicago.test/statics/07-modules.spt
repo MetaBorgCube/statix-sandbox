@@ -1,6 +1,6 @@
 module mod 
  
-language london
+language chicago
 start symbol Start
 
 test module definition [[
@@ -21,7 +21,7 @@ test import [[
     def a = 1 
   } 
   module B { 
-    import A 
+    import A  
     def b = a + 1
   }
 ]] analysis succeeds
@@ -96,7 +96,7 @@ test extend remote [[
   } 
 ]] analysis fails
 
-test extend remote [[ 
+test nested imports [[ 
   module A {
     def a = 1;
     def a = 3
