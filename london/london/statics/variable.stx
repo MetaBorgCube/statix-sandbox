@@ -44,7 +44,7 @@ rules
     
   resolveVar(s, x) = ps :- 
     query var
-      filter P* (R* | (M | I)*)
+      filter (M | P)* (R* | (M | I)*)
          and { x' :- x' == x }
          min $ < I, $ < P, $ < M, I < M, I < P, R < P
          and true
@@ -56,7 +56,7 @@ rules
     @x.type := T, @x.ref := x'.
     
 
-    
+   
   varsInScope(s) = ps :- 
     query var
       filter e
