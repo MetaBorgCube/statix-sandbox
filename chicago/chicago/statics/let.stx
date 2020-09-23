@@ -11,8 +11,7 @@ signature
     
 rules
 
-  typeOfExp(s, Let(x, e1, e2)) = T :- 
-   {S s_let}
+  typeOfExp(s, Let(x, e1, e2)) = T :- {S s_let}
      typeOfExp(s, e1) == S,
      new s_let, s_let -P-> s,
      declareVar(s_let, x, S),
