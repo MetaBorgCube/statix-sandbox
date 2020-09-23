@@ -9,37 +9,43 @@ rules
 
 rules 
   
-  typeOfExp(s, True()) = BOOL().
+  typeOfExp(s, e@True()) = BOOL() :-
+    @e.type := BOOL().
   
-  typeOfExp(s, False()) = BOOL().
+  typeOfExp(s, e@False()) = BOOL() :-
+    @e.type := BOOL().
   
-  typeOfExp(s, Not(e)) = BOOL() :-
-    typeOfExp(s, e) == BOOL().
+  typeOfExp(s, e@Not(e1)) = BOOL() :-
+    typeOfExp(s, e1) == BOOL() | error $[boolean expected],
+    @e.type := BOOL().
   
-  typeOfExp(s, And(e1, e2)) = BOOL() :-
-    typeOfExp(s, e1) == BOOL() | error $[Type Bool expected],
-    typeOfExp(s, e2) == BOOL() | error $[Type Bool expected].
+  typeOfExp(s, e@And(e1, e2)) = BOOL() :-
+    typeOfExp(s, e1) == BOOL() | error $[boolean expected],
+    typeOfExp(s, e2) == BOOL() | error $[boolean expected],
+    @e.type := BOOL().
   
-  typeOfExp(s, Or(e1, e2)) = BOOL() :-
-    typeOfExp(s, e1) == BOOL(),
-    typeOfExp(s, e2) == BOOL(). 
+  typeOfExp(s, e@Or(e1, e2)) = BOOL() :-
+    typeOfExp(s, e1) == BOOL() | error $[boolean expected],
+    typeOfExp(s, e2) == BOOL() | error $[boolean expected],
+    @e.type := BOOL(). 
   
-  typeOfExp(s, If(e1, e2, e3)) = lub(T1, T2) :-
-    typeOfExp(s, e1) == BOOL(),
+  typeOfExp(s, e@If(e1, e2, e3)) = T3 :- {T1 T2}
+    typeOfExp(s, e1) == BOOL() | error $[boolean expected],
     typeOfExp(s, e2) == T1, 
     typeOfExp(s, e3) == T2,
-    equitype(T1, T2)
-    | error $[Types [T1] and [T2] are not comparable].
+    equitype(T1, T2) | error $[Types [T1] and [T2] are not comparable],
+    lub(T1, T2) == T3,
+    @e.type := T3.
     
-  typeOfExp(s, Eq(e1, e2)) = BOOL() :- {T1 T2}
+  typeOfExp(s, e@Eq(e1, e2)) = BOOL() :- {T1 T2}
     typeOfExp(s, e1) == T1,
     typeOfExp(s, e2) == T2,
-    equitype(T1, T2) 
-    | error $[Types [T1] and [T2] are not comparable].
+    equitype(T1, T2) | error $[Types [T1] and [T2] are not comparable],
+    @e.type := BOOL().
     
-  typeOfExp(s, Gt(e1, e2)) = BOOL() :- {T1 T2}
+  typeOfExp(s, e@Gt(e1, e2)) = BOOL() :- {T1 T2}
     typeOfExp(s, e1) == T1,
     typeOfExp(s, e2) == T2,
-    equitype(T1, T2) 
-    | error $[Types [T1] and [T2] are not comparable].
+    equitype(T1, T2) | error $[Types [T1] and [T2] are not comparable],
+    @e.type := BOOL().
     
