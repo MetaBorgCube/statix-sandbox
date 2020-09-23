@@ -36,7 +36,7 @@ rules // imports
  
   typeOfPath : scope * Path -> TYPE
   
-  typeOfPath(s, PVar(m)) = typeOfRef(s, m).
+  typeOfPath(s, PVar(m)) = typeOfRef(s, m). 
   
   typeOfPath(s, Path(p, m)) = T :- {s_mod}
     typeOfPath(s, p) == MOD(s_mod),
@@ -63,7 +63,7 @@ rules
   parentOfScope : scope -> scope 
   
   parentOfScope(s1) = s2 :- {p t}
-    query () filter (M | P)+ min $ < P, $ < M and true in s1 |-> [(_, s2)].
+    query () filter (M | P) min $ < P, $ < M and true in s1 |-> [(_, s2)].
         
 rules
 
