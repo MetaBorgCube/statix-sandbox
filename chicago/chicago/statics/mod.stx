@@ -8,7 +8,7 @@ imports signatures/mod-sig
 
 signature
   constructors
-    MOD : scope -> TYPE 
+    MOD : scope -> TYPE
      
 rules // module definitions
 
@@ -29,10 +29,6 @@ rules // module definitions
     membersOk(s2, ms2) == s_end.
 
 rules // imports 
-
-//  declOk(s, Import(PVar(m))) :- {s_mod}
-//    typeOfModRef(parentOfScope(s), m) == MOD(s_mod),
-//    s -I-> s_mod.
 
   declOk(s, Import(p)):- {s_mod}
     typeOfPath(parentOfScope(s), p) == MOD(s_mod),
@@ -66,11 +62,8 @@ rules
 
   parentOfScope : scope -> scope 
   
-//  parentOfScope(s1) = s2 :- {p t}
-//    query () filter (M | P)+ min $ < P, $ < M in s1 |-> [(_, s2) | _]. 
-  
   parentOfScope(s1) = s2 :- {p t}
-    query () filter (M | P)+ min $ < P, $ < M in s1 |-> [(_, s2)]. 
+    query () filter (M | P)+ min $ < P, $ < M and true in s1 |-> [(_, s2)].
         
 rules
 
@@ -80,8 +73,8 @@ rules
   
   declareMod(s, x, T) :- 
     !mod[x, withType(T)] in s,
-//    resolveMod(s, x) == [(_, (_, _))] 
-//      | error $[Duplicate definition of module [x]],
+    resolveMod(s, x) == [(_, (_, _))] 
+      | error $[Duplicate definition of module [x]], 
     @x.type := T.
     
   resolveMod(s, x) = ps :-
@@ -91,16 +84,12 @@ rules
          min $ < I, $ < P, I < P, R < P
          and true
           in s |-> ps.
-          
+  
   typeOfModRef(s, x) = typeOf(T) :- {x'} 
-    resolveMod(s, x) == [(_,(x', T))]
+    resolveMod(s, x) == [(_,(x', T))|_]
       | error $[Module [x] not defined],
-    @x.type := T, @x.ref := x'.
-      
-//  typeOfModRef(s, x) = typeOf(T) :- {x'} 
-//    resolveMod(s, x) == [(_,(x', T))|_]
-//      | error $[Module [x] not defined],
-//    @x.type := T, @x.ref := x'.
+//    @x.type := typeOf(T),
+    @x.ref := x'.
     
 rules // disambiguate names based on name resolution
 
@@ -112,12 +101,12 @@ rules // disambiguate names based on name resolution
   typeOfRefDisamb(s, x, []) = typeOfVar(s, x).
   
   typeOfRefDisamb(s, x, [(_,(x',T))|_]) = typeOf(T) :-
-    @x.ref := x', 
-    @x.type := typeOf(T).
+//    @x.type := typeOf(T),
+    @x.ref := x'. 
     
 
 
-rules // extend remote
+    rules // extend remote
 
 // the following code is not valid Statix
 

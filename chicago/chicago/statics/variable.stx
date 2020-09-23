@@ -38,13 +38,9 @@ rules
  
   declareVar(s, x, T) :- 
     !var[x, withType(T)] in s,
+    resolveVar(s, x) == [(_, (_, _))] 
+      | error $[Duplicate definition of variable [x]],
     @x.type := T. 
- 
-//  declareVar(s, x, T) :- 
-//    !var[x, withType(T)] in s,
-//    resolveVar(s, x) == [(_, (_, _))] 
-//      | error $[Duplicate definition of variable [x]],
-//    @x.type := T. 
     
   resolveVar(s, x) = ps :- 
     query var
@@ -55,14 +51,10 @@ rules
           in s |-> ps.
 
   typeOfVar(s, x) = typeOf(T) :- {x'} 
-    resolveVar(s, x) == [(_,(x', T))]
+    resolveVar(s, x) == [(_,(x', T))|_]
       | error $[Variable [x] not defined],
-    @x.type := T, @x.ref := x'.
-
-//  typeOfVar(s, x) = typeOf(T) :- {x'} 
-//    resolveVar(s, x) == [(_,(x', T))|_]
-//      | error $[Variable [x] not defined],
-//    @x.type := T, @x.ref := x'.
+//    @x.type := typeOf(T),
+    @x.ref := x'.
     
   varsInScope(s) = ps :- 
     query var

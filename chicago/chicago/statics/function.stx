@@ -31,9 +31,8 @@ rules  // functions
   typeOfExp(s, App(e1, e2)) = T2 :- {T1 S}
     typeOfExp(s, e1) == FUN(T1, T2),
     typeOfExp(s, e2) == S,
-    subtype(S, T1) | error $[expression of type [T1] expected],
-    @e1.type := FUN(T1, T2).
-    
+    subtype(S, T1) | error $[expression of type [T1] expected].
+
   typeOfExp(s, FunUT(x, e)) = FUN(T, S) :- {s_fun}
     new s_fun, 
     s_fun -P-> s,
