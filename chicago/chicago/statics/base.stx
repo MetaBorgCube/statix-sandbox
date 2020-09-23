@@ -33,10 +33,12 @@ rules
 signature
   name-resolution
     labels P I R M
-    
   relations 
     typeOfDecl : occurrence -> scope
-    typeOf     : -> TYPE
+    
+signature
+  relations 
+    typeOf : -> TYPE
 rules
   typeOf : scope -> TYPE
   typeOf(s) = T :-
