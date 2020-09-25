@@ -1,6 +1,6 @@
 module booleans
 
-language london
+language chicago
 start symbol Start
 
 test true [[
@@ -25,7 +25,8 @@ test not eq [[
 
 test not eq [[
   $ ! 1 == 2
-]] analysis succeeds
+]] 
+analysis fails
 
 test or [[
   $ false || true 
