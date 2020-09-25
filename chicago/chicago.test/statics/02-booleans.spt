@@ -23,11 +23,6 @@ test not eq [[
   $ ! false
 ]] analysis succeeds
 
-test not eq [[
-  $ ! 1 == 2
-]] 
-analysis fails
-
 test or [[
   $ false || true 
 ]] analysis succeeds
@@ -69,10 +64,10 @@ test type error [[
   $ 1 && true
 ]] analysis fails 
 
-//test bug in analysis! [[
-//  ! 1 
-//]] analysis fails
-
+test not eq [[
+  $ ! 1 == 2
+]]
+analysis fails
 
 
 
