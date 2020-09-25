@@ -66,8 +66,7 @@ test type error [[
 
 test not eq [[
   $ ! 1 == 2
-]]
-analysis fails
+]] analysis fails
 
 
 
