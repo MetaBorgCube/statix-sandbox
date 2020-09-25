@@ -1,6 +1,6 @@
 module records 
  
-language london
+language chicago
 start symbol Start
 
 test record type [[

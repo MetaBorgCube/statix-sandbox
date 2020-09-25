@@ -1,6 +1,6 @@
 module numbers
 
-language london
+language chicago
 start symbol Start
 
 test number literal [[

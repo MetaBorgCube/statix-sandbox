@@ -1,6 +1,6 @@
 module functions 
 
-language london
+language chicago
 start symbol Start
 
 test type definition [[
