@@ -1,0 +1,79 @@
+module statics/variable
+
+imports statics/base
+imports signatures/variable-sig 
+    
+rules
+    
+  typeOfExp(s, Var(x)) = typeOfVar(s, x).
+    
+rules 
+
+  declOk(s, Def(bind)) :- 
+    bindOk(s, s, bind).
+    
+rules
+
+  bindOk(s_bnd, s_ctx, Bind(x, e)) :- {T}
+    typeOfExp(s_ctx, e) == T,
+    declareVar(s_bnd, x, T).
+    
+  bindOk(s_bnd, s_ctx, BindT(x, t, e)) :- {T1 T2}
+    typeOfType(s_ctx, t) == T1,
+    declareVar(s_bnd, x, T1),
+    typeOfExp(s_ctx, e) == T2,
+    subtype(T2, T1) 
+    | error $[type of expression [T2] does not match expected type [T1]].
+     
+signature
+  relations 
+    var : ID -> scope
+     
+rules
+
+  declareVar  : scope * ID * TYPE
+  resolveVar  : scope * ID -> list((path * (ID * scope)))
+  varsInScope : scope      -> list((path * (ID * scope)))
+  typeOfVar   : scope * ID -> TYPE
+ 
+  declareVar(s, x, T) :- 
+    !var[x, withType(T)] in s,
+    resolveVar(s, x) == [(_, (_, _))] 
+      | error $[Duplicate definition of variable [x]],
+    @x.type := T. 
+    
+  resolveVar(s, x) = ps :- 
+    query var
+      filter P* (R* | (M | I)*)
+         and { x' :- x' == x }
+         min $ < I, $ < P, $ < M, I < M, I < P, R < P
+         and true
+          in s |-> ps.
+
+  typeOfVar(s, x) = typeOf(T) :- {x'} 
+    resolveVar(s, x) == [(_,(x', T))|_]
+      | error $[Variable [x] not defined],
+//    @x.type := typeOf(T),
+    @x.ref := x'.
+    
+  varsInScope(s) = ps :- 
+    query var
+      filter e
+         and true
+         min 
+         and { x, y :- x == y }
+          in s |-> ps.
+
+    
+//  visibleVar  : scope      -> list((path * (ID * TYPE)))
+//  visibleVar(s) = ps :- 
+//    query var
+//      filter P* (R* | I*) 
+//         and true
+//         min $ < I, $ < P, I < P, R < P
+//         and { x, y :- x == y }
+//          in s |-> ps.
+
+      
+
+    
