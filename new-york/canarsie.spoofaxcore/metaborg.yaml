@@ -1,0 +1,22 @@
+---
+id: org.metaborg:canarsie:0.1.0-SNAPSHOT
+name: canarsie
+dependencies:
+  compile:
+  - org.metaborg:org.metaborg.meta.lang.template:${metaborgVersion}
+  - org.metaborg:statix.lang:${metaborgVersion}
+  source:
+  - org.metaborg:meta.lib.spoofax:${metaborgVersion}
+  - org.metaborg:statix.runtime:${metaborgVersion}
+pardonedLanguages:
+- EditorService
+- Stratego-Sugar
+- SDF
+language:
+  sdf:
+    sdf2table: java
+  stratego:
+    format: jar
+exports:
+- language: ATerm
+  directory: src-gen/statix
