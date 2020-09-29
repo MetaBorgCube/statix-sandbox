@@ -1,0 +1,16 @@
+module columns
+
+imports
+  brooklyn-lex
+  types
+
+context-free sorts ColumnRef ColumnDef ColumnConstraint
+
+context-free syntax
+
+  ColumnRef.ColumnRef = <<SQLID>>
+  
+  ColumnDef.ColumnDef = <<ColumnRef> <DataType>>
+  
+  ColumnConstraint.PrimaryKey 	= <PRIMARY KEY>
+  ColumnConstraint.NotNull		= <NOT NULL>

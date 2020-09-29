@@ -1,0 +1,49 @@
+module pp
+
+imports
+
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/editor/refactoring/-
+  pp/brooklyn-parenthesize
+  pp/brooklyn-pp
+
+rules
+
+  editor-format:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[pp.[ext]])> path
+    ; result   := <pp-debug> node
+
+rules
+  
+  pp-brooklyn-string =
+    parenthesize-brooklyn
+    ; prettyprint-brooklyn-start-symbols
+    ; !V([], <id>)
+    ; box2text-string(|120)
+      
+  pp-partial-brooklyn-string =
+    parenthesize-brooklyn
+    ; prettyprint-brooklyn
+    ; !V([], <id>)
+    ; box2text-string(|120)
+    
+  pp-partial-brooklyn-string(|sort) =
+    parenthesize-brooklyn
+    ; prettyprint-brooklyn(|sort)
+    ; !V([], <id>)
+    ; box2text-string(|120)  
+      
+  pp-debug :
+    ast -> result
+    with
+       result := <pp-brooklyn-string> ast
+    <+ <bottomup(try(not(is-string); not(is-list); not(pp-brooklyn-string); debug(!"cannot pp ")))> ast
+    ;  result := ""
+
+rules
+  
+  construct-textual-change = construct-textual-change(pp-partial-brooklyn-string, parenthesize, override-reconstruction, resugar)

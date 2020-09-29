@@ -1,0 +1,25 @@
+module Analysis
+
+imports
+
+  statix/Menus
+
+language
+
+  // see README.md for details on how to switch to multi-file analysis
+
+  observer : editor-analyze (constraint) (multifile)
+
+references
+
+  reference _ : stx-editor-resolve
+  hover _     : stx-editor-hover
+
+menus
+
+  menu: "Analysis" (openeditor)
+
+    action: "Show pre-analyzed AST" = debug-show-pre-analyzed (source)
+    action: "Show analyzed AST"     = debug-show-analyzed
+    
+    action: "Show scope-graph"		= stx--show-scopegraph

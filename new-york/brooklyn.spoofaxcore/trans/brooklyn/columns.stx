@@ -1,0 +1,16 @@
+module brooklyn/columns
+
+imports
+  signatures/create-table-sig
+  brooklyn/datatypes
+  brooklyn/constraints
+  canarsie/types
+
+rules // column types
+  
+  typeOfCols maps typeOfCol(*, list(*)) = list(*)
+  typeOfCol : scope * ColumnInit -> (string * COL)
+  
+  typeOfCol(s, ColumnInit(ColumnDef(ColumnRef(n), t), ccs)) = 
+    (n, COL(typeOfDataType(t), colConstrsOk(s, n, ccs))).
+  

@@ -1,0 +1,6 @@
+module canarsie/resolution
+
+signature
+
+  name-resolution
+    labels P

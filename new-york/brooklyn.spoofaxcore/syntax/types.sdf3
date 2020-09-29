@@ -1,0 +1,13 @@
+module types
+
+imports
+  brooklyn-lex
+
+context-free sorts DataType
+
+context-free syntax
+
+  DataType.TVarChar	 	= <VARCHAR>
+  DataType.TVarCharP 	= <VARCHAR(<INT>)>
+  DataType.TInt 		= <INT>
+  DataType.TDate 		= <DATE>
