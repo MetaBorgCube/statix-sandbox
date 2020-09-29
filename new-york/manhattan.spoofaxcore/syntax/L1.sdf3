@@ -4,6 +4,7 @@ imports base
 
 imports numbers 
 imports booleans 
+imports strings 
 
 imports record  
 imports function 

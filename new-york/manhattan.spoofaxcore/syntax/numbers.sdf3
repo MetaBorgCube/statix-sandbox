@@ -10,7 +10,6 @@ context-free syntax
   Exp.Mul   = <<Exp> * <Exp>> {left}
 
   Type.IntT = <Int>
-  TYPE.INT  = <Int>
   
   Val.IntV  = <<INT>>
   

@@ -1,5 +1,6 @@
 module statics/variable
 
+imports canarsie/resolution
 imports statics/base
 imports signatures/variable-sig 
     
@@ -65,6 +66,13 @@ rules
           in s |-> ps.
 
     
+  rule : scope * occurrence
+  rule(s, n) :-
+      query decl
+        filter P* R*
+          and { x :- x == n }
+        min $ < P, $ < R, R < P
+        in s |-> _. 
 //  visibleVar  : scope      -> list((path * (ID * TYPE)))
 //  visibleVar(s) = ps :- 
 //    query var

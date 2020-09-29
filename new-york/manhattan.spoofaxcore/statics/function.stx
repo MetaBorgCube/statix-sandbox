@@ -1,8 +1,13 @@
 module statics/function
 
+imports canarsie/resolution
 imports statics/base
 imports statics/variable 
 imports signatures/function-sig
+
+signature
+  constructors
+    FUN		: TYPE * TYPE -> TYPE
 
 rules
 

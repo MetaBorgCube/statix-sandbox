@@ -3,7 +3,7 @@ module base
 imports lex
 
 lexical sorts ID INT STRING 
-sorts Exp Type Val Decl Bind TYPE
+sorts Exp Type Val Decl Bind
 context-free syntax
 
   Exp = <(<Exp>)> {bracket}

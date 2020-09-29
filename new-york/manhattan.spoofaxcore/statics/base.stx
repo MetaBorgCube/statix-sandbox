@@ -1,6 +1,8 @@
 module statics/base
 
 imports signatures/base-sig
+imports canarsie/types
+imports canarsie/resolution
     
 rules // type of ...
 
@@ -25,6 +27,7 @@ rules // operations on types
   lub(T, T) = T.
   
   equitype(T, T).
+
   
 rules
 
@@ -32,19 +35,9 @@ rules
   
 signature
   name-resolution
-    labels P I R M
+    labels I R M // P imported
     
   relations 
     typeOfDecl : occurrence -> scope
-    typeOf     : -> TYPE
-rules
-  typeOf : scope -> TYPE
-  typeOf(s) = T :-
-    query typeOf
-      filter e and true
-      min /* */ and true
-      in s |-> [(_, T)].
-  withType : TYPE -> scope
-  withType(T) = s :-
-    new s, !typeOf[T] in s.
+
     

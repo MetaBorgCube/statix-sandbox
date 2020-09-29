@@ -5,7 +5,6 @@ imports base
 context-free syntax
 
   Type.FunT = [[Type] -> [Type]] {right}
-  TYPE.FUN  = [[TYPE] -> [TYPE]] {right}
   
 context-free syntax // function literals
 

@@ -1,5 +1,6 @@
 module statics/type
 
+imports canarsie/resolution
 imports statics/base
 imports signatures/type-sig
 
@@ -9,22 +10,19 @@ rules
     declareType(s, x, typeOfType(s, t)).
     
   typeOfType(s, TypeRef(x)) = typeOfTypeRef(s, x).
-    
+
   typeOfExp(s, e1@Ascr(e, t)) = T :- {S}
     typeOfExp(s, e) == S,
     typeOfType(s, t) == T,
     subtype(S, T),
     @e1.type := T.
     
-signature
-  relations 
-    type : ID -> scope
-    
 rules
 
   declareType : scope * ID * TYPE
   resolveType : scope * ID -> list((path * (ID * scope)))
   typeOfTypeRef  : scope * ID -> TYPE
+  scopeOfType : TYPE -> scope
   
   declareType(s, x, T) :- 
     !type[x, withType(T)] in s,

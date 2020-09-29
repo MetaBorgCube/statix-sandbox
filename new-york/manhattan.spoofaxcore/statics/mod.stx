@@ -1,6 +1,8 @@
 module statics/mod
 
 imports statics/base
+imports canarsie/mod
+imports canarsie/resolution
 imports statics/variable
 imports statics/numbers 
 imports statics/type
@@ -8,13 +10,13 @@ imports signatures/mod-sig
 
 signature
   constructors
-    MOD : scope -> TYPE
+    TMOD : MOD -> TYPE
      
 rules // module definitions
 
   declOk(s, Module(m, ms)) :- {s_mod s_end} 
     new s_mod, s_mod -P-> s, 
-    declareMod(s, m, MOD(s_end)),
+    declareMod(s, m, TMOD(MOD(s_end))),
     membersOk(s_mod, ms) == s_end.
    
   membersOk : scope * Members -> scope
@@ -31,7 +33,7 @@ rules // module definitions
 rules // imports 
 
   declOk(s, Import(p)):- {s_mod}
-    typeOfPath(parentOfScope(s), p) == MOD(s_mod),
+    typeOfPath(parentOfScope(s), p) == TMOD(MOD(s_mod)),
     s -I-> s_mod.
  
   typeOfPath : scope * Path -> TYPE
@@ -39,10 +41,10 @@ rules // imports
   typeOfPath(s, PVar(m)) = typeOfRef(s, m).
   
   typeOfPath(s, Path(p, m)) = T :- {s_mod}
-    typeOfPath(s, p) == MOD(s_mod),
+    typeOfPath(s, p) == TMOD(MOD(s_mod)),
     typeOfRef(s_mod, m) == T.
              
-  proj(MOD(s_mod), x) = T :- {p d}
+  proj(TMOD(MOD(s_mod)), x) = T :- {p d}
     typeOfVar(s_mod, x) == T.
     
 rules // qualified names 
@@ -51,7 +53,7 @@ rules // qualified names
   	proj(typeOfPath(s, p), x) == T.
   
   typeOfType(s, PType(Path(p,x))) = T :- {s_mod} 
-  	typeOfPath(s, p) == MOD(s_mod),
+  	typeOfPath(s, p) == TMOD(MOD(s_mod)),
   	typeOfTypeRef(s_mod, x) == T.
   
 signature
@@ -76,7 +78,7 @@ rules
     resolveMod(s, x) == [(_, (_, _))] 
       | error $[Duplicate definition of module [x]], 
     @x.type := T.
-    
+
   resolveMod(s, x) = ps :-
     query mod
       filter (M | P)* (R* | (M | I)*)

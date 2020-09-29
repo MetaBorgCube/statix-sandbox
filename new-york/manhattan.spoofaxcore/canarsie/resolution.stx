@@ -1,0 +1,23 @@
+module canarsie/resolution
+
+imports canarsie/types
+
+signature
+
+  name-resolution
+    labels P
+
+  relations 
+    type : string -> scope
+    typeOf      : -> TYPE
+
+rules
+  typeOf : scope -> TYPE
+  typeOf(s) = T :-
+    query typeOf
+      filter e and true
+      min /* */ and true
+      in s |-> [(_, T)].
+  withType : TYPE -> scope
+  withType(T) = s :-
+    new s, !typeOf[T] in s.

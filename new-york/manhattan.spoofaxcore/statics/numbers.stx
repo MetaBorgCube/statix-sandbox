@@ -5,7 +5,8 @@ imports signatures/numbers-sig
 
 signature
   constructors
-    FLOAT : TYPE
+    INT		: TYPE
+    FLOAT 	: TYPE
 
 rules
 

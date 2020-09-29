@@ -31,7 +31,6 @@ context-free syntax // record expressions
   
   Exp.Null   = <null>
   Type.NullT = <Null>
-  TYPE.NULL  = <Null>
   
 template options
   ID = keyword {reject}

@@ -1,13 +1,15 @@
 module statics/record
 
+imports canarsie/resolution
 imports statics/base
 imports statics/variable
 imports statics/type
 imports signatures/record-sig
 
-signature  
+signature
   constructors 
     REC  : scope -> TYPE
+    NULL : TYPE
     
 rules
 
@@ -40,10 +42,11 @@ rules // record type
     
 rules // record construction
   
-  typeOfExp(s, e@New(x, fbinds)) = REC(s1_rec) :- {p d s2_rec}
-    typeOfTypeRef(s, x) == REC(s1_rec),
+  typeOfExp(s, e@New(x, fbinds)) = TR :- {s1_rec p d s2_rec}
+    typeOfTypeRef(s, x) == TR,
     new s2_rec,
-    fbindsOk(s, s2_rec, REC(s1_rec), fbinds),
+    scopeOfType(TR) == s1_rec,
+    fbindsOk(s, s2_rec, TR, fbinds),
     initComplete(e, s1_rec, s2_rec).
     
   fbindOk : scope * scope * TYPE * FBind
@@ -61,11 +64,13 @@ rules // record projection
   typeOfExp(s, Proj(e, x)) = proj(typeOfExp(s, e), x).
     
   proj(REC(s_rec), x) = typeOfVar(s_rec, x).
+  scopeOfType(REC(s_rec)) = s_rec.
     
 rules // with record value
 
-  typeOfExp(s, With(e1, e2)) = T :- {s_with s_rec}
-    typeOfExp(s, e1) == REC(s_rec),
+  typeOfExp(s, With(e1, e2)) = T :- {s_with s_rec T_decl}
+    typeOfExp(s, e1) == T_decl,
+    scopeOfType(T_decl) == s_rec,
     new s_with, 
     s_with -P-> s, 
     s_with -R-> s_rec,
@@ -91,4 +96,5 @@ rules
   fieldInScope(e, (_, (x, T)), s) :- 
     resolveVar(s, x) == [(_,(_,_))] 
     | error $[field [x] not initialized]@e.
+
     

@@ -4,7 +4,6 @@ imports base
 
 context-free syntax // booleans
   Type.BoolT = <Bool>
-  TYPE.BOOL  = <Bool>
   
   Exp.Eq    = <<Exp> == <Exp>> {non-assoc}
   Exp.Gt    = [[Exp] > [Exp]] {non-assoc}

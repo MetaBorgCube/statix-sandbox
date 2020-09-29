@@ -1,5 +1,6 @@
 module statics/let
 
+imports canarsie/resolution
 imports statics/base 
 imports statics/variable
 imports signatures/let-sig
