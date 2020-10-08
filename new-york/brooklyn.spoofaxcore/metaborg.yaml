@@ -40,3 +40,6 @@ language:
 exports:
 - language: ATerm
   directory: src-gen/statix
+    - signatures/**/*.aterm
+    - statix/**/*.aterm
+    - brooklyn.spec.aterm

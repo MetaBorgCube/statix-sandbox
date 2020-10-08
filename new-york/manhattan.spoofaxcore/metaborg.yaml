@@ -40,3 +40,7 @@ language:
 exports:
 - language: ATerm
   directory: src-gen/statix
+  includes:
+    - signatures/**/*.aterm
+    - statix/**/*.aterm
+    - manhattan.spec.aterm

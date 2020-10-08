@@ -12,7 +12,7 @@ imports
 
 rules // Analysis
 
-  editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
+  editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"brooklyn", "projectOk", "fileOk")
 
   pre-analyze  = explicate-injections-brooklyn-Start; desugar-all
   post-analyze = resugar-all; implicate-injections-brooklyn-Start

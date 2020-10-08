@@ -15,7 +15,7 @@ rules // Analysis
   
   // see README.md for details on how to switch to multi-file analysis
   // multi-file analysis
-  editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
+  editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"manhattan", "projectOk", "fileOk")
 
   pre-analyze  = explicate-injections-manhattan-Start
   post-analyze = implicate-injections-manhattan-Start

@@ -1,17 +1,21 @@
 plugins {
-  id("org.metaborg.gitonium") version "0.1.3"
+  id("org.metaborg.gradle.config.root-project") version "0.3.21" apply false
 
-  // Set versions for plugins to use, only applying them in subprojects (apply false here).
-  id("org.metaborg.spoofax.compiler.gradle.spoofaxcore.language") version "0.1.7" apply false
-  id("org.metaborg.spoofax.gradle.langspec") version "0.4.4" apply false
   id("de.set.ecj") version "1.4.1" apply false
   id("org.metaborg.coronium.bundle") version "0.3.3" apply false
-  id("biz.aQute.bnd.builder") version "5.1.1" apply false
-  id("org.jetbrains.intellij") version "0.4.21" apply false
+
+  id("org.metaborg.spoofax.gradle.base") version "0.4.5" apply false
+  id("org.metaborg.spoofax.compiler.gradle.language") version "0.3.0" apply false
+  id("org.metaborg.spoofax.compiler.gradle.adapter") version "0.3.0" apply false
+  id("org.metaborg.spoofax.compiler.gradle.eclipse.externaldeps") version "0.3.0" apply false
+  id("org.metaborg.spoofax.compiler.gradle.eclipse") version "0.3.0" apply false
+  id("org.metaborg.spoofax.compiler.gradle.spoofax2.language") version "0.3.0" apply false
 }
+
 
 allprojects {
   group = "org.example"
+  version = "0.1.0"
 
   repositories {
     maven("https://artifacts.metaborg.org/content/groups/public/")
@@ -35,3 +39,15 @@ tasks.register("buildAll") {
   group = "composite build"
   dependsOn(subprojects.map { it.tasks.named("build") })
 }
+
+tasks.register("cleanAll") {
+  group = "composite build"
+  dependsOn(subprojects.map { it.tasks.named("clean") })
+}
+
+tasks.register("newYorkEclipse") {
+  group = "demo"
+  dependsOn(project(":new-york.eclipse").tasks.named("runEclipse"))
+}
+
+// registerDelegateTask("newYorkEclipse", it, ":new-york.eclipse:runEclipse")
