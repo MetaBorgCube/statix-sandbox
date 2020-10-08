@@ -50,4 +50,3 @@ tasks.register("newYorkEclipse") {
   dependsOn(project(":new-york.eclipse").tasks.named("runEclipse"))
 }
 
-// registerDelegateTask("newYorkEclipse", it, ":new-york.eclipse:runEclipse")
