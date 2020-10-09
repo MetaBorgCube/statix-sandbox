@@ -28,7 +28,6 @@ rules // operations on types
 
   equitype(T, T).
 
-
 rules
 
   proj : TYPE * ID -> TYPE

@@ -9,8 +9,8 @@ imports
 rules // column types
   
   typeOfCols maps typeOfCol(*, list(*)) = list(*)
-  typeOfCol : scope * ColumnInit -> (string * COL)
+  typeOfCol : scope * ColumnInit -> (string * TYPE * CNULL)
   
-  typeOfCol(s, ColumnInit(ColumnDef(ColumnRef(n), t), ccs)) = 
-    (n, COL(typeOfDataType(t), colConstrsOk(s, n, ccs))).
+  typeOfCol(s, ColumnInit(ColumnDef(ColumnRef(n), t), ccs)) = T :-
+    T == (n, typeOfDataType(t), colConstrsOk(s, n, ccs)).
   

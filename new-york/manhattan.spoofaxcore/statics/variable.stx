@@ -1,6 +1,7 @@
 module statics/variable
 
 imports canarsie/resolution
+imports canarsie/types
 imports statics/base
 imports signatures/variable-sig 
     
@@ -28,7 +29,6 @@ rules
      
 signature
   relations 
-    var : ID -> scope
      
 rules
 

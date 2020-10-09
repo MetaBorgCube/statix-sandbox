@@ -7,7 +7,7 @@ imports
 
 language
 
-  extensions : mjv
+  extensions : sql
 
   provider : target/metaborg/stratego.ctree
   provider : target/metaborg/stratego.jar

@@ -81,7 +81,7 @@ rules
 
   resolveMod(s, x) = ps :-
     query mod
-      filter (M | P)* (R* | (M | I)*) A*
+      filter (M | P)* (R* | (M | I)*)
          and { x' :- x' == x }
          min $ < I, $ < P, I < P, R < P
          and true

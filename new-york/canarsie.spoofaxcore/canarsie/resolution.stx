@@ -5,7 +5,7 @@ imports canarsie/types
 signature
 
   name-resolution
-    labels P A // auto-import
+    labels P
 
   relations
     type : string -> scope
@@ -18,6 +18,25 @@ rules
       filter e and true
       min /* */ and true
       in s |-> [(_, T)].
+
   withType : TYPE -> scope
-  withType(T) = s :-
+  withType(T) = withTypeAndNullable(T, CNOTNULL()).
+
+  withTypeAndNullable : TYPE * CNULL -> scope
+  withTypeAndNullable(T, CNOTNULL()) = s :-
     new s, !typeOf[T] in s.
+  withTypeAndNullable(T, CNULL()) = s :-
+    new s, !typeOf[T] in s, !nullable[] in s.
+
+rules
+
+  nullable: scope
+  
+  nullable(s) :- ?nullable[] in s.
+  
+  required: scope
+  required(s) :-
+    query nullable
+     filter e
+         in s |-> [].
+  

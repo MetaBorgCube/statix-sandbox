@@ -16,58 +16,65 @@ signature
     CNULL    : CNULL
     CNOTNULL : CNULL
 
-  sorts COL constructors
-    COL : TYPE * CNULL -> COL
-
   relations
-    table 	: occurrence -> TYPE
-    col   	: occurrence -> COL
+    var : string -> scope
+    nullable: 
 
   namespaces
     Table 	: string
-    Col	  	: string
 
   name-resolution
     resolve Table
-      filter P* A*
-      min $ < P,
-          $ < A
-
-    resolve Col
       filter P*
+      min $ < P
 
 rules
 
 rules // table declarations
 
-  declareTable : scope * scope * string * list((string * COL))
+  declareTable : scope * scope * string * list((string * TYPE * CNULL))
 
   declareTable(s, s_table, n, T_cols) :-
     s_table -P-> s,
-    s -> Table{n} with table TABLE(s_table),
+    !type[n, withType(TABLE(s_table))] in s,
     declareCols(s_table, T_cols),
-    Table{n} in s |-> [_]
+    query type
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+          in s |-> [(_, (_, _))]
     | error $[Multiple tables with name [n]].
 
   resolveTable : scope * string -> TYPE
 
-  resolveTable(s, n) = T :- {n'}
-    // @n.ref := n',
-    table of Table{n} in s |-> [(_, (Table{n'}, T))| _]
-    | error $[Table [n] not created].
+  resolveTable(s, n) = typeOf(s_t) :-
+    query type
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+          in s |-> [(_, (_, s_t))|_]
+      | error $[Table [n] not created].
 
 rules // column declarations
 
   declareCols maps declareCol(*, list(*))
-  declareCol : scope * (string * COL)
-  declareCol(s, (n, T)) :-
-    // @n.type := T,
-    s -> Col{n} with col T,
-    Col{n} in s |-> [_]
+  declareCol : scope * (string * TYPE * CNULL)
+  declareCol(s, (n, T, null)) :-
+    !var[n, withTypeAndNullable(T, null)] in s,
+    query var
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+         and true
+          in s |-> [_]
     | error $[Multiple columns with name [n]].
 
-  resolveCol: scope * string -> COL
-  resolveCol(s, n) = T :- {n'}
-    // @n.ref := n',
-    col of Col{n} in s |-> [(_, (Col{n'}, T)) | _]
+  resolveCol: scope * string -> scope
+  resolveCol(s, n) = s_t :-
+    query var
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+         and true
+          in s |-> [(_, (_, s_t)) | _]
     | error $[No column with name [n]].

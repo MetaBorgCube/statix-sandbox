@@ -32,7 +32,7 @@ rules
 
   resolveType(s, x) = ps :-
     query type
-      filter P* (R* | I*) A*
+      filter P* (R* | I*)
          and { x' :- x' == x }
          min $ < I, $ < P, I < P, R < P
          and true

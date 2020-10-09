@@ -42,5 +42,5 @@ exports:
   directory: src-gen/statix
   includes:
     - signatures/**/*.aterm
-    - manhattan/**/*.aterm
+    - statics/**/*.aterm
     - manhattan.spec.aterm

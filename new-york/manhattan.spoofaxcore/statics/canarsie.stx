@@ -12,7 +12,7 @@ imports statics/variable
 rules // Performs mapping of sql table types to the types that are used in mod
 
   proj(TABLE(s_table), n) = modType(T_col) :-
-    resolveCol(s_table, n) == COL(T_col, _).
+    typeOf(resolveCol(s_table, n)) == T_col.
 
   scopeOfType(TABLE(s_table)) = s_table.
 

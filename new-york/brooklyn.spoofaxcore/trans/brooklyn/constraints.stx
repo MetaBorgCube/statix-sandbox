@@ -30,12 +30,13 @@ signature
 rules
   
   declarePKConstr: scope * string * string
-  declarePKConstr(s, n, cn) :- {null}
+  declarePKConstr(s, n, cn) :- {s_col}
     declareConstr(s, n, PK(cn)),
-    resolveCol(s, cn) == COL(_, null),
+    resolveCol(s, cn) == s_col,
     
     // Warning when primary key column is nullable
-    try { null == CNOTNULL() } | warning $[Primary key constraint on nullable column [cn]],
+    try { required(s_col) }
+    | warning $[Primary key constraint on nullable column [cn]],
     
     // Primary key constraint uniqueness
     query constr
@@ -47,11 +48,11 @@ rules
   declareFKConstr(s, n, sc, dt, dc) :- {s_dt TC1 TC2}
     declareConstr(s, n, FK(sc, dt, dc)),
     // Source column exists
-    resolveCol(s, sc) == COL(TC1, _),
+    typeOf(resolveCol(s, sc)) == TC1,
     // Destination table exists
     resolveTable(s, dt) == TABLE(s_dt),
     // Destination column exists
-    resolveCol(s_dt, dc) == COL(TC2, _),
+    typeOf(resolveCol(s_dt, dc)) == TC2,
     
     // Multiple foreign key constraints for column
     try { resolveFKConstrs(s, sc) == [_] } 
@@ -103,4 +104,3 @@ rules // resolve constraints
     query constr
       filter e and { t :- t == (_, FK(cn, _, _)) }
       in s |-> r.
-

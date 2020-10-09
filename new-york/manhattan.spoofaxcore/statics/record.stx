@@ -93,8 +93,13 @@ rules
   fieldInScope : Exp * (path * (ID * scope)) * scope 
   fieldsInScope maps fieldInScope(*, list(*), *) 
 
-  fieldInScope(e, (_, (x, T)), s) :- 
-    resolveVar(s, x) == [(_,(_,_))] 
-    | error $[field [x] not initialized]@e.
+  fieldInScope(e, (_, (x, T)), s) :-
+    initOk(e, x, T, resolveVar(s, x)). 
 
+  // Allow for nullability
+  initOk: Exp * ID * scope * list((path * (ID * scope)))
+  initOk(e, _, T, [_|_]).
+  initOk(e, x, T, []) :-
+    nullable(T)
+    | error $[field [x] not initialized]@e.
     
