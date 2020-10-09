@@ -1,10 +1,10 @@
 defaultArtifactId=manhattan
 defaultBasePackageId=mb.manhattan
-shared.defaultPackageId=mb.manhattan
-shared.defaultGroupId=org.metaborg
+defaultClassPrefix=Manhattan
+defaultGroupId=org.metaborg
+defaultVersion=0.1.0
 shared.defaultArtifactId=manhattan
 shared.defaultClassPrefix=Manhattan
+shared.defaultGroupId=org.metaborg
+shared.defaultPackageId=mb.manhattan
 shared.defaultVersion=0.1.0
-defaultGroupId=org.metaborg
-defaultClassPrefix=Manhattan
-defaultVersion=0.1.0

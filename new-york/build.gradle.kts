@@ -1,15 +1,17 @@
 plugins {
+  val spoofaxVersion = "0.3.1"
+  
   id("org.metaborg.gradle.config.root-project") version "0.3.21" apply false
 
   id("de.set.ecj") version "1.4.1" apply false
   id("org.metaborg.coronium.bundle") version "0.3.3" apply false
 
   id("org.metaborg.spoofax.gradle.base") version "0.4.5" apply false
-  id("org.metaborg.spoofax.compiler.gradle.language") version "0.3.0" apply false
-  id("org.metaborg.spoofax.compiler.gradle.adapter") version "0.3.0" apply false
-  id("org.metaborg.spoofax.compiler.gradle.eclipse.externaldeps") version "0.3.0" apply false
-  id("org.metaborg.spoofax.compiler.gradle.eclipse") version "0.3.0" apply false
-  id("org.metaborg.spoofax.compiler.gradle.spoofax2.language") version "0.3.0" apply false
+  id("org.metaborg.spoofax.compiler.gradle.language") version "$spoofaxVersion" apply false
+  id("org.metaborg.spoofax.compiler.gradle.adapter") version "$spoofaxVersion" apply false
+  id("org.metaborg.spoofax.compiler.gradle.eclipse.externaldeps") version "$spoofaxVersion" apply false
+  id("org.metaborg.spoofax.compiler.gradle.eclipse") version "$spoofaxVersion" apply false
+  id("org.metaborg.spoofax.compiler.gradle.spoofax2.language") version "$spoofaxVersion" apply false
 }
 
 

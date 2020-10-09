@@ -1,5 +1,5 @@
-shared.defaultVersion=0.1.0
 shared.defaultArtifactId=canarsie
+shared.defaultClassPrefix=Canarsie
 shared.defaultGroupId=org.metaborg
 shared.defaultPackageId=mb.canarsie
-shared.defaultClassPrefix=Canarsie
+shared.defaultVersion=0.1.0

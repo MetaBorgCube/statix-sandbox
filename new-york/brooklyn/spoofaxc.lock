@@ -1,5 +1,5 @@
-shared.defaultVersion=0.1.0
 shared.defaultArtifactId=brooklyn
+shared.defaultClassPrefix=Brooklyn
 shared.defaultGroupId=org.metaborg
 shared.defaultPackageId=mb.brooklyn
-shared.defaultClassPrefix=Brooklyn
+shared.defaultVersion=0.1.0
