@@ -15,9 +15,11 @@ languageAdapterProject {
     withStyler()
     withStrategoRuntime()
     withMultilangAnalyzer().run {
-      rootModule("brooklyn")
+      rootModule("manhattan")
       preAnalysisStrategy("pre-analyze")
       postAnalysisStrategy("post-analyze")
+      fileConstraint("manhattan!fileOk")
+      projectConstraint("manhattan!projectOk")
       contextId("new-york")
     }
   }

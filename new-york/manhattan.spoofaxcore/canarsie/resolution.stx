@@ -5,9 +5,9 @@ imports canarsie/types
 signature
 
   name-resolution
-    labels P
+    labels P A // auto-import
 
-  relations 
+  relations
     type : string -> scope
     typeOf      : -> TYPE
 

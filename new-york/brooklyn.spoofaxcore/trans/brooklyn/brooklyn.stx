@@ -4,7 +4,7 @@ imports
   signatures/brooklyn-sig
   signatures/statements-sig
   signatures/create-table-sig
-  
+
   canarsie/resolution
   canarsie/types
   brooklyn/columns
@@ -14,10 +14,9 @@ imports
 rules
 
   sqlModOk : scope * Start
-  
-  sqlModOk(s, SQLMod(stmts)) :- {s_mod}
-    new s_mod, s_mod -P-> s,
-    stmtsOk(s_mod, stmts).
+
+  sqlModOk(s, SQLMod(stmts)) :-
+    stmtsOk(s, stmts).
 
 rules
 

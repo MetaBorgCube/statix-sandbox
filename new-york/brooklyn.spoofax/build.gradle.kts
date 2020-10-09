@@ -18,6 +18,8 @@ languageAdapterProject {
       rootModule("brooklyn")
       preAnalysisStrategy("pre-analyze")
       postAnalysisStrategy("post-analyze")
+      fileConstraint("brooklyn!fileOk")
+      projectConstraint("brooklyn!projectOk")
       contextId("new-york")
     }
   }

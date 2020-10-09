@@ -16,7 +16,7 @@ languageProject {
   }
   compilerInput {
     withMultilangAnalyzer().run {
-      rootModules(listOf("canarsie/mod", "canarsie/types"))
+      rootModules(listOf("canarsie/mod", "canarsie/types", "canarsie/resolution"))
     }
   }
 }

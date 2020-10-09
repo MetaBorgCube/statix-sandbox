@@ -18,20 +18,20 @@ signature
 
   sorts COL constructors
     COL : TYPE * CNULL -> COL
-  
+
   relations
     table 	: occurrence -> TYPE
     col   	: occurrence -> COL
-  
+
   namespaces
     Table 	: string
     Col	  	: string
-  
+
   name-resolution
     resolve Table
       filter P*
       min $ < P
-    
+
     resolve Col
       filter P*
 
@@ -40,12 +40,12 @@ rules
 rules // table declarations
 
   declareTable : scope * scope * string * list((string * COL))
-  
+
   declareTable(s, s_table, n, T_cols) :-
     s_table -P-> s,
     s -> Table{n} with table TABLE(s_table),
     declareCols(s_table, T_cols),
-    Table{n} in s |-> [_] 
+    Table{n} in s |-> [_]
     | error $[Multiple tables with name [n]].
 
   resolveTable : scope * string -> TYPE
@@ -54,7 +54,7 @@ rules // table declarations
     // @n.ref := n',
     table of Table{n} in s |-> [(_, (Table{n'}, T))| _]
     | error $[Table [n] not created].
- 
+
 rules // column declarations
 
   declareCols maps declareCol(*, list(*))

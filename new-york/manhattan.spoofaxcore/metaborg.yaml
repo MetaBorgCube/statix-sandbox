@@ -17,7 +17,7 @@ pardonedLanguages:
 language:
   sdf:
     pretty-print: manhattan
-    sdf2table: dynamic
+    sdf2table: java
     placeholder:
       prefix: "$"
   stratego:
@@ -42,5 +42,5 @@ exports:
   directory: src-gen/statix
   includes:
     - signatures/**/*.aterm
-    - statix/**/*.aterm
+    - manhattan/**/*.aterm
     - manhattan.spec.aterm

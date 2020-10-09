@@ -1,5 +1,5 @@
 ---
-id: org.metaborg:brooklyn:0.1.0-SNAPSHOT
+id: org.example:brooklyn:0.1.0-SNAPSHOT
 name: brooklyn
 dependencies:
   compile:
@@ -40,6 +40,8 @@ language:
 exports:
 - language: ATerm
   directory: src-gen/statix
+  includes:
     - signatures/**/*.aterm
-    - statix/**/*.aterm
+    - brooklyn/**/*.aterm
     - brooklyn.spec.aterm
+
