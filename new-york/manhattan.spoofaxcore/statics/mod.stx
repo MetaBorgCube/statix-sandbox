@@ -41,11 +41,13 @@ rules // imports
   typeOfPath(s, PVar(m)) = typeOfRef(s, m).
 
   typeOfPath(s, Path(p, m)) = T :- {s_mod}
-    typeOfPath(s, p) == TMOD(MOD(s_mod)),
+    scopeOfType(typeOfPath(s, p)) == s_mod,
     typeOfRef(s_mod, m) == T.
 
-  proj(TMOD(MOD(s_mod)), x) = T :- {p d}
+  proj(TMOD(MOD(s_mod)), x) = T :-
     typeOfVar(s_mod, x) == T.
+
+  scopeOfType(TMOD(MOD(s_mod))) = s_mod.
 
 rules // qualified names
 
@@ -53,7 +55,7 @@ rules // qualified names
   	proj(typeOfPath(s, p), x) == T.
 
   typeOfType(s, PType(Path(p,x))) = T :- {s_mod}
-  	typeOfPath(s, p) == TMOD(MOD(s_mod)),
+  	scopeOfType(typeOfPath(s, p)) == s_mod,
   	typeOfTypeRef(s_mod, x) == T.
 
 signature
@@ -103,17 +105,4 @@ rules // disambiguate names based on name resolution
   typeOfRefDisamb(s, x, []) = typeOfVar(s, x).
 
   typeOfRefDisamb(s, x, [(_,(x',T))|_]) = typeOf(T) :-
-//    @x.type := typeOf(T),
     @x.ref := x'.
-
-
-
-    rules // extend remote
-
-// the following code is not valid Statix
-
-//  declOk(s, ExtendRemote(p, x, e)) :- {s_mod T}
-//    typeOfPath(s, p) == MOD(s_mod),
-//    typeOfExp(s, e) == T,
-//    declareVar(s_mod, x, T). // no permission to extend
-

@@ -30,7 +30,7 @@ rules // operations on types
 
 rules
 
-  proj : TYPE * ID -> TYPE
+  proj   : TYPE * ID -> TYPE
 
 signature
   name-resolution

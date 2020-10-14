@@ -43,3 +43,11 @@ rules
       | error $[Type [x] not defined],
 //    @x.type := typeOf(T),
     @x.ref := x'.
+    
+rules
+
+  strictTypeOf: scope -> TYPE
+  strictTypeOf(s) = strict(typeOf(s)).
+
+  strict: TYPE -> TYPE
+  strict(T) = T.

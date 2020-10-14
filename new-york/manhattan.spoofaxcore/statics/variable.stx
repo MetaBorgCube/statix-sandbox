@@ -3,6 +3,7 @@ module statics/variable
 imports canarsie/resolution
 imports canarsie/types
 imports statics/base
+imports statics/type
 imports signatures/variable-sig 
     
 rules
@@ -51,10 +52,9 @@ rules
          and true
           in s |-> ps.
 
-  typeOfVar(s, x) = typeOf(T) :- {x'} 
+  typeOfVar(s, x) = strictTypeOf(T) :- {x'} 
     resolveVar(s, x) == [(_,(x', T))|_]
       | error $[Variable [x] not defined],
-//    @x.type := typeOf(T),
     @x.ref := x'.
     
   varsInScope(s) = ps :- 
@@ -64,24 +64,5 @@ rules
          min 
          and { x, y :- x == y }
           in s |-> ps.
-
-    
-  rule : scope * occurrence
-  rule(s, n) :-
-      query decl
-        filter P* R*
-          and { x :- x == n }
-        min $ < P, $ < R, R < P
-        in s |-> _. 
-//  visibleVar  : scope      -> list((path * (ID * TYPE)))
-//  visibleVar(s) = ps :- 
-//    query var
-//      filter P* (R* | I*) 
-//         and true
-//         min $ < I, $ < P, I < P, R < P
-//         and { x, y :- x == y }
-//          in s |-> ps.
-
-      
 
     

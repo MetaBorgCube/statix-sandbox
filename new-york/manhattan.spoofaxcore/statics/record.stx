@@ -64,6 +64,7 @@ rules // record projection
   typeOfExp(s, Proj(e, x)) = proj(typeOfExp(s, e), x).
     
   proj(REC(s_rec), x) = typeOfVar(s_rec, x).
+  
   scopeOfType(REC(s_rec)) = s_rec.
     
 rules // with record value
