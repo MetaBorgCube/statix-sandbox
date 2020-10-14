@@ -15,7 +15,7 @@ rules // data type
   
   typeOfDataType(TVarChar()) 	= VARCHAR(80).
   typeOfDataType(TVarCharI(n))	= VARCHAR(n).
-  typeOfDataType(TInt()) 		= SINT().
+  typeOfDataType(TInt()) 		= INT().
   typeOfDataType(TDate()) 		= DATE().
 
 rules
@@ -26,4 +26,4 @@ rules
   columnReferenceTypeOk(FK(VARCHAR(s1), _), VARCHAR(s2)) :-
     s1 #> s2.
   
-  // columnReferenceTypeOk(_, _) :- false.
+  columnReferenceTypeOk(_, _) :- false.

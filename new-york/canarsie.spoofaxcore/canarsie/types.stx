@@ -7,7 +7,7 @@ signature
 
   // SQL data types
   sorts TYPE constructors
-    SINT 	: TYPE
+    INT 	: TYPE
     VARCHAR	: int -> TYPE
     DATE 	: TYPE
     TABLE   : scope -> TYPE

@@ -17,7 +17,6 @@ rules // Performs mapping of sql table types to the types that are used in mod
     
   scopeOfType(TABLE(s_table)) = s_table.
 
-  strict(SINT()) = INT().
   strict(VARCHAR(_)) = STRING().
   strict(DATE()) = REC(s_rec) :-
     // Declare dummy type with utc : int field
