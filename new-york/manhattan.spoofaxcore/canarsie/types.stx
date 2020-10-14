@@ -11,6 +11,9 @@ signature
     VARCHAR	: int -> TYPE
     DATE 	: TYPE
     TABLE   : scope -> TYPE
+    // On a table with a foreign key constraint
+    // Store column type and referenced type
+    FK		: TYPE * TYPE -> TYPE
 
   sorts CNULL constructors // nullability constraint
     CNULL    : CNULL

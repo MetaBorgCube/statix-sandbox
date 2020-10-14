@@ -3,6 +3,10 @@ CREATE TABLE Conference (
   year    	INT NOT NULL,
   city      INT NOT NULL,
   series    INT,
+  
+  start		DATE,
+  end		DATE,
+  
   CONSTRAINT city_fk FOREIGN KEY (city) REFERENCES City(cityid),
   CONSTRAINT series_fk FOREIGN KEY (series) REFERENCES Series(seriesid)
 );

@@ -22,9 +22,8 @@ rules
 
   columnReferenceTypeOk: TYPE * TYPE
 
-  columnReferenceTypeOk(SINT(), SINT()).
-  columnReferenceTypeOk(DATE(), DATE()).
-  columnReferenceTypeOk(VARCHAR(s1), VARCHAR(s2)) :-
+  columnReferenceTypeOk(FK(T, _), T).
+  columnReferenceTypeOk(FK(VARCHAR(s1), _), VARCHAR(s2)) :-
     s1 #> s2.
   
-  columnReferenceTypeOk(_, _) :- false.
+  // columnReferenceTypeOk(_, _) :- false.

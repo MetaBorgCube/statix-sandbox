@@ -11,7 +11,15 @@ def sle : Series = Series {
 
 def sle2019 : Conference = Conference {
   confid = 3,
-  series = 2,
+  series = sle,
   year = 2019,
-  city = 1
+  city = leipzig
 }
+
+$ sle2019.start.utc + sle2019.city.cityid + sle2019.series.seriesid
+
+$ with (leipzig) do cityid + 1
+
+
+
+

@@ -16,9 +16,9 @@ rules // table constraints
   declareTableConstr : scope * TableConstraint
   
   declareTableConstr(s, ForeignKey(n, ColumnRef(sc), TableRef(dt), ColumnRef(dc))) :-
-    @n.type := FK(sc, dt, dc),
+    @n.type := FKC(sc, dt, dc),
     declareFKConstr(s, n, sc, dt, dc).
   
   declareTableConstr(s, PrimaryKey(n, ColumnRef(cn))) :-
-    @n.type := PK(cn),
+    @n.type := PKC(cn),
     declarePKConstr(s, n, cn).
