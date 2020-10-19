@@ -1,0 +1,32 @@
+module canarsie/procedures
+
+imports
+  canarsie/resolution
+  canarsie/types
+
+signature
+  constructors
+    PROC: list(TYPE) * TYPE -> TYPE
+
+rules
+
+  declareProc: scope * string * list(TYPE) * TYPE
+  
+  declareProc(s, n, Targs, T) :-
+    !type[n, withType(PROC(Targs, T))] in s,
+    query type
+      filter e and {n' :- n' == n}
+          in s |-> [_]
+    | error $[Duplicate declaration of type [n]].
+
+  resolveProc: scope * string -> TYPE
+  resolveProc(s, n) = T :- {s_t}
+    query type
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+          in s |-> [(_, (_, s_t))|_]
+      | error $[Procedure [n] not created],
+    typeOf(s_t) == T@PROC(_, _).
+
+

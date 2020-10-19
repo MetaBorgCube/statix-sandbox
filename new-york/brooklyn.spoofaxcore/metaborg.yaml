@@ -1,5 +1,5 @@
 ---
-id: org.example:brooklyn:0.1.0-SNAPSHOT
+id: org.metaborg:brooklyn:0.1.0-SNAPSHOT
 name: brooklyn
 dependencies:
   compile:

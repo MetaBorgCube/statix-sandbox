@@ -7,4 +7,4 @@ context-free sorts TableRef
 
 context-free syntax
 
-  TableRef.TableRef = <<SQLID>>
+  TableRef.TableRef = <<ID>>

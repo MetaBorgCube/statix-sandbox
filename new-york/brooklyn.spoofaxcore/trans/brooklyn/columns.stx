@@ -2,20 +2,34 @@ module brooklyn/columns
 
 imports
   signatures/create-table-sig
+  
+  canarsie/types
+  canarsie/resolution
+  
   brooklyn/datatypes
   brooklyn/constraints
-  canarsie/types
 
 rules // column types
   
   typeOfCols maps typeOfCol(*, list(*)) = list(*)
   typeOfCol : scope * ColumnInit -> (string * TYPE * CNULL)
+  disambFK: TYPE * list(TYPE)-> TYPE
   
-  typeOfCol(s, ColumnInit(ColumnDef(ColumnRef(n), t), ccs)) = (n, T, null) :-
+  typeOfCol(s, ColumnInit(ColumnDef(n, t), ccs)) = (n, T, null) :-
     null == colConstrsOk(s, n, ccs),
     T == disambFK(typeOfDataType(t), resolveFKTarget(s, n)).
 
-  disambFK: TYPE * list(TYPE)-> TYPE
-
   disambFK(T, []) = T.
   disambFK(T, [TR|_]) = FK(T, TR).
+
+rules
+
+  typeOfColumnRef: scope * ColumnRef -> scope
+
+  typeOfColumnRef(s, ColumnRef(n)) = T :-
+    resolveCol(s, n) == T.
+
+  typeOfColumnRef(s, QColumnRef(t, n)) = T :- {s_table}
+    resolveTable(s, t) == TABLE(s_table), 
+    resolveCol(s_table, n) == T.
+  

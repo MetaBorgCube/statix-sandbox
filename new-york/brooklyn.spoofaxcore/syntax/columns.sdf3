@@ -8,9 +8,10 @@ context-free sorts ColumnRef ColumnDef ColumnConstraint
 
 context-free syntax
 
-  ColumnRef.ColumnRef = <<SQLID>>
+  ColumnRef.ColumnRef = <<ID>>
+  ColumnRef.QColumnRef = <<ID>.<ID>>
   
-  ColumnDef.ColumnDef = <<ColumnRef> <DataType>>
+  ColumnDef.ColumnDef = <<ID> <DataType>>
   
   ColumnConstraint.PrimaryKey 	= <PRIMARY KEY>
   ColumnConstraint.NotNull		= <NOT NULL>

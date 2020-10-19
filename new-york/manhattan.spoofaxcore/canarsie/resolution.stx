@@ -5,7 +5,9 @@ imports canarsie/types
 signature
 
   name-resolution
-    labels P
+    labels 
+      P // Lexical parent
+      N // Result set
 
   relations
     type : string -> scope

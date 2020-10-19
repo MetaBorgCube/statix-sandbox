@@ -2,7 +2,7 @@ module desugar
 
 imports
 
-  signatures/brooklyn/-
+  signatures/-
 
 rules
 
@@ -15,5 +15,14 @@ signature
 
 rules
     
-  desugar: TVarCharP(arg){annos*} -> TVarCharI(<string-to-int> arg){annos*}  
-  resugar: TVarCharI(arg){annos*} -> TVarCharP(<int-to-string> arg){annos*}
+  desugar: TVarCharP(arg){annos*} 		-> TVarCharI(<string-to-int> arg){annos*}  
+  resugar: TVarCharI(arg){annos*} 		-> TVarCharP(<int-to-string> arg){annos*}
+
+  desugar: Table(r@TableRef(n)){annos*}	-> TAlias(r, n){annos*}
+  desugar: Ref(r){annos*} 				-> CAlias(r, n){annos*}
+    with
+      n := <column-ref-name> r
+
+rules
+  column-ref-name: ColumnRef(r) 	-> r
+  column-ref-name: QColumnRef(_, r) -> r

@@ -1,0 +1,143 @@
+module brooklyn/selects
+
+imports
+  signatures/selects-sig
+
+  canarsie/resolution
+  canarsie/types
+  
+  brooklyn/values
+  brooklyn/datatypes
+  brooklyn/columns
+
+signature
+
+  relations
+    // Qualified result set
+    res : ID -> scope
+
+rules
+
+  typeOfSelect: scope * Select -> TYPE
+  
+  typeOfSelect(s, Select(c, t, w)) = RESULT(s_res) :- {s_sel}
+    new s_res, new s_sel, s_sel -P-> s,
+    selectSpecOk(s_sel, c, s_res),
+    tableSpecOk(s, s_sel, t),
+    whereClausesOk(s_sel, w).
+
+rules
+
+  tableSpecOk: scope * scope * TableSpec
+  
+  tableSpecOk(s, s_sel, TAlias(r, n)) :- {s_tab}
+    TABLE(s_tab) == typeOfTableRef(s, r),
+    declareResultSet(s_sel, n, s_tab).
+  
+  tableSpecOk(s, s_sel, Join(tl, tr, c)) :-
+    tableSpecOk(s, s_sel, tl),
+    tableSpecOk(s, s_sel, tr),
+    conditionOk(s_sel, c).
+
+rules
+
+  conditionOk: scope * Condition
+  
+  conditionOk(s, And(l, r)) :-
+    conditionOk(s, l),
+    conditionOk(s, r).
+  
+  conditionOk(s, Or(l, r)) :-
+    conditionOk(s, l),
+    conditionOk(s, r).
+  
+  conditionOk(s, Equal(l, r)) :- {Tl Tr}
+    typeOfValue(s, l) == Tl,    
+    typeOfValue(s, r) == Tr,
+    equiType(typeOf(Tl), typeOf(Tr)).
+
+  conditionOk(s, NotEqual(l, r)) :- {Tl Tr}
+    typeOfValue(s, l) == Tl,    
+    typeOfValue(s, r) == Tr,
+    equiType(typeOf(Tl), typeOf(Tr)).
+  
+  conditionOk(s, Null(v)) :- {T}
+    typeOfValue(s, v) == T,
+    try { nullable(T) }
+    | warning $[There is a NOT NULL constraint on this column, so condition is always false].
+
+  conditionOk(s, NotNull(v)) :- {T}
+    typeOfValue(s, v) == T,
+    try { nullable(T) }
+    | warning $[There is a NOT NULL constraint on this column, so condition is always true].
+
+rules
+
+  whereClausesOk maps whereClauseOk(*, list(*))
+  whereClauseOk : scope * WhereClause
+  
+  whereClauseOk(s, Where(c)) :- conditionOk(s, c).
+
+rules
+
+  selectSpecOk: scope * SelectSpec * scope    
+  columnSelectsOk maps columnSelectOk(*, list(*), *)
+  columnSelectOk: scope * ColSpec * scope
+  
+  selectSpecOk(s_sel, Cols(cs), s_res) :-
+    columnSelectsOk(s_sel, cs, s_res).
+
+  selectSpecOk(s_sel, Wld(), s_res) :- {cs}
+    visibleColumns(s_sel) == cs,
+    copyCols(s_res, cs).
+  
+  columnSelectOk(s_sel, CAlias(c, n), s_res) :- {Tcol}
+  	typeOfResultColumnRef(s_sel, c) == Tcol,
+  	copyCol(s_res, (n, Tcol)).
+
+
+rules
+
+  typeOfTableRef: scope * TableRef -> TYPE
+  typeOfTableRef(s, TableRef(n)) = resolveTable(s, n).
+  
+  typeOfValue(s, Column(r)) = T :-
+    typeOfResultColumnRef(s, r) == T.
+
+rules
+
+  typeOfResultColumnRef: scope * ColumnRef -> scope
+
+  typeOfResultColumnRef(s, ColumnRef(n)) = T :-
+    resolveColNP(s, n) == T.
+
+  typeOfResultColumnRef(s, QColumnRef(t, n)) = T :- {s_table}
+    resolveResultSet(s, t) == s_table, 
+    resolveCol(s_table, n) == T.
+
+rules
+
+  declareResultSet: scope * ID * scope
+  declareResultSet(s, n, s_t) :- {s_int}
+    !res[n, s_t] in s,
+    // Path for unqualified names
+    // Intermediate scope is needed to distinguish 
+    // resolutions via multiple paths,
+    // which happen at self joins
+    new s_int, s_int -N-> s_t, s -N-> s_int,
+    query res
+      filter e
+         and { n' :- n' == n }
+         // min and true
+          in s |-> [_]
+      | error $[Multiple declarations of result set [n]].
+  
+  resolveResultSet: scope * ID -> scope
+  
+  resolveResultSet(s, n) = s_t :-
+    query res 
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+          in s |-> [(_, (_, s_t))| _]
+      | error $[Result [n] not found].

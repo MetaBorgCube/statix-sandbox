@@ -2,27 +2,26 @@ module brooklyn-lex
 
 lexical sorts 
 
-  SQLID SQLSTRING INT
+  ID STRING INT
   CommentChar1 CommentChar2 InsideComment BlockComment
   NewLineEOF EOF
 
 
 lexical syntax
 
-  SQLID          = [a-zA-Z] [\_a-zA-Z0-9]* 
-  SQLSTRING      = "\"" SQLStringChar* "\"" 
-  SQLStringChar  = ~[\"\n] 
-  SQLStringChar  = "\\\"" 
-  SQLStringChar  = SQLBackSlashChar 
-  SQLBackSlashChar  = "\\" 
+  ID          = [a-zA-Z] [\_a-zA-Z0-9]* 
+  STRING      = "'" StringChar* "'" 
+  StringChar  = ~[\'\n] 
+  StringChar  = "\\'" 
+  StringChar  = BackSlashChar 
+  BackSlashChar  = "\\" 
 
 lexical restrictions
   
-  SQLID         -/- [a-zA-Z0-9\_]
+  ID         -/- [a-zA-Z0-9\_]
   
-  SQLBackSlashChar -/- [\"]
+  BackSlashChar -/- [\']
 
-lexical sorts
 lexical syntax
   INT            = "-"? [0-9]+  
   LAYOUT         = [\ \t\n\r] 

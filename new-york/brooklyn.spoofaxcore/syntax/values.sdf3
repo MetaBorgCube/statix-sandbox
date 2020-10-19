@@ -1,0 +1,17 @@
+module values
+
+imports brooklyn-lex
+
+lexical sorts VAR
+
+lexical syntax
+
+  VAR = "@" ID
+
+context-free sorts Value
+
+context-free syntax
+
+  Value.Var 		= VAR
+  Value.IntLit		= INT
+  Value.StringLit 	= STRING

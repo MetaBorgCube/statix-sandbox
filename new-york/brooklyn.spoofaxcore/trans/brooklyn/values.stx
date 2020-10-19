@@ -1,0 +1,40 @@
+module brooklyn/values
+
+imports 
+  signatures/values-sig
+
+  canarsie/resolution
+  canarsie/types
+
+signature
+  
+  relations
+    var: ID -> TYPE
+
+rules
+
+  typeOfValue: scope * Value -> scope
+  
+  typeOfValue(_, IntLit(_)) = withTypeAndNullable(INT(), CNULL()).
+  typeOfValue(_, StringLit(_)) = withTypeAndNullable(VARCHAR(0), CNULL()).
+  typeOfValue(s, Var(n)) =  withTypeAndNullable(resolveVar(s, n), CNULL()).
+
+rules
+
+  declareVar: scope * ID * TYPE
+  declareVar(s, n, T) :-
+    !var[n, T] in s,
+    query var
+      filter e
+         and { n' :- n' == n }
+          in s |-> [_]
+      | error $[Variable [n] declared multiple times].
+
+
+  resolveVar: scope * ID -> TYPE
+  resolveVar(s, n) = T :-
+    query var
+      filter P*
+         and {n' :- n' == n }
+          in s |-> [(_, (_, T))|_].
+    

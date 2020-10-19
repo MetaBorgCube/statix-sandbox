@@ -20,6 +20,17 @@ rules // data type
 
 rules
 
+  equiType: TYPE * TYPE
+
+  equiType(FK(T1, _), T2) :- equiType(T1, T2).
+  equiType(T1, FK(T2, _)) :- equiType(T1, T2).
+
+  equiType(VARCHAR(_), VARCHAR(_)).
+  // Indirection to solve overlapping pattern issue
+  equiType(T1, T2) :- T1 == T2.
+
+rules
+
   columnReferenceTypeOk: TYPE * TYPE
 
   columnReferenceTypeOk(FK(T, _), T).

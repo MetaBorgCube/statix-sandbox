@@ -1,0 +1,31 @@
+module brooklyn/procedures
+
+imports 
+  signatures/procedures-sig
+
+  canarsie/resolution
+  canarsie/types
+  canarsie/procedures
+  
+  brooklyn/datatypes
+  brooklyn/selects
+  brooklyn/values
+
+rules
+
+  procedureOk: scope * Procedure
+  
+  procedureOk(s, Procedure(n, p, b)) :- {s_proc Tp T}
+    new s_proc, s_proc -P-> s,
+    typeOfParamDecls(s_proc, p) == Tp,
+    typeOfSelect(s_proc, b) == T,
+    declareProc(s, n, Tp, T).
+
+rules
+  
+  typeOfParamDecls maps typeOfParamDecl(*, list(*)) = list(*)
+  typeOfParamDecl: scope * ParamDecl -> TYPE
+  
+  typeOfParamDecl(s, Param(n, t)) = T :-
+    declareVar(s, n, T),
+    typeOfDataType(t) == T.

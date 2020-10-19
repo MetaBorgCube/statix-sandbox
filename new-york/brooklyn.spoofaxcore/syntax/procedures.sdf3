@@ -1,0 +1,18 @@
+module procedures
+
+imports statements selects brooklyn-lex types values
+
+context-free sorts Procedure ParamDecl
+
+context-free syntax
+
+  Statement.CreateProc = Procedure
+
+  Procedure.Procedure = <CREATE PROCEDURE <ID> <{ParamDecl ","}*>
+    AS
+    <Select>
+    GO;
+  >
+  
+  
+  ParamDecl.Param = <<VAR> <DataType>>

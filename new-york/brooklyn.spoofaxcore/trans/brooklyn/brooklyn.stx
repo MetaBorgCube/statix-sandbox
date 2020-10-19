@@ -4,12 +4,14 @@ imports
   signatures/brooklyn-sig
   signatures/statements-sig
   signatures/create-table-sig
+  signatures/procedures-sig
 
   canarsie/resolution
   canarsie/types
   brooklyn/columns
   brooklyn/tables
   brooklyn/constraints
+  brooklyn/procedures
 
 rules
 
@@ -21,7 +23,7 @@ rules
 rules
 
   stmtsOk maps stmtOk(*, list(*))
-  stmtOk : scope * SQLStatement
+  stmtOk : scope * Statement
 
   stmtOk(s, Create(n, cols, cons)) :- {s_table}
     new s_table,
@@ -31,3 +33,5 @@ rules
     // Ensure there is a primary key constraint
     try { resolvePKConstrs(s_table) == [_|_] }
     | warning $[No primary key constraints for this table].
+
+  stmtOk(s, CreateProc(p)) :- procedureOk(s, p).

@@ -1,0 +1,53 @@
+module selects
+
+imports statements brooklyn-lex columns table values
+
+context-free sorts 
+  SelectSpec
+  ColSpec
+  TableSpec
+  Condition
+  WhereClause
+  Select
+ 
+context-free syntax
+
+  Select.Select = <SELECT <SelectSpec> FROM <TableSpec>
+  	  <WhereClause?>
+  >
+  
+  SelectSpec.Wld = "*"
+  SelectSpec.Cols = <<{ColSpec ", "}*>>
+  
+  ColSpec.Ref = ColumnRef
+  ColSpec.CAlias = <<ColumnRef> AS <ID>>
+  
+  TableSpec.Table = TableRef
+  TableSpec.TAlias = <<TableRef> <ID>>
+  TableSpec.Join  = <<TableSpec> JOIN <TableSpec> ON <Condition>> {left}
+  
+  Condition.And			= <<Condition> AND <Condition>> {right}
+  Condition.Or			= <<Condition> OR <Condition>>  {right}
+  Condition				= <(<Condition>)>				{bracket}
+  
+  Condition.Equal 		= <<Value> = <Value>>
+  Condition.NotEqual 	= [[Value] <> [Value]]
+  Condition.Null  		= <<Value> IS NULL>
+  Condition.NotNull  	= <<Value> IS NOT NULL>
+  
+  Value.Column 			= ColumnRef
+
+  WhereClause.Where 	= <WHERE <Condition>>
+
+context-free priorities
+
+  Condition.And >
+  Condition.Or
+
+template options
+
+  tokenize: "<>();"
+
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]
+  

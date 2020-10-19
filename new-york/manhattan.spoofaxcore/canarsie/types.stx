@@ -11,6 +11,7 @@ signature
     VARCHAR	: int -> TYPE
     DATE 	: TYPE
     TABLE   : scope -> TYPE
+    RESULT	: scope -> TYPE
     // On a table with a foreign key constraint
     // Store column type and referenced type
     FK		: TYPE * TYPE -> TYPE
@@ -23,16 +24,6 @@ signature
     var : string -> scope
     nullable: 
 
-  namespaces
-    Table 	: string
-
-  name-resolution
-    resolve Table
-      filter P*
-      min $ < P
-
-rules
-
 rules // table declarations
 
   declareTable : scope * scope * string * list((string * TYPE * CNULL))
@@ -42,7 +33,7 @@ rules // table declarations
     !type[n, withType(TABLE(s_table))] in s,
     declareCols(s_table, T_cols),
     query type
-      filter P*
+      filter P* 
          and { n' :- n' == n }
          min $ < P
           in s |-> [(_, (_, _))]
@@ -62,8 +53,21 @@ rules // column declarations
 
   declareCols maps declareCol(*, list(*))
   declareCol : scope * (string * TYPE * CNULL)
+  copyCols maps copyCol(*, list(*))
+  copyCol : scope * (string * scope)
+
   declareCol(s, (n, T, null)) :-
     !var[n, withTypeAndNullable(T, null)] in s,
+    query var
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+         and true
+          in s |-> [_]
+    | error $[Multiple columns with name [n]].
+
+  copyCol(s, (n, T)) :-
+    !var[n, T] in s,
     query var
       filter P*
          and { n' :- n' == n }
@@ -75,9 +79,34 @@ rules // column declarations
   resolveCol: scope * string -> scope
   resolveCol(s, n) = s_t :-
     query var
-      filter P*
+      filter P* N*
          and { n' :- n' == n }
-         min $ < P
+         min $ < P, N < P, $ < N
          and true
           in s |-> [(_, (_, s_t)) | _]
     | error $[No column with name [n]].
+
+  // Non-permissive lookup
+  // Needed for selects on joined tables
+  resolveColNP: scope * string -> scope
+  resolveColNP(s, n) = s_t :-
+    query var
+      filter N*
+          and { n' :- n' == n }
+          min $ < N
+          and true
+          in s |-> [(_, (_, s_t))]
+    | error $[No unique column with name [n]].
+
+rules
+
+  visibleColumns: scope -> list((string * scope))
+  stripColPaths maps stripColPath(list(*)) = list(*)
+  stripColPath: (path * (string * scope)) -> (string * scope)
+
+  visibleColumns(s) = stripColPaths(r) :-
+    query var
+      filter N*
+         in s |-> r.
+
+  stripColPath((p, T)) = T.

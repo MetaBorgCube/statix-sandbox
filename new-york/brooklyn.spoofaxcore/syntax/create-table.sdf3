@@ -11,15 +11,15 @@ context-free sorts ColumnInit TableConstraints TableConstraint
 
 context-free syntax
 
-  SQLStatement.Create = <CREATE TABLE <SQLID> (
+  Statement.Create = <CREATE TABLE <ID> (
     <{ColumnInit ",\n"}+>
     <TableConstraints>
   );>
 
   ColumnInit.ColumnInit = <<ColumnDef> <ColumnConstraint*>>
   
-  TableConstraint.PrimaryKey = <CONSTRAINT <SQLID> PRIMARY KEY (<ColumnRef>)>
-  TableConstraint.ForeignKey = <CONSTRAINT <SQLID> FOREIGN KEY (<ColumnRef>) REFERENCES <TableRef>(<ColumnRef>)>
+  TableConstraint.PrimaryKey = <CONSTRAINT <ID> PRIMARY KEY (<ColumnRef>)>
+  TableConstraint.ForeignKey = <CONSTRAINT <ID> FOREIGN KEY (<ColumnRef>) REFERENCES <TableRef>(<ColumnRef>)>
   
   TableConstraints.TableConstraints = <, 
     <{TableConstraint ",\n"}*>
