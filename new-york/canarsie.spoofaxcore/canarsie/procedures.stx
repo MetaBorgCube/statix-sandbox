@@ -20,3 +20,4 @@ rules
     | error $[Duplicate declaration of type [n]].
 
 
+

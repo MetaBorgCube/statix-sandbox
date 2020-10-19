@@ -27,7 +27,8 @@ rules
 
   equiType(VARCHAR(_), VARCHAR(_)).
   // Indirection to solve overlapping pattern issue
-  equiType(T1, T2) :- T1 == T2.
+  equiType(T1, T2) :- T1 == T2
+  | error $[Types [T1] and [T2] cannot be compared].
 
 rules
 

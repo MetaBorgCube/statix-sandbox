@@ -32,6 +32,8 @@ context-free syntax
   
   Condition.Equal 		= <<Value> = <Value>>
   Condition.NotEqual 	= [[Value] <> [Value]]
+  Condition.Gt		 	= [[Value] > [Value]]
+  Condition.Lt		 	= [[Value] < [Value]]
   Condition.Null  		= <<Value> IS NULL>
   Condition.NotNull  	= <<Value> IS NOT NULL>
   

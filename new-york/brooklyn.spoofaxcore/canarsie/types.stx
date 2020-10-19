@@ -62,7 +62,7 @@ rules // column declarations
       filter P*
          and { n' :- n' == n }
          min $ < P
-         and true
+         and false
           in s |-> [_]
     | error $[Multiple columns with name [n]].
 
@@ -72,7 +72,7 @@ rules // column declarations
       filter P*
          and { n' :- n' == n }
          min $ < P
-         and true
+         and false
           in s |-> [_]
     | error $[Multiple columns with name [n]].
 
@@ -82,7 +82,7 @@ rules // column declarations
       filter P* N*
          and { n' :- n' == n }
          min $ < P, N < P, $ < N
-         and true
+         and false
           in s |-> [(_, (_, s_t)) | _]
     | error $[No column with name [n]].
 
@@ -94,7 +94,7 @@ rules // column declarations
       filter N*
           and { n' :- n' == n }
           min $ < N
-          and true
+          and false
           in s |-> [(_, (_, s_t))]
     | error $[No unique column with name [n]].
 

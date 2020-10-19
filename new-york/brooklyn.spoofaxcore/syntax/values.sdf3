@@ -1,6 +1,6 @@
 module values
 
-imports brooklyn-lex
+imports brooklyn-lex types
 
 lexical sorts VAR
 
@@ -15,3 +15,6 @@ context-free syntax
   Value.Var 		= VAR
   Value.IntLit		= INT
   Value.StringLit 	= STRING
+  Value.Convert		= <CONVERT(<DataType>, <Value>)>
+  
+  

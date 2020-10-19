@@ -5,6 +5,8 @@ imports
 
   canarsie/resolution
   canarsie/types
+  
+  brooklyn/datatypes
 
 signature
   
@@ -15,9 +17,22 @@ rules
 
   typeOfValue: scope * Value -> scope
   
-  typeOfValue(_, IntLit(_)) = withTypeAndNullable(INT(), CNULL()).
-  typeOfValue(_, StringLit(_)) = withTypeAndNullable(VARCHAR(0), CNULL()).
-  typeOfValue(s, Var(n)) =  withTypeAndNullable(resolveVar(s, n), CNULL()).
+  typeOfValue(_, IntLit(_)) = T :-
+    withTypeAndNullable(INT(), CNULL()) == T.
+    
+  typeOfValue(_, StringLit(_)) = T :-
+    withTypeAndNullable(VARCHAR(0), CNULL()) == T.
+    
+  typeOfValue(s, Var(n)) = T :- {Tvar}
+    resolveVar(s, n) == Tvar,
+    withTypeAndNullable(Tvar, CNULL()) == T.
+  
+  typeOfValue(s, Convert(t, v)) = T :- {Td Tv}
+  	withTypeAndNullable(Td, CNULL()) == T,
+    typeOfDataType(t) == Td,
+    typeOf(typeOfValue(s, v)) == Tv,
+    try { Td != Tv }
+    | warning $[Input and target type are equal, no conversion needed].
 
 rules
 

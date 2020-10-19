@@ -55,6 +55,16 @@ rules
     typeOfValue(s, l) == Tl,    
     typeOfValue(s, r) == Tr,
     equiType(typeOf(Tl), typeOf(Tr)).
+  
+  conditionOk(s, Gt(l, r)) :- {Tl Tr}
+    typeOfValue(s, l) == Tl,    
+    typeOfValue(s, r) == Tr,
+    equiType(typeOf(Tl), typeOf(Tr)).
+  
+  conditionOk(s, Lt(l, r)) :- {Tl Tr}
+    typeOfValue(s, l) == Tl,    
+    typeOfValue(s, r) == Tr,
+    equiType(typeOf(Tl), typeOf(Tr)).
 
   conditionOk(s, NotEqual(l, r)) :- {Tl Tr}
     typeOfValue(s, l) == Tl,    
