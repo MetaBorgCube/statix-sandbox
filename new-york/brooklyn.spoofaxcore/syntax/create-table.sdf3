@@ -14,15 +14,15 @@ context-free syntax
   Statement.Create = <CREATE TABLE <ID> (
     <{ColumnInit ",\n"}+>
     <TableConstraints>
-  );>
+  );> {case-insensitive}
 
   ColumnInit.ColumnInit = <<ColumnDef> <ColumnConstraint*>>
   
-  TableConstraint.PrimaryKey = <CONSTRAINT <ID> PRIMARY KEY (<ColumnRef>)>
-  TableConstraint.ForeignKey = <CONSTRAINT <ID> FOREIGN KEY (<ColumnRef>) REFERENCES <TableRef>(<ColumnRef>)>
+  TableConstraint.PrimaryKey = <CONSTRAINT <ID> PRIMARY KEY (<ColumnRef>)> {case-insensitive}
+  TableConstraint.ForeignKey = <CONSTRAINT <ID> FOREIGN KEY (<ColumnRef>) REFERENCES <TableRef>(<ColumnRef>)> {case-insensitive}
   
   TableConstraints.TableConstraints = <, 
-    <{TableConstraint ",\n"}*>
+    <{TableConstraint ",\n"}+>
   >
 
   TableConstraints.None =

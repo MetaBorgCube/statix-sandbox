@@ -18,10 +18,10 @@ rules
   typeOfValue: scope * Value -> scope
   
   typeOfValue(_, IntLit(_)) = T :-
-    withTypeAndNullable(INT(), CNULL()) == T.
+    withTypeAndNullable(INT(), CNOTNULL()) == T.
     
   typeOfValue(_, StringLit(_)) = T :-
-    withTypeAndNullable(VARCHAR(0), CNULL()) == T.
+    withTypeAndNullable(VARCHAR(0), CNOTNULL()) == T.
     
   typeOfValue(s, Var(n)) = T :- {Tvar}
     resolveVar(s, n) == Tvar,
@@ -51,5 +51,6 @@ rules
     query var
       filter P*
          and {n' :- n' == n }
-          in s |-> [(_, (_, T))|_].
+          in s |-> [(_, (_, T))|_]
+      | error $[Variable [n] not declared].
     

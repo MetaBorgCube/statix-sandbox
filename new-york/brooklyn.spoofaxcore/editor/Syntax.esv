@@ -25,3 +25,9 @@ views
   
   outline view: editor-outline (source)
     expand to level: 3
+
+colorer
+
+  STRING : darkgreen
+
+  

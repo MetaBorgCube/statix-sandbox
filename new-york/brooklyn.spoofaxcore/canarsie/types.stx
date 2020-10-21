@@ -75,6 +75,7 @@ rules // column declarations
          and false
           in s |-> [_]
     | error $[Multiple columns with name [n]].
+    
 
   resolveCol: scope * string -> scope
   resolveCol(s, n) = s_t :-
@@ -85,7 +86,7 @@ rules // column declarations
          and false
           in s |-> [(_, (_, s_t)) | _]
     | error $[No column with name [n]].
-
+    
   // Non-permissive lookup
   // Needed for selects on joined tables
   resolveColNP: scope * string -> scope

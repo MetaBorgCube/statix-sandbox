@@ -74,12 +74,12 @@ rules
   conditionOk(s, Null(v)) :- {T}
     typeOfValue(s, v) == T,
     try { nullable(T) }
-    | warning $[There is a NOT NULL constraint on this column, so condition is always false].
+    | warning $[There is a NOT NULL constraint on this value, so this condition is always false].
 
   conditionOk(s, NotNull(v)) :- {T}
     typeOfValue(s, v) == T,
     try { nullable(T) }
-    | warning $[There is a NOT NULL constraint on this column, so condition is always true].
+    | warning $[There is a NOT NULL constraint on this value, so this condition is always true].
 
 rules
 

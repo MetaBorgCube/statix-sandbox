@@ -13,5 +13,5 @@ context-free syntax
   
   ColumnDef.ColumnDef = <<ID> <DataType>>
   
-  ColumnConstraint.PrimaryKey 	= <PRIMARY KEY>
-  ColumnConstraint.NotNull		= <NOT NULL>
+  ColumnConstraint.PrimaryKey 	= <PRIMARY KEY> {case-insensitive}
+  ColumnConstraint.NotNull		= <NOT NULL> {case-insensitive}

@@ -7,7 +7,7 @@ context-free sorts DataType
 
 context-free syntax
 
-  DataType.TVarChar	 	= <VARCHAR>
-  DataType.TVarCharP 	= <VARCHAR(<INT>)>
-  DataType.TInt 		= <INT>
-  DataType.TDate 		= <DATE>
+  DataType.TVarChar	 	= <VARCHAR> {case-insensitive}
+  DataType.TVarCharP 	= <VARCHAR(<INT>)> {case-insensitive}
+  DataType.TInt 		= <INT> {case-insensitive}
+  DataType.TDate 		= <DATE> {case-insensitive}

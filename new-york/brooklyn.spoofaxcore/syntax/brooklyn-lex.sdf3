@@ -12,22 +12,22 @@ lexical syntax
   ID          = [a-zA-Z] [\_a-zA-Z0-9]* 
   STRING      = "'" StringChar* "'" 
   StringChar  = ~[\'\n] 
-  StringChar  = "\\'" 
-  StringChar  = BackSlashChar 
-  BackSlashChar  = "\\" 
+  StringChar  = "''" 
+  StringChar  = SingleQuoteChar 
+  SingleQuoteChar  = "'" 
 
 lexical restrictions
   
   ID         -/- [a-zA-Z0-9\_]
   
-  BackSlashChar -/- [\']
+  SingleQuoteChar -/- [\']
 
 lexical syntax
   INT            = "-"? [0-9]+  
   LAYOUT         = [\ \t\n\r] 
   LAYOUT         = [\ \t\n\r]
-  CommentChar1    = [\*]
-  CommentChar2    = [\/]
+  CommentChar1   = [\*]
+  CommentChar2   = [\/]
   LAYOUT         = BlockComment
   BlockComment   = "/*" InsideComment* "*/"
   InsideComment  = "/*" InsideComment* "*/"
@@ -35,7 +35,7 @@ lexical syntax
   InsideComment  = CommentChar1
   InsideComment  = CommentChar2
   InsideComment  = BlockComment
-  LAYOUT         = "//" ~[\n\r]* NewLineEOF
+  LAYOUT         = "--" ~[\n\r]* NewLineEOF
   NewLineEOF     = [\n\r]
   NewLineEOF     = EOF
   EOF            =
@@ -52,5 +52,5 @@ context-free restrictions
   // Ensure greedy matching for comments
   
   LAYOUT? -/- [\ \t\n\r]
-  LAYOUT? -/- [\/].[\/]
+  LAYOUT? -/- [\-].[\-]
   LAYOUT? -/- [\/].[\*]

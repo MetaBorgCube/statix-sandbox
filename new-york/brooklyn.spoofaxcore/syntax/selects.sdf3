@@ -14,32 +14,32 @@ context-free syntax
 
   Select.Select = <SELECT <SelectSpec> FROM <TableSpec>
   	  <WhereClause?>
-  >
+  > {case-insensitive}
   
   SelectSpec.Wld = "*"
-  SelectSpec.Cols = <<{ColSpec ", "}*>>
+  SelectSpec.Cols = <<{ColSpec ", "}+>>
   
   ColSpec.Ref = ColumnRef
-  ColSpec.CAlias = <<ColumnRef> AS <ID>>
+  ColSpec.CAlias = <<ColumnRef> AS <ID>> {case-insensitive}
   
   TableSpec.Table = TableRef
-  TableSpec.TAlias = <<TableRef> <ID>>
-  TableSpec.Join  = <<TableSpec> JOIN <TableSpec> ON <Condition>> {left}
+  TableSpec.TAlias = <<TableRef> AS <ID>> {case-insensitive}
+  TableSpec.Join  = <<TableSpec> JOIN <TableSpec> ON <Condition>> {left, case-insensitive}
   
-  Condition.And			= <<Condition> AND <Condition>> {right}
-  Condition.Or			= <<Condition> OR <Condition>>  {right}
+  Condition.And			= <<Condition> AND <Condition>> {right, case-insensitive}
+  Condition.Or			= <<Condition> OR <Condition>>  {right, case-insensitive}
   Condition				= <(<Condition>)>				{bracket}
   
   Condition.Equal 		= <<Value> = <Value>>
   Condition.NotEqual 	= [[Value] <> [Value]]
   Condition.Gt		 	= [[Value] > [Value]]
   Condition.Lt		 	= [[Value] < [Value]]
-  Condition.Null  		= <<Value> IS NULL>
-  Condition.NotNull  	= <<Value> IS NOT NULL>
+  Condition.Null  		= <<Value> IS NULL> {case-insensitive}
+  Condition.NotNull  	= <<Value> IS NOT NULL> {case-insensitive}
   
   Value.Column 			= ColumnRef
 
-  WhereClause.Where 	= <WHERE <Condition>>
+  WhereClause.Where 	= <WHERE <Condition>> {case-insensitive}
 
 context-free priorities
 
