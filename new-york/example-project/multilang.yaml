@@ -1,6 +1,0 @@
-languageContexts:
-  'mb.brooklyn': "debugContext"
-  'mb.manhattan': "debugContext"
-contextConfigs:
-  debugContext:
-    stripTraces: false

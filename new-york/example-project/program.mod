@@ -1,21 +1,10 @@
-def leipzig : City = City {
-  cityid = 1,
-  name = "Leipzig"
+def quote = Quotes {
+    id = 1,
+	text = "Brevity is the soul of wit.",
+	author = Authors {
+	  id = 2,
+	  name = "Bruce"
+	}
 }
 
-def sle : Series = Series {
-  seriesid = 2,
-  name = "Societas Linguistica Europaea",
-  abbrev = "SLE"
-}
-
-def sle2019 : Conference = Conference {
-  confid = 3,
-  year = 2019,
-  series = sle,
-  city = leipzig
-}
-
-$ sle2019.start.utc + sle2019.city.cityid + sle2019.series.seriesid
-
-$ with (leipzig) do cityid + 1 
+$ (authorQuotes 2).hd.author == 2
