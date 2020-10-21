@@ -14,6 +14,9 @@ signature
 rules
 
   subtype(NULL(), REC(_)).
+  subtype(REC(r1), REC(r2)) :- {v2}
+    varsInScope(r2) == v2,
+    fdeclsInScope(v2, r1).
   
   equitype(NULL(), REC(_)).
   equitype(REC(_), NULL()).
@@ -103,4 +106,15 @@ rules
   initOk(e, x, T, []) :-
     nullable(T)
     | error $[field [x] not initialized]@e.
-    
+
+rules
+
+  fdeclInScope : (path * (ID * scope)) * scope 
+  fdeclsInScope maps fdeclInScope(list(*), *) 
+
+  fdeclInScope((_, (x, T)), s) :-
+    ftypeOk(T, resolveVar(s, x)). 
+
+  ftypeOk: scope * list((path * (ID * scope)))
+  ftypeOk(T, [(_, (_, Td))|_]) :- 
+    subtype(typeOf(T), typeOf(Td)).

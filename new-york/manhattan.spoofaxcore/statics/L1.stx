@@ -12,6 +12,7 @@ imports statics/function
 
 imports statics/let
 imports statics/type
+imports statics/builtin
 imports statics/mod
 imports statics/canarsie
 
@@ -19,4 +20,3 @@ imports statics/canarsie
 imports statics/file
 
 imports statics/pattern
-

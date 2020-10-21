@@ -55,6 +55,7 @@ rules // column declarations
   declareCol : scope * (string * TYPE * CNULL)
   copyCols maps copyCol(*, list(*))
   copyCol : scope * (string * scope)
+  removeFK: TYPE -> TYPE
 
   declareCol(s, (n, T, null)) :-
     !var[n, withTypeAndNullable(T, null)] in s,
@@ -62,19 +63,24 @@ rules // column declarations
       filter P*
          and { n' :- n' == n }
          min $ < P
-         and true
+         and false
           in s |-> [_]
     | error $[Multiple columns with name [n]].
 
-  copyCol(s, (n, T)) :-
-    !var[n, T] in s,
+  copyCol(s, (n, T)) :- {T' null}
+    removeFK(typeOf(T)) == T',
+    nullability(T) == null,
+    !var[n, withTypeAndNullable(T', null)] in s,
     query var
       filter P*
          and { n' :- n' == n }
          min $ < P
-         and true
+         and false
           in s |-> [_]
     | error $[Multiple columns with name [n]].
+
+  removeFK(T) = T.
+  removeFK(FK(T, _)) = removeFK(T).
 
   resolveCol: scope * string -> scope
   resolveCol(s, n) = s_t :-
@@ -85,7 +91,7 @@ rules // column declarations
          and false
           in s |-> [(_, (_, s_t)) | _]
     | error $[No column with name [n]].
-
+    
   // Non-permissive lookup
   // Needed for selects on joined tables
   resolveColNP: scope * string -> scope
@@ -110,3 +116,17 @@ rules
          in s |-> r.
 
   stripColPath((p, T)) = T.
+
+rules
+
+  nullability: scope -> CNULL
+  
+  nullability(s) = disambNullable(R) :-
+    query nullable
+       filter e
+           in s |-> R. 
+
+  disambNullable: list((path * ())) -> CNULL
+  
+  disambNullable([]) = CNOTNULL().
+  disambNullable([_|_]) = CNULL().

@@ -3,12 +3,13 @@ module manhattan
 
 imports statics/L1
 imports statics/file
+imports statics/builtin
 
 rules // multi-file entry point
 
   projectOk : scope
 
-  projectOk(s).
+  projectOk(s) :- declareBuiltinTypes(s).
   
   fileOk : scope * Start 
   

@@ -3,6 +3,6 @@ plugins {
 }
 
 languageEclipseProject {
-  eclipseExternaldepsProject.set(project(":manhattan.eclipse.externaldeps"))
+  // eclipseExternaldepsProject.set(project(":manhattan.eclipse.externaldeps"))
   adapterProject.set(project(":manhattan.spoofax"))
 }

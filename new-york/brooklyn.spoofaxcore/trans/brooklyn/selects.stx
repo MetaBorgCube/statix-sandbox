@@ -105,7 +105,6 @@ rules
   	typeOfResultColumnRef(s_sel, c) == Tcol,
   	copyCol(s_res, (n, Tcol)).
 
-
 rules
 
   typeOfTableRef: scope * TableRef -> TYPE

@@ -1,0 +1,19 @@
+module statics/builtin
+
+imports canarsie/resolution
+imports canarsie/types
+imports statics/type
+imports statics/record
+
+rules
+
+  declareBuiltinTypes: scope
+  
+  declareBuiltinTypes(s) :- {s_date}
+    !type["Date", withType(dateType())] in s.
+  
+  dateType: -> TYPE  
+  dateType() = REC(s_date) :-
+    // Declare dummy type with utc : int field
+    new s_date, 
+    !var["epoch", withType(INT())] in s_date.

@@ -47,7 +47,7 @@ rules
 rules
 
   strictTypeOf: scope -> TYPE
-  strictTypeOf(s) = strict(typeOf(s)).
+  strictTypeOf(T) = strict(typeOf(T)).
 
   strict: TYPE -> TYPE
   strict(T) = T.
