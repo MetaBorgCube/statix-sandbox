@@ -7,10 +7,10 @@ dependencies:
   - org.metaborg:org.metaborg.meta.lang.template:${metaborgVersion}
   - org.metaborg:statix.lang:${metaborgVersion}
   - org.metaborg:sdf3.ext.statix:${metaborgVersion}
-  - org.metaborg:dynsem:${metaborgVersion}
   source:
   - org.metaborg:meta.lib.spoofax:${metaborgVersion}
   - org.metaborg:statix.runtime:${metaborgVersion}
+  - org.metaborg:org.metaborg.meta.lang.stratego:${metaborgVersion}
 pardonedLanguages:
 - EditorService
 - Stratego-Sugar
@@ -18,11 +18,15 @@ pardonedLanguages:
 language:
   sdf:
     pretty-print: chicago
-    sdf2table: dynamic
+    sdf2table: java
+    jsglr-version: recovery-incremental 
     placeholder:
       prefix: "$"
+  statix:
+    concurrent: false 
   stratego:
-    format: ctree
+    format: jar
+    build: incremental
     args:
     - -la
     - stratego-lib

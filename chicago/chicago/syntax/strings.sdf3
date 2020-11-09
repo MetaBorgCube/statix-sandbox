@@ -1,0 +1,11 @@
+module strings
+
+imports lex
+imports base 
+
+context-free syntax
+  Type.StringT = <String>
+  TYPE.STRING  = <String>
+
+  Exp.String = STRING
+  

@@ -12,6 +12,68 @@ rules
   typeOfExp(s, e@True()) = BOOL() :-
     @e.type := BOOL().
   
+  
+signature 
+  sorts KV Dict
+  constructors 
+    Bools : list(Exp) -> Exp 
+    BoolZip : list(Exp) * list(Exp) -> Exp 
+    
+    Bind : ID * TYPE -> KV
+    Dict : list(KV) -> Dict
+    
+rules
+
+  typesOfExps maps typeOfExp(*, list(*)) = list(*)
+ 
+
+  typeOfExp(s, Bools(es)) = T :- {Ts}
+    typesOfExps(s, es) == Ts.
+    
+  typesOfExps2 : scope * list(Exp) -> list(TYPE)
+  
+  
+  typesOfExps2(s, []) = [].
+  
+  typesOfExps2(s, [e | es]) = [T | Ts] :-
+    typeOfExp(s, e) == T,
+    typesOfExps2(s, es) == Ts.
+ 
+    
+    
+    
+  zipTypeOfExp : scope * Exp * Exp -> TYPE
+  
+  typesOfExpZip maps zipTypeOfExp(*, list(*), list(*)) = list(*)
+  
+  typeOfExp(s, BoolZip(es1, es2)) = T :- {Ts}
+    typesOfExpZip(s, es1, es2) == Ts.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   typeOfExp(s, e@False()) = BOOL() :-
     @e.type := BOOL().
   

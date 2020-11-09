@@ -20,7 +20,7 @@ context-free restrictions
 //lexical sorts STRING
 lexical syntax
   STRING         = "\"" StringChar* "\"" 
-  StringChar     = ~[\"\n] 
+  StringChar     = ~[\\\"\n] 
   StringChar     = "\\\"" 
   StringChar     = BackSlashChar 
   BackSlashChar  = "\\" 

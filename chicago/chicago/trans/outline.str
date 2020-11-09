@@ -2,7 +2,9 @@ module outline
 
 imports
   
-  signatures/chicago-sig
+//  signatures/chicago-sig
+//  signatures/chicago-sig/-
+  signatures/-
   libspoofax/editor/outline
 
 rules
@@ -11,5 +13,12 @@ rules
     (_, _, ast, path, project-path) -> outline
     where
       outline := <simple-label-outline(to-outline-label)> ast
+      
+   
+  to-outline-label :: Decl -> string 
   
-  to-outline-label = fail
+  to-outline-label : 
+    Def(Bind(x, _)) -> x
+
+  to-outline-label :
+    Module(x, _) -> x

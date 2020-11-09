@@ -1,0 +1,13 @@
+module statics/strings
+
+imports statics/base
+imports signatures/strings-sig
+
+rules
+
+  typeOfType(s, StringT()) = STRING().
+  
+  typeOfExp(s, e@String(_)) = STRING() :-
+    @e.type := STRING().
+  
+  

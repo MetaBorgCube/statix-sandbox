@@ -12,4 +12,4 @@ rules // multi-file entry point
   
   fileOk : scope * Start 
   
-  fileOk(s, p) :- programOk(s, p). 
+  fileOk(s, p) :- programOk(s, p).  

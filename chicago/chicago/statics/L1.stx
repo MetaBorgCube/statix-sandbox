@@ -3,7 +3,9 @@ module statics/L1
 imports statics/base
 
 imports statics/numbers
-imports statics/booleans
+imports statics/booleans 
+imports statics/strings
+
 imports statics/variable
 
 imports statics/record

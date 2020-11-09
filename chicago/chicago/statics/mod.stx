@@ -77,9 +77,15 @@ rules
       | error $[Duplicate definition of module [x]], 
     @x.type := T.
     
+//  resolveMod(s, x) = ps :-
+//    query mod
+//      filter P* and { x' :- x' == x }
+//         min $ < I, $ < P, I < P and true
+//          in s |-> ps.
+          
   resolveMod(s, x) = ps :-
     query mod
-      filter (M | P)* (R* | (M | I)*)
+      filter (M | P)* (R* | (I (M | I)*)?)
          and { x' :- x' == x }
          min $ < I, $ < P, I < P, R < P
          and true
