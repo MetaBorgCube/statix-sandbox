@@ -1,0 +1,41 @@
+module analysis
+
+imports
+
+  statixruntime
+  statix/api
+
+  pp
+  injections/-
+  
+  desugar
+
+rules // Analysis
+
+  editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"brooklyn", "projectOk", "fileOk")
+
+  pre-analyze  = explicate-injections-brooklyn-Start; desugar-all
+  post-analyze = resugar-all; implicate-injections-brooklyn-Start
+
+rules // Editor Services
+
+  editor-resolve = stx-editor-resolve
+
+  editor-hover = stx-editor-hover
+
+rules // Debugging
+
+  // Prints the abstract syntax ATerm of a selection.
+  debug-show-aterm: (selected, _, _, path, project-path) -> (filename, result)
+    with filename := <guarantee-extension(|"aterm")> path
+       ; result   := selected
+
+  // Prints the pre-analyzed abstract syntax ATerm of a selection.
+  debug-show-pre-analyzed: (selected, _, _, path, project-path) -> (filename, result)
+    with filename := <guarantee-extension(|"pre-analyzed.aterm")> path
+       ; result   := <pre-analyze> selected
+
+  // Prints the analyzed annotated abstract syntax ATerm of a selection.
+  debug-show-analyzed: (selected, _, _, path, project-path) -> (filename, result)
+    with filename := <guarantee-extension(|"analyzed.aterm")> path
+       ; result   := selected

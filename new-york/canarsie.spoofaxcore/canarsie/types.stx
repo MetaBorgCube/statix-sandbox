@@ -1,0 +1,83 @@
+module canarsie/types
+
+imports
+  canarsie/resolution
+
+signature
+
+  // SQL data types
+  sorts TYPE constructors
+    INT 	: TYPE
+    VARCHAR	: int -> TYPE
+    DATE 	: TYPE
+    TABLE   : scope -> TYPE
+    // On a table with a foreign key constraint
+    // Store column type and referenced type
+    FK		: TYPE * TYPE -> TYPE
+
+  sorts CNULL constructors // nullability constraint
+    CNULL    : CNULL
+    CNOTNULL : CNULL
+
+  relations
+    var : string -> scope
+    nullable: 
+
+  namespaces
+    Table 	: string
+
+  name-resolution
+    resolve Table
+      filter P*
+      min $ < P
+
+rules
+
+rules // table declarations
+
+  declareTable : scope * scope * string * list((string * TYPE * CNULL))
+
+  declareTable(s, s_table, n, T_cols) :-
+    s_table -P-> s,
+    !type[n, withType(TABLE(s_table))] in s,
+    declareCols(s_table, T_cols),
+    query type
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+          in s |-> [(_, (_, _))]
+    | error $[Multiple tables with name [n]].
+
+  resolveTable : scope * string -> TYPE
+
+  resolveTable(s, n) = typeOf(s_t) :-
+    query type
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+          in s |-> [(_, (_, s_t))|_]
+      | error $[Table [n] not created].
+
+rules // column declarations
+
+  declareCols maps declareCol(*, list(*))
+  declareCol : scope * (string * TYPE * CNULL)
+  declareCol(s, (n, T, null)) :-
+    !var[n, withTypeAndNullable(T, null)] in s,
+    query var
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+         and true
+          in s |-> [_]
+    | error $[Multiple columns with name [n]].
+
+  resolveCol: scope * string -> scope
+  resolveCol(s, n) = s_t :-
+    query var
+      filter P*
+         and { n' :- n' == n }
+         min $ < P
+         and true
+          in s |-> [(_, (_, s_t)) | _]
+    | error $[No column with name [n]].

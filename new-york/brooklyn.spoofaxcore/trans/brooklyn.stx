@@ -1,0 +1,15 @@
+module brooklyn
+
+imports
+
+  signatures/brooklyn-sig
+  brooklyn/brooklyn
+
+rules
+
+  projectOk : scope
+  projectOk(_).
+
+  fileOk : scope * Start
+
+  fileOk(s, mod)  :- sqlModOk(s, mod).

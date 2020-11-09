@@ -1,0 +1,19 @@
+module desugar
+
+imports
+
+  signatures/brooklyn/-
+
+rules
+
+  desugar-all = bottomup(try(desugar))
+  resugar-all = bottomup(try(resugar))
+
+signature
+  constructors
+    TVarCharI : int -> DataType
+
+rules
+    
+  desugar: TVarCharP(arg){annos*} -> TVarCharI(<string-to-int> arg){annos*}  
+  resugar: TVarCharI(arg){annos*} -> TVarCharP(<int-to-string> arg){annos*}

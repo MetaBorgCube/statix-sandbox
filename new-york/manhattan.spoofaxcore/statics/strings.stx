@@ -1,0 +1,14 @@
+module statics/strings
+
+imports canarsie/types
+imports statics/base
+imports signatures/strings-sig
+
+signature
+  constructors
+    STRING: TYPE
+
+rules
+
+  typeOfExp(_, String(_)) = STRING().
+  typeOfType(s, StringT()) = STRING().

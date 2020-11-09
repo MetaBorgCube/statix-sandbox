@@ -1,0 +1,18 @@
+module brooklyn
+
+imports
+
+  brooklyn-lex
+  statements
+  create-table
+
+context-free sorts Start
+
+context-free start-symbols Start
+
+context-free syntax
+  
+  Start.SQLMod = <
+  	<{SQLStatement "\n"}+>
+  >
+

@@ -1,0 +1,21 @@
+module numbers
+
+imports base
+
+context-free syntax
+  Exp.Int   = <<INT>>
+  Exp.Min   = [-[Exp]]
+  Exp.Add   = <<Exp> + <Exp>> {left}
+  Exp.Sub   = <<Exp> - <Exp>> {left}
+  Exp.Mul   = <<Exp> * <Exp>> {left}
+
+  Type.IntT = <Int>
+  
+  Val.IntV  = <<INT>>
+  
+context-free priorities
+  Exp.Min > Exp.Mul > {left: Exp.Add Exp.Sub}
+    
+template options
+  ID = keyword {reject}
+  keyword -/- [a-zA-Z0-9]

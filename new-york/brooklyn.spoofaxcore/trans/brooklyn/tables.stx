@@ -1,0 +1,24 @@
+module brooklyn/tables
+
+imports
+  brooklyn/constraints
+  canarsie/types
+
+signature
+
+rules // table constraints
+
+  constrs2List: TableConstraints -> list(TableConstraint)
+  constrs2List(None()) = [].
+  constrs2List(TableConstraints(cs)) = cs.
+  
+  declareTableConstrs maps declareTableConstr(*, list(*))
+  declareTableConstr : scope * TableConstraint
+  
+  declareTableConstr(s, ForeignKey(n, ColumnRef(sc), TableRef(dt), ColumnRef(dc))) :-
+    @n.type := FKC(sc, dt, dc),
+    declareFKConstr(s, n, sc, dt, dc).
+  
+  declareTableConstr(s, PrimaryKey(n, ColumnRef(cn))) :-
+    @n.type := PKC(cn),
+    declarePKConstr(s, n, cn).

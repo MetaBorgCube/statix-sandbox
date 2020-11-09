@@ -1,0 +1,26 @@
+module statics/canarsie
+
+imports canarsie/types
+imports canarsie/resolution
+imports statics/base
+imports statics/type
+imports statics/numbers
+imports statics/strings
+imports statics/record
+imports statics/variable
+imports statics/mod
+
+rules // Performs mapping of sql table types to the types that are used in mod
+
+  proj(TABLE(s_table), n) = strictTypeOf(s_col) :-
+    resolveCol(s_table, n) == s_col.
+    
+  scopeOfType(TABLE(s_table)) = s_table.
+
+  strict(VARCHAR(_)) = STRING().
+  strict(DATE()) = REC(s_rec) :-
+    // Declare dummy type with utc : int field
+    new s_rec, !var["utc", withType(INT())] in s_rec.
+
+  strict(FK(_, T)) = strict(T).
+  

@@ -1,0 +1,17 @@
+module brooklyn
+
+imports
+  
+  completion/completion
+  pp
+  outline
+  analysis
+  desugar
+
+rules // Debugging
+  
+  debug-show-aterm:
+    (node, _, _, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path
+    ; result   := node

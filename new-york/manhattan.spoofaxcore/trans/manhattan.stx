@@ -1,0 +1,15 @@
+module manhattan
+
+
+imports statics/L1
+imports statics/file
+
+rules // multi-file entry point
+
+  projectOk : scope
+
+  projectOk(s).
+  
+  fileOk : scope * Start 
+  
+  fileOk(s, p) :- programOk(s, p). 

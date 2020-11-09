@@ -1,0 +1,29 @@
+module brooklyn/datatypes
+
+imports
+  signatures/types-sig
+  canarsie/types
+
+signature
+ 
+  constructors
+    TVarCharI : int -> DataType
+
+rules // data type
+
+  typeOfDataType: DataType -> TYPE
+  
+  typeOfDataType(TVarChar()) 	= VARCHAR(80).
+  typeOfDataType(TVarCharI(n))	= VARCHAR(n).
+  typeOfDataType(TInt()) 		= INT().
+  typeOfDataType(TDate()) 		= DATE().
+
+rules
+
+  columnReferenceTypeOk: TYPE * TYPE
+
+  columnReferenceTypeOk(FK(T, _), T).
+  columnReferenceTypeOk(FK(VARCHAR(s1), _), VARCHAR(s2)) :-
+    s1 #> s2.
+  
+  columnReferenceTypeOk(_, _) :- false.

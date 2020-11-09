@@ -1,0 +1,53 @@
+module statics/type
+
+imports canarsie/resolution
+imports statics/base
+imports signatures/type-sig
+
+rules
+
+  declOk(s, TypeDef(x, t)) :-
+    declareType(s, x, typeOfType(s, t)).
+
+  typeOfType(s, TypeRef(x)) = typeOfTypeRef(s, x).
+
+  typeOfExp(s, e1@Ascr(e, t)) = T :- {S}
+    typeOfExp(s, e) == S,
+    typeOfType(s, t) == T,
+    subtype(S, T),
+    @e1.type := T.
+
+rules
+
+  declareType : scope * ID * TYPE
+  resolveType : scope * ID -> list((path * (ID * scope)))
+  typeOfTypeRef  : scope * ID -> TYPE
+  scopeOfType : TYPE -> scope
+
+  declareType(s, x, T) :-
+    !type[x, withType(T)] in s,
+    resolveType(s, x) == [(_, (_, _))]
+      | error $[Duplicate definition of type [x]],
+    @x.type := T.
+
+  resolveType(s, x) = ps :-
+    query type
+      filter P* (R* | I*)
+         and { x' :- x' == x }
+         min $ < I, $ < P, I < P, R < P
+         and true
+          in s |-> ps.
+
+  typeOfTypeRef(s, x) = typeOf(T) :- {x'}
+    resolveType(s, x) == [(_,(x', T))|_]
+      | error $[Type [x] not defined],
+//    @x.type := typeOf(T),
+    @x.ref := x'.
+    
+rules
+
+  strictTypeOf: scope -> TYPE
+  strictTypeOf(s) = strict(typeOf(s)).
+
+  strict: TYPE -> TYPE
+  strict(T) = T.

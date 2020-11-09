@@ -1,0 +1,10 @@
+module table
+
+imports
+  brooklyn-lex
+
+context-free sorts TableRef
+
+context-free syntax
+
+  TableRef.TableRef = <<SQLID>>

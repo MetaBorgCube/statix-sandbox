@@ -1,0 +1,7 @@
+module canarsie
+
+context-free sorts Start
+
+context-free start-symbols Start
+
+// No productions: language is not used for parsing

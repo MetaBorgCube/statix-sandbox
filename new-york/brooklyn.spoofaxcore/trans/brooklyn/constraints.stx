@@ -1,0 +1,118 @@
+module brooklyn/constraints
+
+imports
+  signatures/columns-sig
+  signatures/create-table-sig
+
+  canarsie/resolution
+  canarsie/types
+  brooklyn/datatypes
+  brooklyn/columns
+
+signature
+  
+  // Table constraints
+  sorts TCONSTR constructors
+    FKC : string * string * string -> TCONSTR
+    PKC : string -> TCONSTR
+
+  relations
+    constr	: occurrence * TCONSTR
+  
+  namespaces
+    Constr	: string
+
+  name-resolution
+    
+    resolve Constr
+      filter P*
+
+rules
+  
+  declarePKConstr: scope * string * string
+  declarePKConstr(s, n, cn) :- {s_col}
+    declareConstr(s, n, PKC(cn)),
+    resolveCol(s, cn) == s_col,
+    
+    // Warning when primary key column is nullable
+    try { required(s_col) }
+    | warning $[Primary key constraint on nullable column [cn]],
+    
+    // Primary key constraint uniqueness
+    query constr
+      filter e and { t :- t == (_, PKC(_)) }
+      in s |-> [_] 
+    | error $[Multiple primary key constraints for this table].
+  
+  declareFKConstr: scope * string * string * string * string  
+  declareFKConstr(s, n, sc, dt, dc) :- {s_dt TC1 TC2}
+    declareConstr(s, n, FKC(sc, dt, dc)),
+    // Source column exists
+    typeOf(resolveCol(s, sc)) == TC1,
+    // Destination table exists
+    resolveTable(s, dt) == TABLE(s_dt),
+    // Destination column exists
+    typeOf(resolveCol(s_dt, dc)) == TC2,
+    
+    // Multiple foreign key constraints for column
+    try { resolveFKConstrs(s, sc) == [_] } 
+    | error $[Multiple foreign key constraints for column [sc]] @sc,
+    
+    // Warning when referenced column is not PK
+    try { resolvePKConstrs(s_dt) == [dc] } 
+    | warning $[Column [dc] is not the Primary key of table [dt]] @dc,
+    
+    // incompatible type
+    columnReferenceTypeOk(TC1, TC2) 
+    | error $[Incompatible column types. Cannot refer from column [sc]: [TC1] to [dt]([dc]) : [TC2]] @dc.
+
+  declareConstr : scope * string * TCONSTR
+  declareConstr(s, n, c) :-
+    s -> Constr{n} with constr c,
+    // Constraint name uniqueness
+    Constr{n} in s |-> [_]
+    | error $[Duplicate definition of constraint with name [n]].
+
+rules // column constraints
+
+  colConstrsOk: scope * string * list(ColumnConstraint) -> CNULL
+  
+  colConstrsOk(_, n, []) = CNULL().
+  colConstrsOk(s, n, [NotNull() | t]) = CNOTNULL() :-
+    colConstrsOk(s, n, t) == _.
+  
+  colConstrsOk(s, n, [p@PrimaryKey()| t]) = colConstrsOk(s, n, t) :-
+    declarePKConstr(s, "<pk_anonymous>", n) | error $[Multiple primary key constraints for this table] @p.
+
+rules // resolve constraints
+  
+  resolvePKConstrs: scope -> list(string)
+  resolvePKConstrs(s) = colOfConstrs(r) :-
+    query constr
+      filter e and { t :- t == (_, PKC(_)) }
+      in s |-> r.
+
+  colOfConstrs maps colOfConstr(list(*)) = list(*)
+  colOfConstr : ((path * (occurrence * TCONSTR))) -> string
+  
+  colOfConstr((_, (_, PKC(n)))) = n.
+  colOfConstr((_, (_, FKC(n, _, _)))) = n.
+  
+  resolveFKConstrs: scope * string -> list(string)
+  
+  resolveFKConstrs(s, cn) = colOfConstrs(r) :-
+    query constr
+      filter e and { t :- t == (_, FKC(cn, _, _)) }
+      in s |-> r.
+
+rules
+  fkTargets maps fkTarget(*, list(*)) = list(*)
+  fkTarget: scope * (path * (occurrence * TCONSTR)) -> TYPE
+  fkTarget(s, (_, (_, FKC(_, dt, _)))) = resolveTable(s, dt).
+    
+  resolveFKTarget: scope * string -> list(TYPE) // 0 or 1 type
+
+  resolveFKTarget(s, n) = fkTargets(s, r) :-
+    query constr
+      filter e and { t :- t == (_, FKC(n, _, _)) }
+      in s |-> r.

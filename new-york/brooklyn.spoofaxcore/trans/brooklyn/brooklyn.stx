@@ -1,0 +1,33 @@
+module brooklyn/brooklyn
+
+imports
+  signatures/brooklyn-sig
+  signatures/statements-sig
+  signatures/create-table-sig
+
+  canarsie/resolution
+  canarsie/types
+  brooklyn/columns
+  brooklyn/tables
+  brooklyn/constraints
+
+rules
+
+  sqlModOk : scope * Start
+
+  sqlModOk(s, SQLMod(stmts)) :-
+    stmtsOk(s, stmts).
+
+rules
+
+  stmtsOk maps stmtOk(*, list(*))
+  stmtOk : scope * SQLStatement
+
+  stmtOk(s, Create(n, cols, cons)) :- {s_table}
+    new s_table,
+    s_table -P-> s,
+    declareTableConstrs(s_table, constrs2List(cons)),
+    declareTable(s, s_table, n, typeOfCols(s_table, cols)),
+    // Ensure there is a primary key constraint
+    try { resolvePKConstrs(s_table) == [_|_] }
+    | warning $[No primary key constraints for this table].

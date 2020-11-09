@@ -1,0 +1,41 @@
+module statics/base
+
+imports signatures/base-sig
+imports canarsie/types
+imports canarsie/resolution
+
+rules // type of ...
+
+  typeOfType : scope * Type -> TYPE
+  typeOfExp  : scope * Exp  -> TYPE
+
+rules // well-typedness of ...
+
+  declOk : scope * Decl
+  declsOk maps declOk(*, list(*))
+
+  bindOk : scope * scope * Bind
+  bindsOk maps bindOk(*, *, list(*))
+
+rules // operations on types
+
+  subtype  : TYPE * TYPE
+  equitype : TYPE * TYPE
+  lub      : TYPE * TYPE -> TYPE
+
+  subtype(T, T).
+  lub(T, T) = T.
+
+  equitype(T, T).
+
+rules
+
+  proj   : TYPE * ID -> TYPE
+
+signature
+  name-resolution
+    labels I R M // P A imported
+
+  relations
+    typeOfDecl : occurrence -> scope
+

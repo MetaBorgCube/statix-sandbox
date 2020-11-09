@@ -1,0 +1,106 @@
+module statics/record
+
+imports canarsie/resolution
+imports statics/base
+imports statics/variable
+imports statics/type
+imports signatures/record-sig
+
+signature
+  constructors 
+    REC  : scope -> TYPE
+    NULL : TYPE
+    
+rules
+
+  subtype(NULL(), REC(_)).
+  
+  equitype(NULL(), REC(_)).
+  equitype(REC(_), NULL()).
+  
+  lub(T@REC(_), NULL()) = T.
+  lub(NULL(), T@REC(_)) = T.
+  
+rules // record type
+  
+  typeOfType(s, t@RecT(fdecls)) = REC(s_rec) :-
+    new s_rec,
+    fdeclsOk(s_rec, s, fdecls),
+    @t.type := REC(s_rec).
+
+  declOk(s, Record(x, fdecls)) :- {s_rec}
+    new s_rec,
+    fdeclsOk(s_rec, s, fdecls),
+    declareType(s, x, REC(s_rec)).
+  
+  fdeclOk : scope * scope * FDecl
+  fdeclsOk maps fdeclOk(*, *, list(*))
+  
+  fdeclOk(s_bnd, s_ctx, FDecl(x, t)) :- {T}
+    typeOfType(s_ctx, t) == T,
+    declareVar(s_bnd, x, T).
+    
+rules // record construction
+  
+  typeOfExp(s, e@New(x, fbinds)) = TR :- {s1_rec p d s2_rec}
+    typeOfTypeRef(s, x) == TR,
+    new s2_rec,
+    scopeOfType(TR) == s1_rec,
+    fbindsOk(s, s2_rec, TR, fbinds),
+    initComplete(e, s1_rec, s2_rec).
+    
+  fbindOk : scope * scope * TYPE * FBind
+  fbindsOk maps fbindOk(*, *, *, list(*))
+  
+  fbindOk(s, s_rec, T_rec, FBind(x, e)) :- {T1 T2}
+    typeOfExp(s, e) == T1,
+    declareVar(s_rec, x, T1), 
+    //!var[x, withType(T1)] in s_rec,
+    proj(T_rec, x) == T2,
+    subtype(T1, T2).
+    
+rules // record projection
+
+  typeOfExp(s, Proj(e, x)) = proj(typeOfExp(s, e), x).
+    
+  proj(REC(s_rec), x) = typeOfVar(s_rec, x).
+  
+  scopeOfType(REC(s_rec)) = s_rec.
+    
+rules // with record value
+
+  typeOfExp(s, With(e1, e2)) = T :- {s_with s_rec T_decl}
+    typeOfExp(s, e1) == T_decl,
+    scopeOfType(T_decl) == s_rec,
+    new s_with, 
+    s_with -P-> s, 
+    s_with -R-> s_rec,
+    typeOfExp(s_with, e2) == T. 
+    
+rules // Null
+    
+  typeOfExp(s, Null()) = NULL().
+  
+  typeOfType(s, NullT()) = NULL().
+  
+rules
+
+  initComplete : Exp * scope * scope 
+  
+  initComplete(e, s1, s2) :- {ps} // all fields of s1 in s2
+    varsInScope(s1) == ps,
+    fieldsInScope(e, ps, s2).
+    
+  fieldInScope : Exp * (path * (ID * scope)) * scope 
+  fieldsInScope maps fieldInScope(*, list(*), *) 
+
+  fieldInScope(e, (_, (x, T)), s) :-
+    initOk(e, x, T, resolveVar(s, x)). 
+
+  // Allow for nullability
+  initOk: Exp * ID * scope * list((path * (ID * scope)))
+  initOk(e, _, T, [_|_]).
+  initOk(e, x, T, []) :-
+    nullable(T)
+    | error $[field [x] not initialized]@e.
+    
