@@ -75,7 +75,7 @@ test nested module : qualified name [[
   def b = A.B.[[a]] + 1
 ]] resolve #2 to #1
 
-test nested module and records [[
+test nested module and records [[ 
   module A { 
     module B {
       def a = 1
