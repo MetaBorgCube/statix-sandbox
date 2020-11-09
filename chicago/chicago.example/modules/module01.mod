@@ -10,7 +10,7 @@ module A2 {
 }
 
 module B1 {
-  import A1
+  //import A1
   module B2 {
     //def b = A1 
     import A2
