@@ -31,14 +31,14 @@ lexical restrictions
 lexical syntax
   LAYOUT         = [\ \t\n\r] 
   
-  CommentChar    = [\*] 
   LAYOUT         = "/*" InsideComment* "*/" 
+  CommentChar    = [\*] 
   InsideComment  = ~[\*] 
   InsideComment  = CommentChar 
   
   LAYOUT         = "//" ~[\n\r]* NewLineEOF 
   NewLineEOF     = [\n\r] 
-  NewLineEOF     = EOF 
+  //NewLineEOF     = EOF 
   EOF            =  
 lexical restrictions
   CommentChar -/- [\/]

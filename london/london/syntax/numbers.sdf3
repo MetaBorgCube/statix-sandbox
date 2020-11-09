@@ -18,5 +18,5 @@ context-free priorities
   Exp.Min > Exp.Mul > {left: Exp.Add Exp.Sub}
     
 template options
-  ID = keyword {reject}
-  keyword -/- [a-zA-Z0-9]
+  ID = keyword {reject} 
+  keyword -/- [a-zA-Z0-9] 

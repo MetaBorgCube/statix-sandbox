@@ -14,15 +14,13 @@ module Library{
 
   module Even {
     import Odd
-    def even : Sig.Pred = 
+    def even : Sig.Pred =
         fun(x) if x == 0 then true else odd (x - 1)
   }
 }
 
 module Application {
-
-//  import Library;
-//  import Even 
+  
   import Library.Even
 //  def alias = Library  // error
 

@@ -4,7 +4,7 @@ module SandBox {
     def a = 1;
     def a = 3
     def b = 2;
-    def c = 3 + a + b
+    def c = 3 + b
     def foo = 1 
   } 
  
@@ -26,7 +26,7 @@ module SandBox {
   }
   
   module H {
-    def a = true;
+    def a = true; 
     def a = 3;
     def aljd  = 5
   }
