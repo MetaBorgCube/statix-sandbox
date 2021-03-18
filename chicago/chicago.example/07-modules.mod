@@ -1,4 +1,4 @@
-module Library{
+module Library {
 
   module Sig {
     type Pred = Int -> Bool

@@ -7,7 +7,7 @@ imports statics/variable
 
 signature
   constructors
-    Let : ID * Exp * Exp -> Exp
+    Let : ID * Exp * Exp -> Exp 
     
 rules
 

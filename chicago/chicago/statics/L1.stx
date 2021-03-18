@@ -4,7 +4,7 @@ imports statics/base
 
 imports statics/numbers
 imports statics/booleans 
-imports statics/strings
+imports statics/strings 
 
 imports statics/variable
 
@@ -17,4 +17,4 @@ imports statics/mod
 
 imports statics/file
 
-imports statics/pattern
+//imports statics/pattern  

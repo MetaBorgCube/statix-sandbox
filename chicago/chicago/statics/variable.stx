@@ -1,6 +1,6 @@
 module statics/variable
 
-imports statics/base
+imports statics/base 
 imports signatures/variable-sig  
   
 rules 

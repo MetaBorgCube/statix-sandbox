@@ -8,7 +8,7 @@ context-free syntax
   Exp.LetSeq = <
     let 
       <{Bind ";\n"}*> 
-    in 
+    in  
       <Exp>
   >
   Exp.LetPar = <
