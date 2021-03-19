@@ -1,0 +1,48 @@
+module statics/core-sig
+
+imports signatures/core-sig
+
+signature
+  sorts VALTYPE DEFTYPE KIND 
+
+rules
+
+  valTypeOf : scope * ValType -> VALTYPE
+  
+  defTypeOf : scope * DefType -> DEFTYPE
+  
+  kindOf : scope * Kind -> KIND
+  
+signature
+  relations 
+    vtypeOf : -> VALTYPE
+rules
+
+  vtypeOf : scope -> VALTYPE
+  withVType : VALTYPE -> scope
+  
+  vtypeOf(s) = T :-
+    query vtypeOf
+      filter e and true
+      min /* */ and true
+      in s |-> [(_, T)].
+      
+  withVType(T) = s :-
+    new s, !vtypeOf[T] in s.
+    
+signature
+  relations 
+    dtypeOf : -> DEFTYPE
+rules
+
+  dtypeOf : scope -> DEFTYPE
+  withDType : DEFTYPE -> scope
+  
+  dtypeOf(s) = T :-
+    query dtypeOf
+      filter e and true
+      min /* */ and true
+      in s |-> [(_, T)].
+      
+  withDType(T) = s :-
+    new s, !dtypeOf[T] in s.

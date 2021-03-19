@@ -1,0 +1,3 @@
+module statics/core
+
+imports signatures/core-sig

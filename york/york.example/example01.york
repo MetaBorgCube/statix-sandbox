@@ -1,0 +1,9 @@
+module A : 
+  sig
+  end;
+
+module A = 
+  struct 
+  end;
+  
+  

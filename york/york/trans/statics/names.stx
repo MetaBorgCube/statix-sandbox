@@ -1,0 +1,35 @@
+module statics/names
+
+imports signatures/lex-sig
+imports statics/modules-sig
+
+signature
+  name-resolution
+    labels P
+  relations 
+    var : ID -> scope 
+ 
+rules
+
+  declareVar : scope * ID * scope
+  resolveVar : scope * ID -> list((path * (ID * scope)))
+  scopeOfVar : scope * ID -> scope
+
+  declareVar(s, x, s2) :- 
+    !var[x, s2] in s,
+    resolveVar(s, x) == [(_, (_, _))] 
+      | error $[Duplicate definition of variable [x]],
+    @x.scope := s2. 
+    
+  resolveVar(s, x) = ps :-  
+    query var
+      filter P*
+         and { x' :- x' == x }
+         min $ < P
+         and true
+          in s |-> ps.  
+          
+  scopeOfVar(s, x) = s2 :- {x'} 
+    resolveVar(s, x) == [(_,(x', s2))|_]
+      | error $[Variable [x] not defined],
+    @x.ref := x'. 

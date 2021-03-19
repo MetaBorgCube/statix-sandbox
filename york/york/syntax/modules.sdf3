@@ -1,0 +1,81 @@
+module modules
+
+imports lex
+imports base
+imports core
+
+sorts Path
+context-free syntax
+  Path.PIdent = ID
+  Path.PDot = <<Path>.<ID>>
+
+sorts ModType  
+context-free syntax
+  
+  ModType.Sig = <
+    sig
+      <{Spec "\n"}*>
+    end
+  >
+  
+  ModType.FunctorType = <
+    functor(<ID> : <ModType>)
+      <ModType>
+  >
+  
+sorts Spec
+context-free syntax
+
+  Spec.ValSig = <
+    val <ID> : <ValType>
+  >
+  
+  Spec.TypeSig = <
+    type <ID> :: <Kind> = <TypeDecl>
+  >
+  
+  Spec.ModSig = <
+    module <ID> : 
+      <ModType>
+  >
+
+sorts ModTerm
+context-free syntax
+
+  ModTerm.LongIdent = Path
+  
+  ModTerm.Struct = <
+    struct 
+      <{Def "\n"}*>
+    end
+  >
+  
+  ModTerm.Functor = <
+    functor(<ID> : <ModType>)
+      <ModTerm>
+  >
+  
+  ModTerm.Apply = <
+    <ModTerm>(<ModTerm>)
+  >
+  
+  ModTerm.Constraint = <
+    (<ModTerm> : <ModType>)
+  >
+  
+sorts Def
+context-free syntax
+  
+  Def.ValueStr = <
+    let <ID> = <Expr>
+  >
+  
+  Def.TypeStr = <
+    type <ID> :: <Kind> = <DefType>
+  >
+  
+  Def.ModuleStr = <
+    module <ID> = 
+      <ModTerm>
+  >
+  

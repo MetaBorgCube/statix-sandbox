@@ -1,0 +1,7 @@
+module test
+
+language york
+
+test parse [[
+
+]] parse succeeds

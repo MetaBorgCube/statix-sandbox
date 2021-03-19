@@ -1,0 +1,3 @@
+module core 
+
+sorts ValType Kind TypeDecl Expr DefType

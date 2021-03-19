@@ -1,0 +1,38 @@
+module statics
+
+// see README.md for details on how to switch to multi-file analysis
+
+imports signatures/york-sig
+imports statics/modules
+imports statics/core
+
+rules // single-file entry point
+
+  programOk : Program
+
+  programOk(Program(tls)) :- {s}
+    new s,
+    tlOk(s, tls) == _.
+
+rules // multi-file entry point
+
+  projectOk : scope
+
+  projectOk(s).
+
+  fileOk : scope * Program
+
+  fileOk(s, Program(_)).
+
+rules
+
+  tlOk : scope * list(TL) -> scope
+  
+  tlOk(s, []) = s.
+  
+  tlOk(s1, [Def(def) | tls]) = s3 :- {s2}
+   defOk(s1, def) == s2,
+   tlOk(s2, tls) == s3.
+   
+
+

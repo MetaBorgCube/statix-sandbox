@@ -1,0 +1,16 @@
+module york
+
+imports lex
+imports modules
+imports core
+
+context-free start-symbols Program
+
+sorts Program TL
+context-free syntax
+  
+  Program.Program = {TL "\n"}+
+  
+  TL.Def  = <<Def>;>
+  TL.Spec = <<Spec>;>
+

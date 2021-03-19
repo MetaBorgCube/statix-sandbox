@@ -1,0 +1,75 @@
+module statics/modules
+
+imports signatures/modules-sig
+imports statics/modules-sig
+imports statics/core-sig
+imports statics/names
+
+rules
+
+  specOk : scope * Spec -> scope
+
+  specOk(s1, ValSig(x, t)) = s2 :- {T}
+    new s2, s2 -P-> s1,
+    valTypeOf(s1, t) == T, 
+    declareVar(s2, x, withVType(T)).
+  
+  specOk(s1, TypeSig(x, k, td)) = s2 :- {K TD}
+    new s2, s2 -P-> s1,
+    kindOf(s1, k) == K, // TODO: what to do with kind?
+    typeOfTypeDecl(s1, td) == TD,
+    declareVar(s2, x, withDType(TD)).
+  
+  specOk(s1, ModSig(x, mt)) = s2 :- {MT}
+    new s2, s2 -P-> s1,
+    modTypeOf(s1, mt) == MT,
+    declareVar(s2, x, withMType(MT)).
+    
+  specsOk : scope * list(Spec) -> scope
+  
+  specsOk(s, []) = s.
+  
+  specsOk(s1, [spec | specs]) = 
+    specsOk(specOk(s1, spec), specs).
+  
+signature
+  constructors
+    SIG : scope -> MTYPE
+    FUNCTOR : ID * MTYPE * MTYPE -> MTYPE
+
+rules 
+
+  modTypeOf : scope * ModType -> MTYPE
+
+  modTypeOf(s, Sig(specs)) = SIG(specsOk(s, specs)). 
+    // problem: s reachable from s_sig
+  
+  modTypeOf(s, FunctorType(x, mt1, mt2)) = FUNCTOR(x, MT1, MT2) :-
+    modTypeOf(s, mt1) == MT1,
+    modTypeOf(s, mt2) == MT2.
+  
+rules 
+
+  modTypeOfModTerm : scope * ModTerm -> MTYPE
+  
+  modTypeOfModTerm(s, LongIdent(p)) = _.
+  
+  modTypeOfModTerm(s, Struct(defs)) = _.
+  
+  modTypeOfModTerm(s, Functor(x, mt1, mtrm)) = _.
+  
+  modTypeOfModTerm(s, Apply(mtrm1, mtrm2)) = _.
+  
+  modTypeOfModTerm(s, Constraint(mtrm, mt)) = _.
+  
+rules
+
+  typeOfDef : scope * Def -> (scope * MTYPE)
+  
+  typeOfDef(s, ValueStr(x, e)) = _.
+  
+  typeOfDef(s, TypeStr(x, k, deft)) = _.
+  
+  typeOfDef(s, ModuleStr(x, mtrm)) = _.
+  
+  

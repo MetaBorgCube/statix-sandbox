@@ -1,0 +1,11 @@
+---
+id: org.metaborg:york.example:0.1.0-SNAPSHOT
+name: york
+dependencies:
+  compile:
+  - org.metaborg:york:0.1.0-SNAPSHOT
+runtime:
+  nabl2:
+    debug: analysis files
+build:
+  useBuildSystemSpec: true
