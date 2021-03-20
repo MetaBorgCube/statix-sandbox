@@ -1,0 +1,3 @@
+val x : int;
+type TreePt = *Tree;
+let x = void;

@@ -16,6 +16,10 @@ lexical restrictions
   INT -/- [0-9]
 context-free restrictions 
   "-" -/- [0-9]  
+  
+lexical sorts FLOAT
+lexical syntax
+  FLOAT = INT "." INT
 
 lexical sorts STRING
 lexical syntax

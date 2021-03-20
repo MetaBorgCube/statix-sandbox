@@ -4,26 +4,36 @@ imports signatures/modules-sig
 imports statics/modules-sig
 imports statics/core-sig
 imports statics/names
+imports statics/base
+imports statics/path
 
+signature
+  constructors
+    SIG : scope -> TYPE
+    FUNCTOR : ID * TYPE * TYPE -> TYPE
+    ABS : TYPE
+    
 rules
 
   specOk : scope * Spec -> scope
 
   specOk(s1, ValSig(x, t)) = s2 :- {T}
     new s2, s2 -P-> s1,
-    valTypeOf(s1, t) == T, 
-    declareVar(s2, x, withVType(T)).
+    typeOfValType(s1, t) == T, 
+    declareID(s2, x, withType(T)).
   
-  specOk(s1, TypeSig(x, k, td)) = s2 :- {K TD}
+  specOk(s1, TypeSig(x, td)) = s2 :- {K TD}
     new s2, s2 -P-> s1,
-    kindOf(s1, k) == K, // TODO: what to do with kind?
-    typeOfTypeDecl(s1, td) == TD,
-    declareVar(s2, x, withDType(TD)).
+    declareID(s2, x, withType(TD)).
   
+  specOk(s1, AbsTypeSig(x)) = s2 :- {K TD}
+    new s2, s2 -P-> s1,
+    declareID(s2, x, withType(ABS())).
+    
   specOk(s1, ModSig(x, mt)) = s2 :- {MT}
     new s2, s2 -P-> s1,
-    modTypeOf(s1, mt) == MT,
-    declareVar(s2, x, withMType(MT)).
+    typeOfModType(s1, mt) == MT,
+    declareID(s2, x, withType(MT)).
     
   specsOk : scope * list(Spec) -> scope
   
@@ -32,44 +42,78 @@ rules
   specsOk(s1, [spec | specs]) = 
     specsOk(specOk(s1, spec), specs).
   
-signature
-  constructors
-    SIG : scope -> MTYPE
-    FUNCTOR : ID * MTYPE * MTYPE -> MTYPE
-
 rules 
 
-  modTypeOf : scope * ModType -> MTYPE
+  typeOfModType : scope * ModType -> TYPE
 
-  modTypeOf(s, Sig(specs)) = SIG(specsOk(s, specs)). 
+  typeOfModType(s, Sig(specs)) = SIG(specsOk(s, specs)). 
     // problem: s reachable from s_sig
   
-  modTypeOf(s, FunctorType(x, mt1, mt2)) = FUNCTOR(x, MT1, MT2) :-
-    modTypeOf(s, mt1) == MT1,
-    modTypeOf(s, mt2) == MT2.
+  typeOfModType(s, FunctorType(x, mt1, mt2)) = FUNCTOR(x, MT1, MT2) :-
+    typeOfModType(s, mt1) == MT1,
+    typeOfModType(s, mt2) == MT2.
+  
+
+  
+  proj(SIG(s), x) = typeOfID(s, x).
+  
+  // it is an error to project on a functor?
   
 rules 
 
-  modTypeOfModTerm : scope * ModTerm -> MTYPE
+  typeOfModTerm : scope * ModTerm -> TYPE
   
-  modTypeOfModTerm(s, LongIdent(p)) = _.
+  typeOfModTerm(s, LongIdent(p)) = typeOfPath(s, p).
   
-  modTypeOfModTerm(s, Struct(defs)) = _.
+  typeOfModTerm(s, Struct(defs)) = SIG(s_sig) :-
+    defsOk(s, defs) == s_sig.
   
-  modTypeOfModTerm(s, Functor(x, mt1, mtrm)) = _.
+  typeOfModTerm(s, Functor(x, mt1, mtrm)) = FUNCTOR(x, T1, T2) :-
+    typeOfModType(s, mt1) == T1,
+    typeOfModTerm(s, mtrm) == T2.
   
-  modTypeOfModTerm(s, Apply(mtrm1, mtrm2)) = _.
+  typeOfModTerm(s, Apply(mtrm1, mtrm2)) = T2 :- {x T1 T3}
+    typeOfModTerm(s, mtrm1) == FUNCTOR(x, T1, T2),
+    typeOfModTerm(s, mtrm2) == T3.
+    // TODO: substitution in type
   
-  modTypeOfModTerm(s, Constraint(mtrm, mt)) = _.
+  typeOfModTerm(s, Constraint(mtrm, mt)) = T2 :- {T1}
+    typeOfModTerm(s, mtrm) == T1,
+    typeOfModType(s, mt) == T2.
+    // TODO: check compatability
   
 rules
 
-  typeOfDef : scope * Def -> (scope * MTYPE)
+  defOk : scope * Def -> scope
   
-  typeOfDef(s, ValueStr(x, e)) = _.
+  defOk(s1, ValueStr(x, e)) = s2 :- {T}
+    new s2, s2 -P-> s1,
+    typeOfTerm(s1, e) == T,
+    declareID(s2, x, withType(T)).
+    
+  defOk(s1, TypeKindStr(x, k, deft)) = s2 :- {T}
+    new s2, s2 -P-> s1,
+    typeOfDefType(s1, deft) == T,
+    declareID(s2, x, withType(T)).
   
-  typeOfDef(s, TypeStr(x, k, deft)) = _.
+  defOk(s1, TypeStr(x, deft)) = s2 :- {T}
+    new s2, s2 -P-> s1,
+    typeOfDefType(s1, deft) == T,
+    declareID(s2, x, withType(T)).
   
-  typeOfDef(s, ModuleStr(x, mtrm)) = _.
+  defOk(s1, ModuleStr(x, mtrm)) = s2 :- {T}
+    new s2, s2 -P-> s1,
+    typeOfModTerm(s1, mtrm) == T,
+    declareID(s2, x, withType(T)).
+  
+  defsOk : scope * list(Def) -> scope
+  
+  defsOk(s, []) = s.
+  
+  defsOk(s1, [def | defs]) = s3 :- {s2}
+    defOk(s1, def) == s2,
+    defsOk(s2, defs) == s3.
+  
+  
   
   

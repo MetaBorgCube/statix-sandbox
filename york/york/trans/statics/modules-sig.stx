@@ -1,21 +1,21 @@
 module statics/modules-sig 
 
-signature
-  sorts MTYPE 
-   
-signature
-  relations 
-    mtypeOf : -> MTYPE
-rules
-
-  mtypeOf : scope -> MTYPE
-  withMType : MTYPE -> scope
-  
-  mtypeOf(s) = T :-
-    query mtypeOf
-      filter e and true
-      min /* */ and true
-      in s |-> [(_, T)].
-      
-  withMType(T) = s :-
-    new s, !mtypeOf[T] in s.
+//signature
+//  sorts MTYPE 
+//   
+//signature
+//  relations 
+//    mtypeOf : -> MTYPE
+//rules
+//
+//  mtypeOf : scope -> MTYPE
+//  withMType : MTYPE -> scope
+//  
+//  mtypeOf(s) = T :-
+//    query mtypeOf
+//      filter e and true
+//      min /* */ and true
+//      in s |-> [(_, T)].
+//      
+//  withMType(T) = s :-
+//    new s, !mtypeOf[T] in s.

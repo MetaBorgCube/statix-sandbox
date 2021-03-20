@@ -1,0 +1,8 @@
+module path
+
+imports lex
+
+sorts Path
+context-free syntax
+  Path.PIdent = ID
+  Path.PDot = <<Path>.<ID>>

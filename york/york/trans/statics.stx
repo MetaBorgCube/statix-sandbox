@@ -33,6 +33,10 @@ rules
   tlOk(s1, [Def(def) | tls]) = s3 :- {s2}
    defOk(s1, def) == s2,
    tlOk(s2, tls) == s3.
+  
+  tlOk(s1, [Spec(def) | tls]) = s3 :- {s2}
+   specOk(s1, def) == s2,
+   tlOk(s2, tls) == s3.
    
 
 

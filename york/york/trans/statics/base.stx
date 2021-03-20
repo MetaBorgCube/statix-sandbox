@@ -2,3 +2,5 @@ module statics/base
 
 imports signatures/base-sig
 
+signature
+  sorts TYPE 

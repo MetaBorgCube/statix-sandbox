@@ -1,13 +1,10 @@
 module modules
 
 imports lex
+imports path
 imports base
 imports core
 
-sorts Path
-context-free syntax
-  Path.PIdent = ID
-  Path.PDot = <<Path>.<ID>>
 
 sorts ModType  
 context-free syntax
@@ -29,16 +26,20 @@ context-free syntax
   Spec.ValSig = <
     val <ID> : <ValType>
   >
+   
+  Spec.AbsTypeSig = <
+    type <ID>
+  >
   
   Spec.TypeSig = <
-    type <ID> :: <Kind> = <TypeDecl>
+    type <ID> = <DefType>
   >
   
   Spec.ModSig = <
     module <ID> : 
       <ModType>
   >
-
+  
 sorts ModTerm
 context-free syntax
 
@@ -67,11 +68,14 @@ sorts Def
 context-free syntax
   
   Def.ValueStr = <
-    let <ID> = <Expr>
+    let <ID> = <Term>
   >
   
-  Def.TypeStr = <
+  Def.TypeKindStr = <
     type <ID> :: <Kind> = <DefType>
+  >
+  Def.TypeStr = <
+    type <ID> = <DefType>
   >
   
   Def.ModuleStr = <
@@ -79,3 +83,5 @@ context-free syntax
       <ModTerm>
   >
   
+template options
+  ID = keyword {reject}

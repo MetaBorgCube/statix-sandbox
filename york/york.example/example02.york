@@ -1,0 +1,5 @@
+module A : 
+  sig
+    val x : int
+    type color = int
+  end;

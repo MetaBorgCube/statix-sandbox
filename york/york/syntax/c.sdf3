@@ -1,0 +1,80 @@
+module c
+
+imports lex
+imports path
+imports core 
+
+sorts CType
+context-free syntax
+  CType.VoidT     = <void>
+  CType.IntT      = <int>
+  CType.FloatT    = <float>
+  CType.PointerT  = <*<CType>>
+  CType.FunctionT = <(<{CType "*"}*>)<CType>>
+  CType.TypeName  = Path
+
+sorts CExpr
+context-free syntax
+  CExpr.CInt    = INT
+  CExpr.CFloat  = FLOAT
+  CExpr.CVar    = Path
+  CExpr.CApply  = <<CExpr>(<{CExpr ", "}*>)>
+  CExpr.CAssign = <<CExpr> = <CExpr>> {non-assoc}
+  CExpr.CUnOp   = <<CUnOp><CExpr>>
+  CExpr.CBinOp  = <<CExpr> <CBinOp> <CExpr>> {left}
+  CExpr.CCast   = <(<CType>)<CExpr>> 
+context-free priorities
+  CExpr.CApply 
+  > CExpr.CUnOp
+  > CExpr.CBinOp
+  > CExpr.CAssign
+  
+sorts CUnOp CBinOp
+context-free syntax
+  CUnOp.CNot   = <!>
+  CUnOp.CDeRef = <*>
+  
+  CBinOp.CAdd = <+>
+  CBinOp.CMul = <*>
+  CBinOp.CSub = [-]
+  
+sorts CStat
+context-free syntax
+  CStat.CExpr = <<CExpr>;>
+  CStat.CIf = <
+    if(<CExpr>)
+      <CStat>
+    else
+      <CStat>
+  >
+  CStat.CFor = <
+    for(<CExpr>; <CExpr>; <CExpr>)
+      <CStat>
+  >
+  CStat.CReturn = <return <CExpr>;>
+  CStat.CBlock = <
+    {
+      <{CDecl "\n"}*>
+      <{CStat "\n"}*>
+    }
+  >
+  
+sorts CDecl CArg
+context-free syntax
+  CDecl.CDecl = <<CType> <ID>;>
+  CArg.CArg = <<CType> <ID>>
+  
+context-free syntax
+  Term.CVarDecl = CType
+  Term.CFunDef = <
+    <CType>(<{CArg ", "}*>) {
+      <{CDecl "\n"}*>
+      <{CStat "\n"}*>
+    } 
+  >
+  DefType.CDefType = CType
+  ValType.CValType = CType
+  
+template options
+  ID = keyword {reject}
+  

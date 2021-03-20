@@ -1,0 +1,17 @@
+module statics/path
+
+imports signatures/path-sig
+imports statics/base
+imports statics/names
+
+rules
+
+  typeOfPath : scope * Path -> TYPE
+  
+  typeOfPath(s, PIdent(x)) = typeOfID(s, x).
+  
+  typeOfPath(s, PDot(p, x)) = T2 :- {T1} 
+    typeOfPath(s, p) == T1,
+    proj(T1, x) == T2.
+    
+  proj : TYPE * ID -> TYPE

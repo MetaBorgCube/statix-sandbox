@@ -1,9 +1,6 @@
-module A : 
-  sig
-  end;
+val x : int;
+//
+//type TreePt = *Tree;
 
-module A = 
-  struct 
-  end;
-  
-  
+//let inc = int(int x){ return x + 1; };
+

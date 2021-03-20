@@ -1,7 +1,7 @@
 module statics/names
 
 imports signatures/lex-sig
-imports statics/modules-sig
+imports statics/base
 
 signature
   name-resolution
@@ -11,17 +11,18 @@ signature
  
 rules
 
-  declareVar : scope * ID * scope
-  resolveVar : scope * ID -> list((path * (ID * scope)))
-  scopeOfVar : scope * ID -> scope
+  declareID : scope * ID * scope
+  resolveID : scope * ID -> list((path * (ID * scope)))
+  scopeOfID : scope * ID -> scope
+  typeOfID  : scope * ID -> TYPE
 
-  declareVar(s, x, s2) :- 
+  declareID(s, x, s2) :- 
     !var[x, s2] in s,
-    resolveVar(s, x) == [(_, (_, _))] 
+    resolveID(s, x) == [(_, (_, _))] 
       | error $[Duplicate definition of variable [x]],
     @x.scope := s2. 
     
-  resolveVar(s, x) = ps :-  
+  resolveID(s, x) = ps :-  
     query var
       filter P*
          and { x' :- x' == x }
@@ -29,7 +30,28 @@ rules
          and true
           in s |-> ps.  
           
-  scopeOfVar(s, x) = s2 :- {x'} 
-    resolveVar(s, x) == [(_,(x', s2))|_]
+  scopeOfID(s, x) = s2 :- {x'} 
+    resolveID(s, x) == [(_,(x', s2))|_]
       | error $[Variable [x] not defined],
     @x.ref := x'. 
+    
+  typeOfID(s, x) = typeOf(scopeOfID(s, x)).
+    
+
+   
+signature
+  relations 
+    typeOf : -> TYPE
+rules
+
+  typeOf : scope -> TYPE
+  withType : TYPE -> scope
+  
+  typeOf(s) = T :-
+    query typeOf
+      filter e and true
+      min /* */ and true
+      in s |-> [(_, T)].
+      
+  withType(T) = s :-
+    new s, !typeOf[T] in s.

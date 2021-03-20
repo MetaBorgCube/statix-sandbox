@@ -1,0 +1,159 @@
+module statics/c
+
+imports statics/core-sig
+imports signatures/c-sig
+imports statics/path
+imports statics/names
+
+signature
+  constructors 
+    CVOID     : TYPE
+    CINT      : TYPE
+    CFLOAT    : TYPE
+    CPOINTER  : TYPE -> TYPE
+    CFUNCTION : list(TYPE) * TYPE -> TYPE
+    
+rules 
+
+  subtype : TYPE * TYPE
+  
+  subtype(T, T).
+  subtype(CINT(), CFLOAT()).
+
+rules
+
+  typeOfValType(s, CValType(t)) = T :-
+    typeOfCType(s, t) == T.
+  typeOfDefType(s, CDefType(t)) = typeOfCType(s, t).
+  
+
+  typeOfCType : scope * CType -> TYPE 
+  typesOfCTypes maps typeOfCType(*, list(*)) = list(*)
+  
+  typeOfCType(s, VoidT())     = CVOID().
+  typeOfCType(s, IntT())      = CINT().
+  typeOfCType(s, FloatT())    = CFLOAT().
+  typeOfCType(s, PointerT(t)) = CPOINTER(typeOfCType(s, t)).
+  typeOfCType(s, TypeName(p)) = typeOfPath(s, p).
+  
+  typeOfCType(s, FunctionT(ts, t)) = 
+    CFUNCTION(typesOfCTypes(s, ts), typeOfCType(s, t)).
+
+rules
+
+  typeOfCExpr : scope * CExpr -> TYPE
+  typesOfCExprs maps typeOfCExpr(*, list(*)) = list(*)
+  
+  typeOfCExpr(s, CInt(_)) = CINT().
+  typeOfCExpr(s, CFloat(_)) = CFLOAT().
+  typeOfCExpr(s, CVar(p)) = typeOfPath(s, p).
+  
+  typeOfCExpr(s, CApply(e, es)) = T :- {TS}
+    typeOfCExpr(s, e) == CFUNCTION(TS, T),
+    typesOfCExprs(s, es) == TS.
+    
+  typeOfCExpr(s, CAssign(e1, e2)) = T :- 
+    typeOfCExpr(s, e1) == CPOINTER(T),
+    typeOfCExpr(s, e2) == T.
+    
+  typeOfCExpr(s, CUnOp(op, e)) = T2 :- {T1}
+    typeOfCExpr(s, e) == T1,
+    typeOfUnOp(op, T1) == T2.
+    
+  typeOfCExpr(s, CBinOp(e1, op, e2)) = T3 :- {T1 T2}
+    typeOfCExpr(s, e1) == T1,
+    typeOfCExpr(s, e2) == T2,
+    typeOfBinOp(op, T1, T2) == T3.
+    
+  typeOfCExpr(s, CCast(t, e)) = T2 :- {T1}
+    typeOfCType(s, t) == T1,
+    typeOfCExpr(s, e) == T2,
+    subtype(T2, T1).
+
+rules
+
+  typeOfUnOp : CUnOp * TYPE -> TYPE
+  
+  typeOfUnOp(CNot(), CINT()) = CINT().
+  typeOfUnOp(CDeRef(), CPOINTER(T)) = T.
+
+rules
+
+  typeOfBinOp : CBinOp * TYPE * TYPE -> TYPE
+  
+  typeOfBinOp(CAdd(), CINT(),   CINT())   = CINT().  
+  typeOfBinOp(CAdd(), CFLOAT(), CINT())   = CFLOAT().  
+  typeOfBinOp(CAdd(), CINT(),   CFLOAT()) = CFLOAT().
+  typeOfBinOp(CAdd(), CFLOAT(), CFLOAT()) = CFLOAT().
+  
+  typeOfBinOp(CMul(), CINT(),   CINT())   = CINT().  
+  typeOfBinOp(CMul(), CFLOAT(), CINT())   = CFLOAT().  
+  typeOfBinOp(CMul(), CINT(),   CFLOAT()) = CFLOAT().
+  typeOfBinOp(CMul(), CFLOAT(), CFLOAT()) = CFLOAT().
+  
+  typeOfBinOp(CSub(), CINT(),   CINT())   = CINT().  
+  typeOfBinOp(CSub(), CFLOAT(), CINT())   = CFLOAT().  
+  typeOfBinOp(CSub(), CINT(),   CFLOAT()) = CFLOAT().
+  typeOfBinOp(CSub(), CFLOAT(), CFLOAT()) = CFLOAT().
+
+rules
+
+  statOk : scope * CStat
+  statsOk maps statOk(*, list(*))
+  
+  statOk(s, CExpr(e)) :-
+    typeOfCExpr(s, e) == _.
+    
+    
+  statOk(s, CIf(e, stm1, stm2)) :-
+    typeOfCExpr(s, e) == CINT(),
+    statOk(s, stm1),
+    statOk(s, stm2).
+    
+  statOk(s, CFor(e1, e2, e3, stm)) :-
+    typeOfCExpr(s, e1) == CINT(),
+    typeOfCExpr(s, e2) == CINT(),
+    typeOfCExpr(s, e3) == CINT(),
+    statOk(s, stm).
+    
+  statOk(s, CReturn(e)) :- {T}
+    typeOfCExpr(s, e) == T.  
+    // check that return type matches return type of function
+    
+  statOk(s1, CBlock(decls, stms)) :- {s2}
+    new s2, s2 -P-> s1,
+    typesOfDecls(s2, decls) == _,
+    statsOk(s2, stms).
+
+rules
+    
+  typeOfDecl: scope * CDecl -> TYPE
+  typesOfDecls maps typeOfDecl(*, list(*)) = list(*)
+  
+  typeOfDecl(s, CDecl(t, x)) = T :-  
+    typeOfCType(s, t) == T,
+    declareID(s, x, withType(T)).
+    
+  typeOfArg: scope * CArg -> TYPE
+  typesOfArgs maps typeOfArg(*, list(*)) = list(*)
+  
+  typeOfArg(s, CArg(t, x)) = T :-  
+    typeOfCType(s, t) == T,
+    declareID(s, x, withType(T)).
+    
+rules 
+
+  typeOfTerm(s, CVarDecl(t)) = typeOfCType(s, t).
+  
+  typeOfTerm(s1, CFunDef(t, args, decls, stms)) = CFUNCTION(TS, T) :- {s2 s3}
+    typeOfCType(s1, t) == T, 
+    new s2, s2 -P-> s1,
+    typesOfArgs(s2, args) == TS,
+    new s3, s3 -P-> s2,
+    typesOfDecls(s3, decls) == _,
+    statsOk(s3, stms).
+    
+  
+  
+//  typeOfTypeDecl : scope * TypeDecl -> TYPE
+//  typeOfTerm     : scope * Term     -> TYPE
