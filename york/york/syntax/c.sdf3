@@ -23,6 +23,7 @@ context-free syntax
   CExpr.CUnOp   = <<CUnOp><CExpr>>
   CExpr.CBinOp  = <<CExpr> <CBinOp> <CExpr>> {left}
   CExpr.CCast   = <(<CType>)<CExpr>> 
+  CExpr         = <(<CExpr>)> {bracket}
 context-free priorities
   CExpr.CApply 
   > CExpr.CUnOp
@@ -67,7 +68,7 @@ context-free syntax
 context-free syntax
   Term.CVarDecl = CType
   Term.CFunDef = <
-    <CType>(<{CArg ", "}*>) {
+    (<{CArg ", "}*>)<CType> {
       <{CDecl "\n"}*>
       <{CStat "\n"}*>
     } 

@@ -1,5 +1,16 @@
 module A : 
   sig
     val x : int
+    type color
+    val c : color
+    val inc : (int)int
+    val clr : (int)color
+  end;  
+  
+module a = 
+  struct
+    let x = int
     type color = int
+    let colorOf = color(int x) { return x; }
+    let inc = int(int x) { return x + 1; }
   end;

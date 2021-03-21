@@ -8,6 +8,8 @@ imports core
 
 sorts ModType  
 context-free syntax
+
+  ModType.PathType = <<Path>>
   
   ModType.Sig = <
     sig
@@ -64,6 +66,12 @@ context-free syntax
     (<ModTerm> : <ModType>)
   >
   
+  ModTerm = <(<ModTerm>)> {bracket}
+  
+context-free priorities
+  ModTerm.Apply 
+  > ModTerm.Functor
+
 sorts Def
 context-free syntax
   

@@ -1,0 +1,87 @@
+module module-syntax
+
+language york
+
+test sig [[
+  module A : 
+    sig
+    end;
+]] parse succeeds
+
+test functor [[
+  module A : 
+    functor(X : sig end) 
+      sig
+      end;
+]] parse succeeds
+
+test val [[
+  module A : 
+    sig
+      val x : int
+    end;
+]] parse succeeds
+
+test type [[
+  module A : 
+    sig
+      type color = int
+    end;
+]] parse succeeds
+
+test abstract type [[
+  module A : 
+    sig
+      type color 
+    end;
+]] parse succeeds
+
+test nested sig [[
+  module A : 
+    sig
+      module B : 
+        sig 
+        end
+    end;
+]] parse succeeds
+
+test struct [[
+  module A =
+    struct
+    end;
+]] parse succeeds
+
+test path [[
+  module A =
+    C.D.E;
+]] parse succeeds
+
+test functor [[
+  module A =
+    functor(X : sig end)
+      struct
+      end;
+]] parse succeeds
+
+test apply [[
+  module A =
+    F(B.C);
+]] parse succeeds
+
+test apply [[
+  module A =
+    functor(X: sig end) F(B.C);
+]] parse succeeds
+
+test apply [[
+  module A =
+    (functor(X: sig end) D) (B.C);
+]] parse succeeds
+
+test let [[
+  let x = int;
+]] parse succeeds
+
+
+
+

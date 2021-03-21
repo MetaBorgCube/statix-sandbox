@@ -1,0 +1,113 @@
+module module-syntax
+
+language york
+
+test sig [[
+  module A : 
+    sig
+    end;
+]] analysis succeeds
+
+test functor [[
+  module A : 
+    functor(X : sig end) 
+      sig
+      end;
+]] analysis succeeds
+
+test val [[ 
+  module A : 
+    sig 
+      val x : int
+    end;
+]] analysis succeeds
+
+test type [[
+  module A : 
+    sig
+      type color = int
+    end;
+]] analysis succeeds
+
+test abstract type [[
+  module A : 
+    sig
+      type color 
+    end;
+]] analysis succeeds
+
+test nested sig [[
+  module A : 
+    sig
+      module B : 
+        sig 
+        end
+    end;
+]] analysis succeeds
+
+test struct [[
+  module A =
+    struct
+    end;
+]] analysis succeeds
+
+test path [[
+  module C = 
+    struct
+      module D = 
+        struct 
+          module E = 
+            struct 
+            end
+        end
+    end;
+  module A =
+    C.D.E;
+]] analysis succeeds
+
+test functor [[
+  module A =
+    functor(X : sig end)
+      struct
+      end;
+]] analysis succeeds
+
+test apply [[
+  module F = 
+    functor (X : sig end) 
+      struct 
+      end;
+  module B = 
+    struct
+      module C = 
+        struct 
+        end
+    end;
+  module A =
+    F(B.C);
+]] analysis succeeds
+
+test apply [[
+  module F = 
+    functor (X : sig end) 
+      struct 
+      end;
+  module A =
+    functor(X: sig end) F(struct end);
+]] analysis succeeds
+
+test apply [[
+  module B = 
+    struct end;
+  module A =
+    (functor(X: sig end) struct end) 
+    (B);
+]] analysis succeeds
+
+test let [[
+  let x = int;
+]] analysis succeeds
+
+
+
+

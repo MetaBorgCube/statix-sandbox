@@ -1,0 +1,6 @@
+module POINT : 
+  sig
+    val x : int
+    val y : int
+  end;
+  

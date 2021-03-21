@@ -1,6 +1,6 @@
 module statics/c
 
-imports statics/core-sig
+//imports statics/core-sig
 imports signatures/c-sig
 imports statics/path
 imports statics/names
@@ -13,6 +13,14 @@ signature
     CPOINTER  : TYPE -> TYPE
     CFUNCTION : list(TYPE) * TYPE -> TYPE
     
+rules // interface to module checking
+
+  typeOfValType  : scope * ValType  -> TYPE
+  typeOfDefType  : scope * DefType  -> TYPE
+  typeOfKind     : scope * Kind     -> TYPE
+  typeOfTypeDecl : scope * TypeDecl -> TYPE
+  typeOfTerm     : scope * Term     -> TYPE
+  
 rules 
 
   subtype : TYPE * TYPE
@@ -22,11 +30,9 @@ rules
 
 rules
 
-  typeOfValType(s, CValType(t)) = T :-
-    typeOfCType(s, t) == T.
+  typeOfValType(s, CValType(t)) = typeOfCType(s, t).
   typeOfDefType(s, CDefType(t)) = typeOfCType(s, t).
   
-
   typeOfCType : scope * CType -> TYPE 
   typesOfCTypes maps typeOfCType(*, list(*)) = list(*)
   
@@ -145,7 +151,7 @@ rules
 
   typeOfTerm(s, CVarDecl(t)) = typeOfCType(s, t).
   
-  typeOfTerm(s1, CFunDef(t, args, decls, stms)) = CFUNCTION(TS, T) :- {s2 s3}
+  typeOfTerm(s1, CFunDef(args, t, decls, stms)) = CFUNCTION(TS, T) :- {s2 s3}
     typeOfCType(s1, t) == T, 
     new s2, s2 -P-> s1,
     typesOfArgs(s2, args) == TS,

@@ -4,7 +4,8 @@ module statics
 
 imports signatures/york-sig
 imports statics/modules
-imports statics/core
+imports statics/names
+imports statics/c
 
 rules // single-file entry point
 
@@ -22,7 +23,9 @@ rules // multi-file entry point
 
   fileOk : scope * Program
 
-  fileOk(s, Program(_)).
+  fileOk(s1, Program(tls)) :- {s2}
+    new s2, s2 -P-> s1,
+    tlOk(s2, tls) == _.
 
 rules
 

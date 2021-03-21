@@ -1,11 +1,11 @@
 module statics/modules
 
 imports signatures/modules-sig
-imports statics/modules-sig
+imports statics/base
 imports statics/core-sig
 imports statics/names
-imports statics/base
 imports statics/path
+imports statics/c
 
 signature
   constructors
@@ -45,6 +45,9 @@ rules
 rules 
 
   typeOfModType : scope * ModType -> TYPE
+  
+  typeOfModType(s, PathType(p)) = 
+    typeOfPath(s, p).
 
   typeOfModType(s, Sig(specs)) = SIG(specsOk(s, specs)). 
     // problem: s reachable from s_sig
@@ -52,8 +55,6 @@ rules
   typeOfModType(s, FunctorType(x, mt1, mt2)) = FUNCTOR(x, MT1, MT2) :-
     typeOfModType(s, mt1) == MT1,
     typeOfModType(s, mt2) == MT2.
-  
-
   
   proj(SIG(s), x) = typeOfID(s, x).
   

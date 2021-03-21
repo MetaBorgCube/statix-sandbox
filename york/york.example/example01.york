@@ -1,6 +1,6 @@
-val x : int;
-//
+val y : int;
+
 //type TreePt = *Tree;
 
-//let inc = int(int x){ return x + 1; };
-
+let inc = (int x)int{ return x + y; };
+let inc2 = (int x)int{ return inc(inc(x)); };
