@@ -9,29 +9,59 @@ imports statics/c
 
 signature
   constructors
-    SIG : scope -> TYPE
+    SIG     : scope -> TYPE
     FUNCTOR : ID * TYPE * TYPE -> TYPE
-    ABS : TYPE
+    ABS     : scope -> TYPE
     
+rules
+
+  applyType : TYPE * TYPE -> TYPE 
+  
+  applyType(FUNCTOR(x, T1, T2), T3) = T4 :- {s_subs}
+    new s_subs,
+    declarePhantomID(s_subs, x, withType(T3)),
+    subs(s_subs, T2) == T4.
+  
+  
+  subs : scope * TYPE -> TYPE
+  
+  subs(s, T) = T.
+  
+//  subs(s, SIG() = T2
+  
+  subtypeO(x, SIG(s1), SIG(s2)) :- 
+    allDefinedIn(idsInScope(s2), x, s1).
+    
+  subtypeO(y, FUNCTOR(x, T1, T2), FUNCTOR(y, S1, S2)) :- 
+    subtypeO(y, S1, T1),
+    subtypeO(y, T2, S2).
+    
+  subtypeO(x, ABS(_), ABS(_)).
+  subtypeO(x, CINT(), ABS(_)).
+  
+  
+      
 rules
 
   specOk : scope * Spec -> scope
 
   specOk(s1, ValSig(x, t)) = s2 :- {T}
-    new s2, s2 -P-> s1,
+    new s2, s2 -S-> s1,
     typeOfValType(s1, t) == T, 
     declareID(s2, x, withType(T)).
   
-  specOk(s1, TypeSig(x, td)) = s2 :- {K TD}
-    new s2, s2 -P-> s1,
-    declareID(s2, x, withType(TD)).
+  specOk(s1, TypeSig(x, td)) = s2 :- {T}
+    new s2, s2 -S-> s1,
+    typeOfDefType(s2, td) == T,
+    declareID(s2, x, withType(T)).
   
-  specOk(s1, AbsTypeSig(x)) = s2 :- {K TD}
-    new s2, s2 -P-> s1,
-    declareID(s2, x, withType(ABS())).
+  specOk(s1, AbsTypeSig(x)) = s2 :- {T s_abs}
+    new s2, s2 -S-> s1,
+    new s_abs,
+    declareID(s2, x, withType(ABS(s_abs))).
     
   specOk(s1, ModSig(x, mt)) = s2 :- {MT}
-    new s2, s2 -P-> s1,
+    new s2, s2 -S-> s1,
     typeOfModType(s1, mt) == MT,
     declareID(s2, x, withType(MT)).
     
@@ -52,9 +82,11 @@ rules
   typeOfModType(s, Sig(specs)) = SIG(specsOk(s, specs)). 
     // problem: s reachable from s_sig
   
-  typeOfModType(s, FunctorType(x, mt1, mt2)) = FUNCTOR(x, MT1, MT2) :-
-    typeOfModType(s, mt1) == MT1,
-    typeOfModType(s, mt2) == MT2.
+  typeOfModType(s1, FunctorType(x, mt1, mt2)) = FUNCTOR(x, T1, T2) :- {s2}
+    new s2, s2 -P-> s1,
+    typeOfModType(s1, mt1) == T1,
+    declareID(s2, x, withType(T1)),
+    typeOfModType(s2, mt2) == T2.
   
   proj(SIG(s), x) = typeOfID(s, x).
   
@@ -69,14 +101,16 @@ rules
   typeOfModTerm(s, Struct(defs)) = SIG(s_sig) :-
     defsOk(s, defs) == s_sig.
   
-  typeOfModTerm(s, Functor(x, mt1, mtrm)) = FUNCTOR(x, T1, T2) :-
-    typeOfModType(s, mt1) == T1,
-    typeOfModTerm(s, mtrm) == T2.
+  typeOfModTerm(s1, Functor(x, mt1, mtrm)) = FUNCTOR(x, T1, T2) :- {s2}
+    new s2, s2 -P-> s1,
+    typeOfModType(s1, mt1) == T1,
+    declareID(s2, x, withType(T1)),
+    typeOfModTerm(s2, mtrm) == T2.
   
-  typeOfModTerm(s, Apply(mtrm1, mtrm2)) = T2 :- {x T1 T3}
-    typeOfModTerm(s, mtrm1) == FUNCTOR(x, T1, T2),
-    typeOfModTerm(s, mtrm2) == T3.
-    // TODO: substitution in type
+  typeOfModTerm(s, Apply(mtrm1, mtrm2)) = T3 :- {x T1 T2}
+    typeOfModTerm(s, mtrm1) == T1@FUNCTOR(_, _, _),
+    typeOfModTerm(s, mtrm2) == T2, 
+    applyType(T1, T2) == T3.
   
   typeOfModTerm(s, Constraint(mtrm, mt)) = T2 :- {T1}
     typeOfModTerm(s, mtrm) == T1,
@@ -88,24 +122,31 @@ rules
   defOk : scope * Def -> scope
   
   defOk(s1, ValueStr(x, e)) = s2 :- {T}
-    new s2, s2 -P-> s1,
+    new s2, s2 -S-> s1,
     typeOfTerm(s1, e) == T,
     declareID(s2, x, withType(T)).
     
   defOk(s1, TypeKindStr(x, k, deft)) = s2 :- {T}
-    new s2, s2 -P-> s1,
+    new s2, s2 -S-> s1,
     typeOfDefType(s1, deft) == T,
     declareID(s2, x, withType(T)).
   
   defOk(s1, TypeStr(x, deft)) = s2 :- {T}
-    new s2, s2 -P-> s1,
-    typeOfDefType(s1, deft) == T,
+    new s2, s2 -S-> s1,
+    typeOfDefType(s2, deft) == T,
     declareID(s2, x, withType(T)).
   
   defOk(s1, ModuleStr(x, mtrm)) = s2 :- {T}
-    new s2, s2 -P-> s1,
+    new s2, s2 -S-> s1,
     typeOfModTerm(s1, mtrm) == T,
     declareID(s2, x, withType(T)).
+  
+  defOk(s1, ModuleTypedStr(x, mt, mtrm)) = s2 :- {T1 T2}
+    new s2, s2 -S-> s1,
+    typeOfModType(s1, mt) == T1,
+    typeOfModTerm(s1, mtrm) == T2,
+    subtypeO(x, T2, T1),
+    declareID(s2, x, withType(T1)).
   
   defsOk : scope * list(Def) -> scope
   

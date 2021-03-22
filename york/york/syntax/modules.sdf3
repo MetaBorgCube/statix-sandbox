@@ -91,5 +91,10 @@ context-free syntax
       <ModTerm>
   >
   
+  Def.ModuleTypedStr = <
+    module <ID> : <ModType> = 
+      <ModTerm>
+  >
+  
 template options
   ID = keyword {reject}

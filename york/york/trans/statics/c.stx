@@ -1,17 +1,19 @@
 module statics/c
 
-//imports statics/core-sig
 imports signatures/c-sig
 imports statics/path
 imports statics/names
+imports statics/base
 
 signature
   constructors 
     CVOID     : TYPE
     CINT      : TYPE
     CFLOAT    : TYPE
+    CNULL     : TYPE
     CPOINTER  : TYPE -> TYPE
     CFUNCTION : list(TYPE) * TYPE -> TYPE
+    CSTRUCT   : scope -> TYPE
     
 rules // interface to module checking
 
@@ -23,11 +25,9 @@ rules // interface to module checking
   
 rules 
 
-  subtype : TYPE * TYPE
-  
-  subtype(T, T).
   subtype(CINT(), CFLOAT()).
-
+  subtypeO(_, CINT(), CFLOAT()).
+  
 rules
 
   typeOfValType(s, CValType(t)) = typeOfCType(s, t).
@@ -39,11 +39,23 @@ rules
   typeOfCType(s, VoidT())     = CVOID().
   typeOfCType(s, IntT())      = CINT().
   typeOfCType(s, FloatT())    = CFLOAT().
+  typeOfCType(s, NullT())     = CNULL().
   typeOfCType(s, PointerT(t)) = CPOINTER(typeOfCType(s, t)).
   typeOfCType(s, TypeName(p)) = typeOfPath(s, p).
   
   typeOfCType(s, FunctionT(ts, t)) = 
     CFUNCTION(typesOfCTypes(s, ts), typeOfCType(s, t)).
+    
+  typeOfCType(s, StructT(flds)) = CPOINTER(CSTRUCT(s_struct)) :-
+    new s_struct,
+    cfieldsOk(s, s_struct, flds).
+    
+  cfieldOk : scope * scope * CField
+  cfieldsOk maps cfieldOk(*, *, list(*))
+  
+  cfieldOk(s, s_struct, CField(t, x)) :- {T}
+    typeOfCType(s, t) == T,
+    declareID(s_struct, x, withType(T)).
 
 rules
 
@@ -52,6 +64,7 @@ rules
   
   typeOfCExpr(s, CInt(_)) = CINT().
   typeOfCExpr(s, CFloat(_)) = CFLOAT().
+  typeOfCExpr(s, CNull()) = CNULL().
   typeOfCExpr(s, CVar(p)) = typeOfPath(s, p).
   
   typeOfCExpr(s, CApply(e, es)) = T :- {TS}
@@ -59,7 +72,7 @@ rules
     typesOfCExprs(s, es) == TS.
     
   typeOfCExpr(s, CAssign(e1, e2)) = T :- 
-    typeOfCExpr(s, e1) == CPOINTER(T),
+    typeOfLValue(s, e1) == CPOINTER(T),
     typeOfCExpr(s, e2) == T.
     
   typeOfCExpr(s, CUnOp(op, e)) = T2 :- {T1}
@@ -75,6 +88,29 @@ rules
     typeOfCType(s, t) == T1,
     typeOfCExpr(s, e) == T2,
     subtype(T2, T1).
+    
+  typeOfCExpr(s, CDot(e, x)) = T :- {s_struct}
+    typeOfCExpr(s, e) == CPOINTER(CSTRUCT(s_struct)),
+    typeOfID(s_struct, x) == T. 
+    
+  typeOfCExpr(s, CInitS(t, inits)) = T :- {s_struct}
+    typeOfCType(s, t) == T@CPOINTER(CSTRUCT(s_struct)),
+    initFieldsOk(s, s_struct, inits).
+    
+    
+  initFieldOk : scope * scope * CInitField 
+  initFieldsOk maps initFieldOk(*, *, list(*))
+  
+  initFieldOk(s, s_struct, CInitField(x, e)) :- {T1 T2}
+    typeOfCExpr(s, e) == T1,
+    typeOfID(s_struct, x) == T2,
+    subtypeO(x, T2, T1).
+    // check that all fields are initialized 
+    
+   
+  typeOfLValue : scope * CExpr -> TYPE
+  
+  typeOfLValue(s, CVar(p)) = CPOINTER(typeOfPath(s, p)).
 
 rules
 
@@ -101,6 +137,11 @@ rules
   typeOfBinOp(CSub(), CFLOAT(), CINT())   = CFLOAT().  
   typeOfBinOp(CSub(), CINT(),   CFLOAT()) = CFLOAT().
   typeOfBinOp(CSub(), CFLOAT(), CFLOAT()) = CFLOAT().
+  
+  typeOfBinOp(CEq(),  CINT(),      CINT())      = CINT().  
+  typeOfBinOp(CEq(),  CPOINTER(T), CPOINTER(T)) = CINT().  
+  typeOfBinOp(CEq(),  CPOINTER(T), CNULL())     = CINT().  
+  typeOfBinOp(CEq(),  CNULL(),     CPOINTER(T)) = CINT().  
 
 rules
 
@@ -122,8 +163,10 @@ rules
     typeOfCExpr(s, e3) == CINT(),
     statOk(s, stm).
     
-  statOk(s, CReturn(e)) :- {T}
-    typeOfCExpr(s, e) == T.  
+  statOk(s, CReturn(e)) :- {T1 T2}
+    typeOfPhantomID(s, "@return") == T1,
+    typeOfCExpr(s, e) == T2,
+    subtype(T2, T1).
     // check that return type matches return type of function
     
   statOk(s1, CBlock(decls, stms)) :- {s2}
@@ -149,13 +192,14 @@ rules
     
 rules 
 
-  typeOfTerm(s, CVarDecl(t)) = typeOfCType(s, t).
+  typeOfTerm(s, CVarDecl(e)) = typeOfCExpr(s, e).
   
   typeOfTerm(s1, CFunDef(args, t, decls, stms)) = CFUNCTION(TS, T) :- {s2 s3}
     typeOfCType(s1, t) == T, 
     new s2, s2 -P-> s1,
     typesOfArgs(s2, args) == TS,
     new s3, s3 -P-> s2,
+    declarePhantomID(s3, "@return", withType(T)),
     typesOfDecls(s3, decls) == _,
     statsOk(s3, stms).
     

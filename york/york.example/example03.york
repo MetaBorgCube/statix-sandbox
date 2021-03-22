@@ -1,6 +1,34 @@
 module POINT : 
   sig
-    val x : int
-    val y : int
+    type t 
+    val x : t
+    val y : t
+    val move : (int, int) void
   end;
   
+module Point : POINT = 
+  struct
+    type t = int
+    let x = 0
+    let y = 0
+    let move = (int h, int v) void {
+      x = x + h; y = y + v;
+    }
+  end;
+  
+module LINE = 
+  functor(P : POINT) 
+    struct
+      module Start = P
+      module End = P     
+    end;
+    
+//module Line = 
+//  LINE(Point);
+  
+//module Main = 
+//  struct 
+//    let main = ()void {
+//      Line.Start.x;
+//    }
+//  end;

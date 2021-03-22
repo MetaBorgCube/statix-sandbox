@@ -1,0 +1,404 @@
+scope graph
+  #-s2_829-88 {
+    relations {
+      statics/names!var : ("xs", #-s_879-87)
+    }
+    edges {
+      statics/names!P : #-s2_61-10
+    }
+  }
+  #-s2_422-66 {
+    relations {
+      statics/names!var : ("t", #-s_437-65)
+    }
+    edges {
+      statics/names!S : #-s_2-69
+    }
+  }
+  #-s3_933-95 {
+    relations {
+    }
+    edges {
+      statics/names!P : #-s2_928-102
+    }
+  }
+  #-s2_393-59 {
+    relations {
+      statics/names!var : ("nil", #-s_404-70)
+    }
+    edges {
+      statics/names!S : #-s2_371-58
+    }
+  }
+  #-s2_928-102 {
+    relations {
+      statics/names!var : ("xs", #-s_1040-98)
+                          ("x", #-s_1071-101)
+    }
+    edges {
+      statics/names!P : #-s2_57-4
+    }
+  }
+  #-s3_85-8 {
+    relations {
+    }
+    edges {
+      statics/names!P : #-s2_80-9
+    }
+  }
+  #-s2_345-54 {
+    relations {
+      statics/names!var : ("empty", #-s_360-53)
+    }
+    edges {
+      statics/names!S : #-s2_316-50
+    }
+  }
+  #-s2_57-4 {
+    relations {
+      statics/names!var : ("empty", #-s_896-90)
+    }
+    edges {
+      statics/names!S : #-s2_61-10
+    }
+  }
+  #-s2_122-22 {
+    relations {
+      statics/names!var : ("t", #-s_137-19)
+    }
+    edges {
+      statics/names!S : #-s2_31-30
+    }
+  }
+  #-s2_31-30 {
+    relations {
+      statics/names!var : ("Elt", #-s_178-25)
+    }
+    edges {
+      statics/names!P : #-s2_200-68
+    }
+  }
+  #-s2_86-16 {
+    relations {
+      statics/names!var : ("hd", #-s_101-13)
+    }
+    edges {
+      statics/names!S : #-s2_122-22
+    }
+  }
+  #-s2_1107-107 {
+    relations {
+      statics/names!var : ("nil", #-s_1122-106)
+    }
+    edges {
+      statics/names!S : #-s2_909-103
+    }
+  }
+  #-s3_110-14 {
+    relations {
+    }
+    edges {
+      statics/names!P : #-s2_105-15
+    }
+  }
+  #-s3_834-84 {
+    relations {
+    }
+    edges {
+      statics/names!P : #-s2_829-88
+    }
+  }
+  #-s2_12-31 {
+    relations {
+      statics/names!var : ("List", #-s_27-3)
+    }
+    edges {
+      statics/names!S : #-s2_200-68
+    }
+  }
+  #-s2_245-42 {
+    relations {
+      statics/names!var : ("elt", #-s_260-41)
+    }
+    edges {
+      statics/names!S : #-s2_226-38
+    }
+  }
+  #-s2_282-46 {
+    relations {
+      statics/names!var : ("hd", #-s_297-45)
+    }
+    edges {
+      statics/names!S : #-s2_245-42
+    }
+  }
+  #-s2_105-15 {
+    relations {
+      statics/names!var : ("xs", #-s_698-79)
+    }
+    edges {
+      statics/names!P : #-s2_122-22
+    }
+  }
+  #-s2_371-58 {
+    relations {
+      statics/names!var : ("cons", #-s_386-57)
+    }
+    edges {
+      statics/names!S : #-s2_345-54
+    }
+  }
+  #-s2_183-29 {
+    relations {
+      statics/names!var : ("t", #-s_198-28)
+    }
+    edges {
+      statics/names!S : #-s2_200-68
+    }
+  }
+  #-s2_61-10 {
+    relations {
+      statics/names!var : ("tl", #-s_76-7)
+    }
+    edges {
+      statics/names!S : #-s2_86-16
+    }
+  }
+  #-s2_80-9 {
+    relations {
+      statics/names!var : ("xs", #-s_776-83)
+    }
+    edges {
+      statics/names!P : #-s2_86-16
+    }
+  }
+  #-s2_909-103 {
+    relations {
+      statics/names!var : ("cons", #-s_924-94)
+    }
+    edges {
+      statics/names!S : #-s2_57-4
+    }
+  }
+  #-s2_219-67 {
+    relations {
+      statics/names!var : ("Elt", #-s_417-62)
+    }
+    edges {
+      statics/names!P : #-s_2-69
+    }
+  }
+  #-s2_226-38 {
+    relations {
+      statics/names!var : ("t", #-s_241-37)
+    }
+    edges {
+      statics/names!S : #-s2_219-67
+    }
+  }
+  #-s2_200-68 {
+    relations {
+      statics/names!var : ("LIST", #-s_215-34)
+    }
+    edges {
+      statics/names!S : #-s_2-69
+    }
+  }
+  #-s2_316-50 {
+    relations {
+      statics/names!var : ("tl", #-s_331-49)
+    }
+    edges {
+      statics/names!S : #-s2_282-46
+    }
+  }
+  #-s_178-25 {
+    relations {
+      statics/names!typeOf : SIG(#-s2_183-29)
+    }
+    edges {
+    }
+  }
+  #-s_437-65 {
+    relations {
+      statics/names!typeOf : ABS()
+    }
+    edges {
+    }
+  }
+  #-s_776-83 {
+    relations {
+      statics/names!typeOf : CPOINTER(CSTRUCT(?-s_struct-796))
+    }
+    edges {
+    }
+  }
+  #-s_698-79 {
+    relations {
+      statics/names!typeOf : CPOINTER(CSTRUCT(#-s_struct_140-21))
+    }
+    edges {
+    }
+  }
+  #-s_76-7 {
+    relations {
+      statics/names!typeOf : CFUNCTION([CPOINTER(CSTRUCT(?-s_struct-796))], CPOINTER(CSTRUCT(#-s_struct_140-21)))
+    }
+    edges {
+    }
+  }
+  #-s_164-20 {
+    relations {
+      statics/names!typeOf : ABS()
+    }
+    edges {
+    }
+  }
+  #-s_241-37 {
+    relations {
+      statics/names!typeOf : ABS()
+    }
+    edges {
+    }
+  }
+  #-s_924-94 {
+    relations {
+      statics/names!typeOf : CFUNCTION([?-T-1058, ?-T-1027], CPOINTER(CSTRUCT(#-s_struct_140-21)))
+    }
+    edges {
+    }
+  }
+  #-s_879-87 {
+    relations {
+      statics/names!typeOf : ?-T-866
+    }
+    edges {
+    }
+  }
+  #-s_896-90 {
+    relations {
+      statics/names!typeOf : CFUNCTION([?-T-866], CINT())
+    }
+    edges {
+    }
+  }
+  #-s_198-28 {
+    relations {
+      statics/names!typeOf : ABS()
+    }
+    edges {
+    }
+  }
+  #-s_331-49 {
+    relations {
+      statics/names!typeOf : CFUNCTION([ABS()], ABS())
+    }
+    edges {
+    }
+  }
+  #-s_1040-98 {
+    relations {
+      statics/names!typeOf : ?-T-1027
+    }
+    edges {
+    }
+  }
+  #-s_260-41 {
+    relations {
+      statics/names!typeOf : ABS()
+    }
+    edges {
+    }
+  }
+  #-s_struct_140-21 {
+    relations {
+      statics/names!var : ("tl", #-s_151-75)
+                          ("hd", #-s_164-20)
+    }
+    edges {
+    }
+  }
+  #-s_1071-101 {
+    relations {
+      statics/names!typeOf : ?-T-1058
+    }
+    edges {
+    }
+  }
+  #-s_215-34 {
+    relations {
+      statics/names!typeOf : FUNCTOR("Elt", SIG(#-s2_422-66), SIG(#-s2_393-59))
+    }
+    edges {
+    }
+  }
+  #-s_360-53 {
+    relations {
+      statics/names!typeOf : CFUNCTION([ABS()], CINT())
+    }
+    edges {
+    }
+  }
+  #-s_404-70 {
+    relations {
+      statics/names!typeOf : ABS()
+    }
+    edges {
+    }
+  }
+  #-s_417-62 {
+    relations {
+      statics/names!typeOf : SIG(#-s2_422-66)
+    }
+    edges {
+    }
+  }
+  #-s_151-75 {
+    relations {
+      statics/names!typeOf : CPOINTER(CSTRUCT(#-s_struct_140-21))
+    }
+    edges {
+    }
+  }
+  #-s_101-13 {
+    relations {
+      statics/names!typeOf : CFUNCTION([CPOINTER(CSTRUCT(#-s_struct_140-21))], ABS())
+    }
+    edges {
+    }
+  }
+  #-s_386-57 {
+    relations {
+      statics/names!typeOf : CFUNCTION([ABS(), ABS()], ABS())
+    }
+    edges {
+    }
+  }
+  #-s_297-45 {
+    relations {
+      statics/names!typeOf : CFUNCTION([ABS()], ABS())
+    }
+    edges {
+    }
+  }
+  #-s_1122-106 {
+    relations {
+      statics/names!typeOf : ?-T-1109
+    }
+    edges {
+    }
+  }
+  #-s_27-3 {
+    relations {
+      statics/names!typeOf : FUNCTOR("Elt", SIG(#-s2_183-29), SIG(#-s2_1107-107))
+    }
+    edges {
+    }
+  }
+  #-s_137-19 {
+    relations {
+      statics/names!typeOf : CPOINTER(CSTRUCT(#-s_struct_140-21))
+    }
+    edges {
+    }
+  }

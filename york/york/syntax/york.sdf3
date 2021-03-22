@@ -10,7 +10,7 @@ context-free start-symbols Program
 sorts Program TL
 context-free syntax
   
-  Program.Program = <<{TL "\n"}+>>
+  Program.Program = <<{TL "\n\n"}+>>
   
   TL.Def  = <<Def>;>
   TL.Spec = <<Spec>;>

@@ -1,0 +1,8 @@
+module F = 
+  functor(X: sig type t end) 
+    struct
+      type t = X.t
+    end;
+    
+module A = 
+  F(struct type t = int end);

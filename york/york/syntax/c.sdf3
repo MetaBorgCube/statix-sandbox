@@ -4,28 +4,45 @@ imports lex
 imports path
 imports core 
 
-sorts CType
+sorts CType CField
 context-free syntax
   CType.VoidT     = <void>
   CType.IntT      = <int>
   CType.FloatT    = <float>
+  CType.NullT     = <null>
   CType.PointerT  = <*<CType>>
-  CType.FunctionT = <(<{CType "*"}*>)<CType>>
+  CType.FunctionT = <(<{CType ", "}*>)<CType>>
   CType.TypeName  = Path
+  
+  CType.StructT   = <
+    struct {
+      <{CField "\n"}*>
+    }
+  >
+  CField.CField = <<CType> <ID>;>
 
-sorts CExpr
+sorts CExpr CInitField
 context-free syntax
+  CExpr         = <(<CExpr>)> {bracket}
   CExpr.CInt    = INT
   CExpr.CFloat  = FLOAT
+  CExpr.CNull   = <null>
   CExpr.CVar    = Path
   CExpr.CApply  = <<CExpr>(<{CExpr ", "}*>)>
   CExpr.CAssign = <<CExpr> = <CExpr>> {non-assoc}
   CExpr.CUnOp   = <<CUnOp><CExpr>>
   CExpr.CBinOp  = <<CExpr> <CBinOp> <CExpr>> {left}
-  CExpr.CCast   = <(<CType>)<CExpr>> 
-  CExpr         = <(<CExpr>)> {bracket}
+  CExpr.CCast   = <(<CType>) <CExpr>> 
+  CExpr.CDot    = [[CExpr]->[ID]]
+  CExpr.CInitS  = <
+    <CType>{
+      <{CInitField "\n"}*>
+    }
+  >  
+  CInitField.CInitField = <<ID> = <CExpr>;>
 context-free priorities
   CExpr.CApply 
+  > CExpr.CDot
   > CExpr.CUnOp
   > CExpr.CBinOp
   > CExpr.CAssign
@@ -38,6 +55,7 @@ context-free syntax
   CBinOp.CAdd = <+>
   CBinOp.CMul = <*>
   CBinOp.CSub = [-]
+  CBinOp.CEq  = [==]
   
 sorts CStat
 context-free syntax
@@ -66,9 +84,9 @@ context-free syntax
   CArg.CArg = <<CType> <ID>>
   
 context-free syntax
-  Term.CVarDecl = CType
+  Term.CVarDecl = <<CExpr>>
   Term.CFunDef = <
-    (<{CArg ", "}*>)<CType> {
+    (<{CArg ", "}*>) <CType> {
       <{CDecl "\n"}*>
       <{CStat "\n"}*>
     } 

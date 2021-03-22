@@ -6,6 +6,7 @@ imports signatures/york-sig
 imports statics/modules
 imports statics/names
 imports statics/c
+imports statics/base
 
 rules // single-file entry point
 

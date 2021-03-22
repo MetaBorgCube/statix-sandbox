@@ -1,3 +1,35 @@
-val x : int;
-type TreePt = *Tree;
-let x = void;
+module COUNTER :
+  sig
+    val current : ( )int
+    val next : ( )int
+  end;
+
+module Counter : COUNTER =
+  struct
+    let counter = 0
+    let current = ( )int {
+                    return counter;
+                  }
+    let next = ( )int {
+                 counter = counter + 1;
+                 return counter;
+               }
+  end;
+
+module STDIO :
+  sig
+    val print : (int)void
+  end;
+
+module Application =
+  functor(io : STDIO)
+    struct
+      module counter1 =
+        Counter
+      module counter2 =
+        Counter
+      let main = ( )void {
+                   io.print(counter1.current( ));
+                   io.print(counter2.next( ));
+                 }
+    end;

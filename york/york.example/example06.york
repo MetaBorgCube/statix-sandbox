@@ -1,0 +1,29 @@
+module LIST : 
+    sig
+      type t
+      type elt 
+      val hd    : (t)elt
+      val tl    : (t)elt
+      val empty : (t)int
+      val cons  : (elt, t)t
+      val nil   : t
+    end;
+  
+  
+module List : LIST = 
+    struct
+      type t = struct { Elt.t hd; t tl; }
+      type elt = int
+      let hd = (t xs)Elt.t { return xs->hd; }  
+      let tl = (t xs)t { return xs->tl; }
+      let empty = (t xs)int {
+        if(xs == null) return 1; else return 0; 
+      }
+      let cons = (Elt.t x, t xs)t {
+        t ys;
+        ys = t{ hd = x; tl = xs; };
+        return ys;
+      }
+      let nil = null
+    end;
+  

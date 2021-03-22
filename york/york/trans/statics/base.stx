@@ -1,6 +1,18 @@
 module statics/base
 
+imports signatures/lex-sig
 imports signatures/base-sig
 
 signature
   sorts TYPE 
+
+rules  
+
+  subtypeO : ID * TYPE * TYPE
+  
+  subtypeO(_, T, T).
+  
+  
+  subtype : TYPE * TYPE
+  
+  subtype(T, T).

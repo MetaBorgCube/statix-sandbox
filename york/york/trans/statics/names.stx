@@ -5,40 +5,81 @@ imports statics/base
 
 signature
   name-resolution
-    labels P
+    labels P S
   relations 
     var : ID -> scope 
  
 rules
 
   declareID : scope * ID * scope
+  declarePhantomID : scope * ID * scope
   resolveID : scope * ID -> list((path * (ID * scope)))
   scopeOfID : scope * ID -> scope
   typeOfID  : scope * ID -> TYPE
-
+  typeOfPhantomID  : scope * ID -> TYPE
+  
   declareID(s, x, s2) :- 
     !var[x, s2] in s,
     resolveID(s, x) == [(_, (_, _))] 
       | error $[Duplicate definition of variable [x]],
-    @x.scope := s2. 
+    @x.scope := s2,
+    @x.type := typeOf(s2). 
+
+  declarePhantomID(s, x, s2) :- 
+    !var[x, s2] in s,
+    resolveID(s, x) == [(_, (_, _))] 
+      | error $[Duplicate definition of variable [x]]. 
     
   resolveID(s, x) = ps :-  
     query var
-      filter P*
+      filter (S | P)*
          and { x' :- x' == x }
-         min $ < P
+         min $ < P, $ < S, S < P
          and true
           in s |-> ps.  
+           
+  typeOfPhantomID(s, x) = typeOf(s2) :-
+    resolveID(s, x) == [(_,(_, s2))|_]
+      | error $[Variable [x] not defined].
           
   scopeOfID(s, x) = s2 :- {x'} 
     resolveID(s, x) == [(_,(x', s2))|_]
       | error $[Variable [x] not defined],
     @x.ref := x'. 
     
-  typeOfID(s, x) = typeOf(scopeOfID(s, x)).
+  typeOfID(s, x) = T :-
+    typeOf(scopeOfID(s, x)) == T.
+    //@x.type := T.
     
+    
+rules
 
+  idsInScope : scope -> list((path * (ID * scope)))
+  
+  idsInScope(s) = ps :- 
+    query var
+      filter S*
+         and true
+         min 
+         and { x, y :- x == y }
+          in s |-> ps.
+    
+  visibleID  : scope -> list((path * (ID * scope)))
+  visibleID(s) = ps :- 
+    query var
+      filter (S | P)*
+         and true
+         min $ < P, $ < S, S < P
+         and { x, y :- x == y }
+          in s |-> ps.
    
+  definedIn : (path * (ID * scope)) * ID * scope 
+  allDefinedIn maps definedIn(list(*), *, *)
+  
+  definedIn((_, (x, s1)), y, s2) :- {x' s3} 
+    resolveID(s2, x) == [(_, (x', s3))] | error $[[x] not defined]@y,
+    subtypeO(x', typeOf(s1), typeOf(s3)) | error $[should be subtype]@x'.
+       
 signature
   relations 
     typeOf : -> TYPE
