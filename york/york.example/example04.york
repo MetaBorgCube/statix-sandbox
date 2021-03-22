@@ -7,7 +7,7 @@ module POINT :
     val move    : (t, t) t 
   end;
   
-module Point = 
+module Point : POINT = 
   struct
     type t = struct { int x; int y; }
     let mkPoint = (int x, int y) t {
@@ -33,7 +33,7 @@ module LINE :
       val move : (t, P.t)t
     end;
     
-module Line = 
+module Line : LINE = 
   functor(P : POINT) 
     struct
       type t = struct{ P.t s; P.t e; }
@@ -45,5 +45,12 @@ module Line =
       let move = (t l, P.t p)t {
         return mkLine(P.move(s(l), p), P.move(e(l), p));
       }
+      let secret = 0
     end;
    
+module Appication = 
+  struct
+    module L = Line(Point)
+    let mkline = L.mkLine
+    let secret = L.secret
+  end;

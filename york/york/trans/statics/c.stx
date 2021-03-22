@@ -28,6 +28,15 @@ rules
   subtype(CINT(), CFLOAT()).
   subtypeO(_, CINT(), CFLOAT()).
   
+  subtypeO(x, CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
+    subtypesO(x, Ts2, Ts1),
+    subtypeO(x, T1, T2).
+  
+  subtype(CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
+    subtypes(Ts2, Ts1),
+    subtype(T1, T2).
+  
+  
 rules
 
   typeOfValType(s, CValType(t)) = typeOfCType(s, t).

@@ -11,7 +11,7 @@ signature
   constructors
     SIG     : scope -> TYPE
     FUNCTOR : ID * TYPE * TYPE -> TYPE
-    ABS     : scope -> TYPE
+    ABS     : TYPE
     
 rules
 
@@ -36,9 +36,13 @@ rules
     subtypeO(y, S1, T1),
     subtypeO(y, T2, S2).
     
-  subtypeO(x, ABS(_), ABS(_)).
-  subtypeO(x, CINT(), ABS(_)).
+  subtypeO(x, ABS(), ABS()).
+  subtypeO(x, CINT(), ABS()).
+  subtypeO(x, CPOINTER(T), ABS()).
   
+  subtype(ABS(), ABS()).
+  subtype(CINT(), ABS()).
+  subtype(CPOINTER(T), ABS()).
   
       
 rules
@@ -58,7 +62,7 @@ rules
   specOk(s1, AbsTypeSig(x)) = s2 :- {T s_abs}
     new s2, s2 -S-> s1,
     new s_abs,
-    declareID(s2, x, withType(ABS(s_abs))).
+    declareID(s2, x, withType(ABS())).
     
   specOk(s1, ModSig(x, mt)) = s2 :- {MT}
     new s2, s2 -S-> s1,

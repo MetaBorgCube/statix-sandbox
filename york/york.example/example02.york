@@ -2,7 +2,7 @@ module A :
   sig
     val x : int
     type color
-    val colorOf : (int)color
+    val colorOf : (int) color
     val inc : (int)int
   end;  
   

@@ -76,9 +76,12 @@ rules
   definedIn : (path * (ID * scope)) * ID * scope 
   allDefinedIn maps definedIn(list(*), *, *)
   
-  definedIn((_, (x, s1)), y, s2) :- {x' s3} 
-    resolveID(s2, x) == [(_, (x', s3))] | error $[[x] not defined]@y,
-    subtypeO(x', typeOf(s1), typeOf(s3)) | error $[should be subtype]@x'.
+  definedIn((_, (x, s1)), y, s2) :- {x' s3 T_x' T_x} 
+    resolveID(s2, x) == [(_, (x', s3))] | error $[[x] not defined in [y]]@y,
+    T_x' == typeOf(s3),
+    T_x == typeOf(s1),
+    subtypeO(x', T_x', T_x) 
+      | error $[[y].[x'] : [T_x'] should be subtype of [x]: [T_x]]@x'.
        
 signature
   relations 

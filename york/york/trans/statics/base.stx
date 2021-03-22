@@ -16,3 +16,7 @@ rules
   subtype : TYPE * TYPE
   
   subtype(T, T).
+  
+  subtypes maps subtype(list(*), list(*))
+  
+  subtypesO maps subtypeO(*, list(*), list(*))
