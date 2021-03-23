@@ -34,7 +34,7 @@ rules
     query var
       filter (S | P)*
          and { x' :- x' == x }
-         min $ < P, $ < S, S < P
+         min $ < P, S < P
          and true
           in s |-> ps.  
            
@@ -48,8 +48,8 @@ rules
     @x.ref := x'. 
     
   typeOfID(s, x) = T :-
-    typeOf(scopeOfID(s, x)) == T.
-    //@x.type := T.
+    typeOf(scopeOfID(s, x)) == T,
+    @x.type := T.
     
     
 rules
@@ -60,7 +60,7 @@ rules
     query var
       filter S*
          and true
-         min 
+         min $ < S
          and { x, y :- x == y }
           in s |-> ps.
     
@@ -77,7 +77,8 @@ rules
   allDefinedIn maps definedIn(list(*), *, *)
   
   definedIn((_, (x, s1)), y, s2) :- {x' s3 T_x' T_x} 
-    resolveID(s2, x) == [(_, (x', s3))] | error $[[x] not defined in [y]]@y,
+    resolveID(s2, x) == [(_, (x', s3))] 
+      | error $[[x] not defined in [y]]@y,
     T_x' == typeOf(s3),
     T_x == typeOf(s1),
     subtypeO(x', T_x', T_x) 
@@ -99,3 +100,14 @@ rules
       
   withType(T) = s :-
     new s, !typeOf[T] in s.
+    
+rules 
+
+  subsInPath : scope * scope * (path * (ID * scope)) 
+  subsInPaths maps subsInPath(*, *, list(*))
+  
+  subsInPath(subs, s_sig, (p, (x, s_T))) :- {T}
+    subs(subs, typeOf(s_T)) == T,
+    declarePhantomID(s_sig, x, withType(T)). 
+    
+    

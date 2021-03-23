@@ -25,17 +25,31 @@ rules // interface to module checking
   
 rules 
 
-  subtype(CINT(), CFLOAT()).
+//  subtype(CINT(), CFLOAT()).
   subtypeO(_, CINT(), CFLOAT()).
   
+//  subtype(CPOINTER(T1), CPOINTER(T2)) :-
+//    subtype(T1, T2).
+    
+  subtypeO(x, CPOINTER(T1), CPOINTER(T2)) :-
+    subtypeO(x, T1, T2).
+    
   subtypeO(x, CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
     subtypesO(x, Ts2, Ts1),
     subtypeO(x, T1, T2).
   
-  subtype(CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
-    subtypes(Ts2, Ts1),
-    subtype(T1, T2).
+//  subtype(CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
+//    subtypes(Ts2, Ts1),
+//    subtype(T1, T2).
+    
+  subtypeO(x, CSTRUCT(s_struct1), CSTRUCT(s_struct2)) :-     
+    allDefinedIn(idsInScope(s_struct2), x, s_struct1).
+
+rules 
+
+  subs(s_subs, CPOINTER(T)) = CPOINTER(subs(s_subs, T)).
   
+  subs(s_subs, CFUNCTION(Ts, T)) = CFUNCTION(subss(s_subs, Ts), subs(s_subs, T)).
   
 rules
 
@@ -96,27 +110,37 @@ rules
   typeOfCExpr(s, CCast(t, e)) = T2 :- {T1}
     typeOfCType(s, t) == T1,
     typeOfCExpr(s, e) == T2,
-    subtype(T2, T1).
+    subtypeO("", T2, T1).
     
   typeOfCExpr(s, CDot(e, x)) = T :- {s_struct}
     typeOfCExpr(s, e) == CPOINTER(CSTRUCT(s_struct)),
     typeOfID(s_struct, x) == T. 
     
-  typeOfCExpr(s, CInitS(t, inits)) = T :- {s_struct}
-    typeOfCType(s, t) == T@CPOINTER(CSTRUCT(s_struct)),
-    initFieldsOk(s, s_struct, inits).
+  typeOfCExpr(s, CInitS(t, inits)) = T1 :- {s_struct1 s_struct2 T2}
+    typeOfCType(s, t) == T1@CPOINTER(CSTRUCT(s_struct1)),
+    new s_struct2, 
+    T2 == CPOINTER(CSTRUCT(s_struct2)),
+    initFieldsOk(s, s_struct2, inits),
+    subtypeO("", T2, T1).
     
-    
+    //allDefinedIn(idsInScope(s_struct1), "", s_struct2).
+     
   initFieldOk : scope * scope * CInitField 
   initFieldsOk maps initFieldOk(*, *, list(*))
   
   initFieldOk(s, s_struct, CInitField(x, e)) :- {T1 T2}
     typeOfCExpr(s, e) == T1,
-    typeOfID(s_struct, x) == T2,
-    subtypeO(x, T2, T1).
-    // check that all fields are initialized 
-    
-   
+    declarePhantomID(s_struct, x, withType(T2)).
+      
+//  initFieldOk : scope * scope * CInitField * scope
+//  initFieldsOk maps initFieldOk(*, *, list(*), *)
+//  
+//  initFieldOk(s, s_struct1, CInitField(x, e), s_struct2) :- {T1 T2}
+//    typeOfCExpr(s, e) == T1,
+//    typeOfID(s_struct1, x) == T2,
+//    subtypeO(x, T2, T1), 
+//    declarePhantomID(s_struct2, x, withType(T2)).
+//    
   typeOfLValue : scope * CExpr -> TYPE
   
   typeOfLValue(s, CVar(p)) = CPOINTER(typeOfPath(s, p)).
@@ -159,8 +183,7 @@ rules
   
   statOk(s, CExpr(e)) :-
     typeOfCExpr(s, e) == _.
-    
-    
+       
   statOk(s, CIf(e, stm1, stm2)) :-
     typeOfCExpr(s, e) == CINT(),
     statOk(s, stm1),
@@ -175,7 +198,7 @@ rules
   statOk(s, CReturn(e)) :- {T1 T2}
     typeOfPhantomID(s, "@return") == T1,
     typeOfCExpr(s, e) == T2,
-    subtype(T2, T1).
+    subtypeO("", T2, T1). // proper ID
     // check that return type matches return type of function
     
   statOk(s1, CBlock(decls, stms)) :- {s2}

@@ -1,25 +1,26 @@
+module c-syntax
 
+language york
+
+test big program [[
 module COUNTER :
   sig
-    val current : ()int 
+    val current : ()int
     val next : ()int
   end;
-  
+
 module Counter : COUNTER = 
   struct
-    
     let counter = 0
-     
+    
     let current = ()int { return counter; }
     
     let next = ()int { 
       counter = counter + 1; 
       return counter;
     }
-    
-    let secret = 0
   end; 
-   
+  
 module STDIO : 
   sig
     val print : (int)void
@@ -33,7 +34,6 @@ module Application =
       let main = ()void {
         io.print(counter1.current());
         io.print(counter2.next());
-        io.print(counter1.secret);
       }
     end;
-    
+]] parse succeeds

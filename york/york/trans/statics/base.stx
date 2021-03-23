@@ -9,14 +9,19 @@ signature
 rules  
 
   subtypeO : ID * TYPE * TYPE
-  
-  subtypeO(_, T, T).
-  
-  
-  subtype : TYPE * TYPE
-  
-  subtype(T, T).
-  
-  subtypes maps subtype(list(*), list(*))
-  
   subtypesO maps subtypeO(*, list(*), list(*))
+  
+//  subtype : TYPE * TYPE
+//  subtypes maps subtype(list(*), list(*))
+  
+  subs : scope * TYPE -> TYPE
+  
+  subss maps subs(*, list(*)) = list(*)
+  
+     
+  subtypeO(_, T, T).
+   
+//  subtype(T, T).
+  
+  subs(s_subs, T) = T.
+  

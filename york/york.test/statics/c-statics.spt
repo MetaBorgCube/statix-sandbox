@@ -1,0 +1,63 @@
+module c-statics
+
+language york
+
+test sig [[
+module B :
+  sig
+    type t 
+  end;  
+module C : B = 
+  struct
+    type t = struct { int x; }
+    let mkT = ()t { return t{ x = 0; }; }
+  end;
+]] analysis succeeds 
+
+test sig [[
+module B :
+  sig
+    type t = struct { int x; int z; }
+  end;
+module C : B = 
+  struct
+    type t = struct { int x; int z; }
+    let mkT = ()t { return t{ x = 0; z = 1; }; }
+  end;
+]] analysis succeeds 
+
+test sig [[
+module B :
+  sig
+    type t = struct { int y; }
+  end;
+module C : B = 
+  struct
+    type t = struct { }
+  end;
+]] analysis fails  
+
+test sig [[
+module B :
+  sig
+    type t = struct { }
+  end;
+module C : B = 
+  struct
+    type t = struct { int y; }
+  end;
+]] analysis fails 
+
+test sig [[
+module B :
+  sig
+    type t = struct { int x; }
+  end;
+module C : B = 
+  struct
+    type t = struct { int y; }
+  end;
+
+]] analysis fails 
+
+  

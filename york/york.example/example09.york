@@ -1,0 +1,27 @@
+//module F = 
+//  functor(X: sig type t end) 
+//    struct
+//      type t = X.t
+//    end;
+//    
+//module A = 
+//  F(struct type t = int end);
+//  
+  
+module A :
+  sig
+    type t
+    val x : t
+  end;
+  
+module B : A =
+  struct 
+    type t = int
+    let x = 0
+  end;
+  
+module C =
+  struct
+    module B = B
+    let y = B.x
+  end;

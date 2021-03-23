@@ -1,4 +1,4 @@
-module module-syntax
+module module-statics
 
 language york
 

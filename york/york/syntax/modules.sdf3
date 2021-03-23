@@ -12,8 +12,8 @@ context-free syntax
   ModType.PathType = <<Path>>
   
   ModType.Sig = <
-    sig
-      <{Spec "\n"}*>
+    sig 
+      <{Spec "\n"}*> 
     end
   >
   

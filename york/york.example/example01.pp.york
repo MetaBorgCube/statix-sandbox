@@ -7,13 +7,14 @@ module COUNTER :
 module Counter : COUNTER =
   struct
     let counter = 0
-    let current = ( )int {
+    let current = ( ) int {
                     return counter;
                   }
-    let next = ( )int {
+    let next = ( ) int {
                  counter = counter + 1;
                  return counter;
                }
+    let secret = 0
   end;
 
 module STDIO :
@@ -28,8 +29,9 @@ module Application =
         Counter
       module counter2 =
         Counter
-      let main = ( )void {
+      let main = ( ) void {
                    io.print(counter1.current( ));
                    io.print(counter2.next( ));
+                   io.print(counter1.secret);
                  }
     end;
