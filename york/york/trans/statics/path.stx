@@ -14,4 +14,3 @@ rules
     typeOfPath(s, p) == T1,
     proj(T1, x) == T2.
     
-  proj : TYPE * ID -> TYPE

@@ -2,12 +2,15 @@ module statics/base
 
 imports signatures/lex-sig
 imports signatures/base-sig
+imports signatures/core-sig
 
 signature
   sorts TYPE 
 
 rules  
 
+  proj : TYPE * ID -> TYPE
+  
   subtypeO : ID * TYPE * TYPE
   subtypesO maps subtypeO(*, list(*), list(*))
   
@@ -16,12 +19,12 @@ rules
   
   subs : scope * TYPE -> TYPE
   
-  subss maps subs(*, list(*)) = list(*)
+  subsList maps subs(*, list(*)) = list(*)
   
      
   subtypeO(_, T, T).
    
 //  subtype(T, T).
   
-  subs(s_subs, T) = T.
+  subs(s_subs, T) = T. 
   

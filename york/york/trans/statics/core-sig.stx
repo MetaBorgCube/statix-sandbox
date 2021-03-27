@@ -3,10 +3,10 @@ module statics/core-sig
 imports signatures/core-sig  
 imports statics/base
 
-//rules
-//
-//  typeOfValType  : scope * ValType  -> TYPE
-//  typeOfDefType  : scope * DefType  -> TYPE
-//  typeOfKind     : scope * Kind     -> TYPE
-//  typeOfTypeDecl : scope * TypeDecl -> TYPE
-//  typeOfTerm     : scope * Term     -> TYPE
+rules // interface to module checking
+
+  typeOfValType  : scope * ValType  -> TYPE
+  typeOfDefType  : scope * DefType  -> TYPE
+  typeOfKind     : scope * Kind     -> TYPE
+  typeOfTypeDecl : scope * TypeDecl -> TYPE
+  typeOfTerm     : scope * Term     -> TYPE

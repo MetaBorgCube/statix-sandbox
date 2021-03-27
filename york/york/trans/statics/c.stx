@@ -1,56 +1,13 @@
 module statics/c
 
-imports signatures/c-sig
 imports statics/path
 imports statics/names
 imports statics/base
 
-signature
-  constructors 
-    CVOID     : TYPE
-    CINT      : TYPE
-    CFLOAT    : TYPE
-    CNULL     : TYPE
-    CPOINTER  : TYPE -> TYPE
-    CFUNCTION : list(TYPE) * TYPE -> TYPE
-    CSTRUCT   : scope -> TYPE
-    
-rules // interface to module checking
+imports signatures/c-sig
+imports statics/core-sig
+imports statics/c-types
 
-  typeOfValType  : scope * ValType  -> TYPE
-  typeOfDefType  : scope * DefType  -> TYPE
-  typeOfKind     : scope * Kind     -> TYPE
-  typeOfTypeDecl : scope * TypeDecl -> TYPE
-  typeOfTerm     : scope * Term     -> TYPE
-  
-rules 
-
-//  subtype(CINT(), CFLOAT()).
-  subtypeO(_, CINT(), CFLOAT()).
-  
-//  subtype(CPOINTER(T1), CPOINTER(T2)) :-
-//    subtype(T1, T2).
-    
-  subtypeO(x, CPOINTER(T1), CPOINTER(T2)) :-
-    subtypeO(x, T1, T2).
-    
-  subtypeO(x, CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
-    subtypesO(x, Ts2, Ts1),
-    subtypeO(x, T1, T2).
-  
-//  subtype(CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
-//    subtypes(Ts2, Ts1),
-//    subtype(T1, T2).
-    
-  subtypeO(x, CSTRUCT(s_struct1), CSTRUCT(s_struct2)) :-     
-    allDefinedIn(idsInScope(s_struct2), x, s_struct1).
-
-rules 
-
-  subs(s_subs, CPOINTER(T)) = CPOINTER(subs(s_subs, T)).
-  
-  subs(s_subs, CFUNCTION(Ts, T)) = CFUNCTION(subss(s_subs, Ts), subs(s_subs, T)).
-  
 rules
 
   typeOfValType(s, CValType(t)) = typeOfCType(s, t).
@@ -86,8 +43,11 @@ rules
   typesOfCExprs maps typeOfCExpr(*, list(*)) = list(*)
   
   typeOfCExpr(s, CInt(_)) = CINT().
+  
   typeOfCExpr(s, CFloat(_)) = CFLOAT().
+  
   typeOfCExpr(s, CNull()) = CNULL().
+  
   typeOfCExpr(s, CVar(p)) = typeOfPath(s, p).
   
   typeOfCExpr(s, CApply(e, es)) = T :- {TS}
@@ -121,16 +81,15 @@ rules
     new s_struct2, 
     T2 == CPOINTER(CSTRUCT(s_struct2)),
     initFieldsOk(s, s_struct2, inits),
+    //subtypeO("", T1, T2), // include to require strict equality
     subtypeO("", T2, T1).
-    
-    //allDefinedIn(idsInScope(s_struct1), "", s_struct2).
      
   initFieldOk : scope * scope * CInitField 
-  initFieldsOk maps initFieldOk(*, *, list(*))
+  initFieldsOk maps initFieldOk(*, *, list(*)) 
   
-  initFieldOk(s, s_struct, CInitField(x, e)) :- {T1 T2}
-    typeOfCExpr(s, e) == T1,
-    declarePhantomID(s_struct, x, withType(T2)).
+  initFieldOk(s, s_struct, CInitField(x, e)) :- {T}
+    typeOfCExpr(s, e) == T,
+    declarePhantomID(s_struct, x, withType(T)).
       
 //  initFieldOk : scope * scope * CInitField * scope
 //  initFieldsOk maps initFieldOk(*, *, list(*), *)
@@ -150,6 +109,7 @@ rules
   typeOfUnOp : CUnOp * TYPE -> TYPE
   
   typeOfUnOp(CNot(), CINT()) = CINT().
+  
   typeOfUnOp(CDeRef(), CPOINTER(T)) = T.
 
 rules
@@ -234,8 +194,3 @@ rules
     declarePhantomID(s3, "@return", withType(T)),
     typesOfDecls(s3, decls) == _,
     statsOk(s3, stms).
-    
-  
-  
-//  typeOfTypeDecl : scope * TypeDecl -> TYPE
-//  typeOfTerm     : scope * Term     -> TYPE

@@ -2,11 +2,18 @@ module statics
 
 // see README.md for details on how to switch to multi-file analysis
 
-imports signatures/york-sig
-imports statics/modules
-imports statics/names
-imports statics/c
 imports statics/base
+imports statics/names
+imports statics/path
+
+imports statics/modules
+imports statics/module-types
+
+imports statics/core-sig
+imports statics/c
+imports statics/c-types
+
+imports signatures/york-sig
 
 rules // single-file entry point
 

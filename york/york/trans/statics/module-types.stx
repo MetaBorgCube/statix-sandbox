@@ -1,0 +1,71 @@
+module statics/module-types 
+
+// semantic module types
+
+imports statics/base
+imports statics/names
+imports statics/c-types
+
+//imports signatures/modules-sig
+//imports statics/core-sig
+//imports statics/path
+//imports statics/c
+
+signature
+  constructors
+    SIG     : scope -> TYPE
+    FUNCTOR : ID * TYPE * TYPE -> TYPE
+    ABS     : ID -> TYPE
+    
+rules
+
+  proj(SIG(s), x) = typeOfID(s, x).
+  
+rules
+
+  applyType : TYPE * TYPE -> TYPE 
+  
+  applyType(FUNCTOR(x, T1, T2), T3) = T4 :- {s_subs}
+    new s_subs,
+    subtypeO(x, T3, T1),
+    declarePhantomID(s_subs, x, withType(T3)),
+    subs(s_subs, T2) == T4. 
+  
+rules // substitution
+
+  subs(subs, SIG(s_sig1)) = SIG(s_sig2) :- {ps}
+    idsInScope(s_sig1) == ps,
+    new s_sig2,
+    subsInPaths(subs, s_sig2, ps). 
+    
+  subs(subs, FUNCTOR(x, T1, T2)) = 
+    FUNCTOR(x, subs(subs, T1), subs(subs, T2)).
+    
+  subs(subs, ABS(x)) = subsAux(resolveID(subs, x), ABS(x)).
+  
+  subsAux : list((path * (ID * scope))) * TYPE -> TYPE
+  
+  subsAux([], T) = T.
+  
+  subsAux([(_, (_, s))], _) = typeOf(s).
+  
+rules
+  
+  subtypeO(x, SIG(s1), SIG(s2)) :- 
+    allDefinedIn(idsInScope(s2), x, s1).
+    
+  subtypeO(y, FUNCTOR(x, T1, T2), FUNCTOR(z, S1, S2)) :- 
+    subtypeO(y, S1, T1),
+    subtypeO(y, T2, S2).
+    
+  subtypeO(x, ABS(y), ABS(y)).
+  subtypeO(x, CINT(), ABS(y)).
+  subtypeO(x, CFLOAT(), ABS(y)).
+  subtypeO(x, CNULL(), ABS(y)).
+  subtypeO(x, CPOINTER(T), ABS(y)).
+  subtypeO(x, CSTRUCT(T), ABS(y)).
+  subtypeO(x, CFUNCTION(Ts, T), ABS(y)).
+  
+//  subtype(ABS(x), ABS(y)).
+//  subtype(CINT(), ABS(x)).
+//  subtype(CPOINTER(T), ABS(x)).

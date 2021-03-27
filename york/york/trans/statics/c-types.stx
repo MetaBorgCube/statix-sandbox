@@ -1,0 +1,48 @@
+module statics/c-types
+
+//imports signatures/c-sig
+//imports statics/path
+imports statics/names
+imports statics/base
+
+signature
+  constructors 
+    CVOID     : TYPE
+    CINT      : TYPE
+    CFLOAT    : TYPE
+    CNULL     : TYPE
+    CPOINTER  : TYPE -> TYPE
+    CFUNCTION : list(TYPE) * TYPE -> TYPE
+    CSTRUCT   : scope -> TYPE
+    
+rules 
+
+//  subtype(CINT(), CFLOAT()).
+  subtypeO(_, CINT(), CFLOAT()).
+  
+//  subtype(CPOINTER(T1), CPOINTER(T2)) :-
+//    subtype(T1, T2).
+    
+  subtypeO(x, CPOINTER(T1), CPOINTER(T2)) :-
+    subtypeO(x, T1, T2).
+    
+  subtypeO(x, CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
+    subtypesO(x, Ts2, Ts1),
+    subtypeO(x, T1, T2).
+  
+//  subtype(CFUNCTION(Ts1, T1), CFUNCTION(Ts2, T2)) :-
+//    subtypes(Ts2, Ts1),
+//    subtype(T1, T2).
+    
+  subtypeO(x, CSTRUCT(s_struct1), CSTRUCT(s_struct2)) :-     
+    // allDefinedIn(idsInScope(s_struct1), x, s_struct2), // include to require strict equality
+    allDefinedIn(idsInScope(s_struct2), x, s_struct1).
+    
+rules 
+
+  subs(s_subs, CPOINTER(T)) = CPOINTER(subs(s_subs, T)).
+  
+  subs(s_subs, CFUNCTION(Ts, T)) = 
+    CFUNCTION(subsList(s_subs, Ts), subs(s_subs, T)).
+    
+  proj(CPOINTER(CSTRUCT(s_struct)), x) = typeOfID(s, x).
