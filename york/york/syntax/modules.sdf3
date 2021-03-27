@@ -96,5 +96,9 @@ context-free syntax
       <ModTerm>
   >
   
+  Def.OpenMod = <
+    open <Path>
+  >
+  
 template options
   ID = keyword {reject}
