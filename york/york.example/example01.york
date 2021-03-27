@@ -2,7 +2,7 @@
 module COUNTER :
   sig
     val current : ()int 
-    val next : ()int
+    val next : ()int 
   end;
   
 module Counter : COUNTER = 
@@ -11,11 +11,11 @@ module Counter : COUNTER =
     let counter = 0
      
     let current = ()int { return counter; }
-    
+     
     let next = ()int { 
       counter = counter + 1; 
       return counter;
-    }
+    } 
     
     let secret = 0
   end; 
@@ -25,15 +25,39 @@ module STDIO :
     val print : (int)void
   end;
   
-module Application = 
+module Stdio : STDIO = 
+  struct
+    let print = (int x)void{ x; }
+  end;
+  
+module APPLICATION :
+  functor(io : STDIO)
+    sig 
+      module counter1 : COUNTER
+      module counter2 : COUNTER 
+      val x : int
+      val main : ()void
+    end;
+  
+module Application : APPLICATION = 
   functor(io: STDIO)
     struct
       module counter1 = Counter
       module counter2 = Counter
+      let x = 1
       let main = ()void {
         io.print(counter1.current());
         io.print(counter2.next());
         io.print(counter1.secret);
-      }
+        io.print(counter1.counter);
+      } 
     end;
-    
+ 
+module App = 
+  struct 
+    module app = Application(Stdio)
+    let c = app.counter1.next()
+    let x = app.main()
+  end;
+  
+  
