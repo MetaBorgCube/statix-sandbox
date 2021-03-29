@@ -1,0 +1,56 @@
+module POINT : 
+  sig
+    type t 
+    val x       : (t)int 
+    val y       : (t)int 
+    val mkPoint : (int, int) t 
+    val move    : (t, t) t 
+  end;
+  
+module Point : POINT = 
+  struct
+    type t = struct { int x; int y; }
+    let mkPoint = (int x, int y) t {
+      return t{x = x; y = y;}; 
+    }
+    let x = (t p)int { return p->x; }
+    let y = (t p)int { return p->y; }
+    let move = (t p1, t p2) t {
+      return t{
+        x = p1->x + p2->x;
+        y = p1->y + p2->y;
+      };
+    }
+  end;
+  
+module LINE :
+  functor(P : POINT) 
+    sig
+      type t 
+      val s : (t)P.t
+      val e : (t)P.t
+      val mkLine : (P.t, P.t)P.t 
+      val move : (t, P.t)t
+    end;
+    
+module Line : LINE = 
+  functor(P : POINT) 
+    struct
+      type t = struct{ P.t s; P.t e; }
+      let s = (t l)P.t { return l->s; }
+      let e = (t l)P.t { return l->e; }
+      let mkLine = (P.t p1, P.t p2)t {
+        return t{ s = p1; e = p2; };
+      }
+      let move = (t l, P.t p)t {
+        return mkLine(P.move(s(l), p), P.move(e(l), p));
+      }
+      let secret = 0
+    end;
+   
+module Appication = 
+  struct
+    module L = Line(Point)
+    let mkline = L.mkLine
+    let secret = L.secret
+  end;

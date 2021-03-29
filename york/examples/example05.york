@@ -1,7 +1,8 @@
-module LIST : 
+module LIST :
+  functor(Elt : sig type t end) 
     sig
       type t
-      type elt 
+      type elt = Elt.t
       val hd    : (t)elt
       val tl    : (t)elt
       val empty : (t)int
@@ -11,9 +12,9 @@ module LIST :
   
   
 module List : LIST = 
+  functor(Elt : sig type t end) 
     struct
-      type t = null //= struct { Elt.t hd; t tl; }
-      type elt = int
+      type t = struct { Elt.t hd; t tl; }
       let hd = (t xs)Elt.t { return xs->hd; }  
       let tl = (t xs)t { return xs->tl; }
       let empty = (t xs)int {
@@ -26,4 +27,11 @@ module List : LIST =
       }
       let nil = null
     end;
+  
+//module IntList =
+//  List(struct type t = int end);
+//  
+//module PointList = 
+//  List(struct type t = struct{ int x; int y; } end);
+  
   

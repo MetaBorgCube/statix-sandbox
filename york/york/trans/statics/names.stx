@@ -14,13 +14,14 @@ rules
   declareID : scope * ID * scope
   declarePhantomID : scope * ID * scope
   resolveID : scope * ID -> list((path * (ID * scope)))
+  resolveLocalID : scope * ID -> list((path * (ID * scope)))
   scopeOfID : scope * ID -> scope
   typeOfID  : scope * ID -> TYPE
   typeOfPhantomID  : scope * ID -> TYPE
   
   declareID(s, x, s2) :- 
     !var[x, s2] in s,
-    resolveID(s, x) == [(_, (_, _))] 
+    resolveLocalID(s, x) == [(_, (_, _))] 
       | error $[Duplicate definition of variable [x]],
     @x.scope := s2,
     @x.type := typeOf(s2). 
@@ -35,6 +36,14 @@ rules
       filter (S | P)*
          and { x' :- x' == x }
          min $ < P, S < P
+         and true
+          in s |-> ps.  
+    
+  resolveLocalID(s, x) = ps :-  
+    query var
+      filter S*
+         and { x' :- x' == x }
+         min $ < S
          and true
           in s |-> ps.  
            
@@ -81,7 +90,8 @@ rules
       | error $[[x] not defined in [y]]@y,
     T_x' == typeOf(s3),
     T_x == typeOf(s1),
-    subtypeO(x', T_x', T_x) 
+ //   T_x' == T_x.
+    subtypeO(x', T_x', T_x)
       | error $[[y].[x'] : [T_x'] should be subtype of [x]: [T_x]]@x'.
        
 signature

@@ -1,0 +1,27 @@
+module REC :
+  sig 
+    type t
+    val hd : (t)int
+//    val tl : (t)t
+  end;
+
+module Rec : REC = 
+  struct
+    type t = struct { int hd; t tl; }   
+    let xs = t{hd = 0; tl = xs;}
+    let ys = xs->tl
+    let zs = xs.tl
+    let hd = (t xs)int { return xs->hd; } 
+    let tl = (t xs)t { return xs.tl; }   
+      let empty = (t xs)int {
+        if(xs == null) return 1; else return 0; 
+      }
+    let cons = (int x, t xs)t {
+        t ys;
+        ys = t{ hd = x; tl = xs; };
+        return ys;
+      }
+      let nil = null
+  end;
+  
+  

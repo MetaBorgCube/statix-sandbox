@@ -26,11 +26,16 @@ rules
   
   specOk(s1, AbsTypeSig(x)) = s2 :- 
     new s2, s2 -S-> s1,
-    declareID(s2, x, withType(ABS(x))).
+    declareID(s2, x, withType(PATHTYPE(PIdent(x), ABS(x)))).
     
   specOk(s1, ModSig(x, mt)) = s2 :- {MT}
     new s2, s2 -S-> s1,
-    typeOfModType(s1, mt) == MT,
+    typeOfModType(s2, mt) == MT,
+    declareID(s2, x, withType(MT)).
+    
+  specOk(s1, ModTypeSig(x, mt)) = s2 :- {MT}
+    new s2, s2 -S-> s1,
+    typeOfModType(s2, mt) == MT,
     declareID(s2, x, withType(MT)).
     
   specsOk : scope * list(Spec) -> scope
@@ -47,17 +52,18 @@ rules
   typeOfModType(s, PathType(p)) = 
     typeOfPath(s, p).
 
-  typeOfModType(s, Sig(specs)) = SIG(specsOk(s, specs)). 
+  typeOfModType(s, Sig(specs)) = SIG(s_sig2) :- {s_sig1}
+    new s_sig1, s_sig1 -P-> s, 
+    specsOk(s_sig1, specs) == s_sig2.
     // problem: s reachable from s_sig
-  
+    // addressed by P edge (?)
+     
   typeOfModType(s1, FunctorType(x, mt1, mt2)) = FUNCTOR(x, T1, T2) :- {s2}
     new s2, s2 -P-> s1,
     typeOfModType(s1, mt1) == T1,
-    declareID(s2, x, withType(T1)),
+    declareID(s2, x, withType(PATHTYPE(PIdent(x), T1))),
     typeOfModType(s2, mt2) == T2.
-  
-  // it is an error to project on a functor?
-  
+   
 rules 
 
   typeOfModTerm : scope * ModTerm -> TYPE
@@ -73,14 +79,25 @@ rules
     declareID(s2, x, withType(T1)),
     typeOfModTerm(s2, mtrm) == T2.
   
-  typeOfModTerm(s, Apply(mtrm1, mtrm2)) = T3 :- {x T1 T2}
+  typeOfModTerm(s, Apply(mtrm1, mtrm2@LongIdent(p))) = T3 :- {x T1 T2}
     typeOfModTerm(s, mtrm1) == T1@FUNCTOR(_, _, _),
     typeOfModTerm(s, mtrm2) == T2, 
     applyType(T1, T2) == T3.
-  
+    // apply to syntactic paths
+    
+  typeOfModTerm(s, Apply(mtrm1, mtrm2)) = T :- 
+    false | error $[functor argument should be path]@mtrm2.
+    
+//  typeOfModTerm(s, Apply(mtrm1, mtrm2)) = T12 :- {T11 T2}
+//    typeOfModTerm(s, mtrm1) == T1@FUNCTOR(_, _, _),
+//    typeOfModTerm(s, mtrm2) == T2, 
+//    applyType(T1, T2) == T3. 
+//    // TODO: erase type that are not right 
+    
   typeOfModTerm(s, Constraint(mtrm, mt)) = T2 :- {T1}
     typeOfModTerm(s, mtrm) == T1,
-    typeOfModType(s, mt) == T2.
+    typeOfModType(s, mt) == T2,
+    subtypeO("", T1, T2).
     // TODO: check compatability
   
 rules
@@ -89,8 +106,8 @@ rules
   
   defOk(s1, ValueStr(x, e)) = s2 :- {T}
     new s2, s2 -S-> s1,
-    typeOfTerm(s1, e) == T,
-    declareID(s2, x, withType(T)).
+    declareID(s2, x, withType(T)), // allow recursive definitions
+    typeOfTerm(s2, e) == T. 
     
   defOk(s1, TypeKindStr(x, k, deft)) = s2 :- {T}
     new s2, s2 -S-> s1,
@@ -113,6 +130,11 @@ rules
     typeOfModTerm(s1, mtrm) == T2,
     subtypeO(x, T2, T1),
     declareID(s2, x, withType(T1)).
+  
+  defOk(s1, ModuleTypeStr(x, mty)) = s2 :- {T}
+    new s2, s2 -S-> s1,
+    typeOfModType(s1, mty) == T,
+    declareID(s2, x, withType(T)).
   
   defsOk : scope * list(Def) -> scope
   

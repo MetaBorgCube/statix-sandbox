@@ -1,0 +1,35 @@
+module type S = 
+  sig
+    type t
+  end;
+  
+module F = 
+  functor(X : S) 
+  struct
+    type x = *X.t 
+  end;
+  
+module Arg1 = 
+  struct
+    type t = int
+  end;
+  
+module Res1 = 
+  F(Arg1);
+  
+module Res2 =
+  F(struct type t = int end);
+  // avoidance problem
+  // type alias is substitued
+  
+module Res3 =
+  F(struct type t = struct{ int x; } end); 
+  // type t is eliminated from F
+  
+  
+type foo = struct{ int x; };
+  
+module Res4 =
+  F(struct type t = foo end); 
+  // type alias is substitued
+  

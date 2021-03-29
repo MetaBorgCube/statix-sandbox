@@ -51,3 +51,10 @@ rules
    
 
 
+
+  subtypeO(x, CINT(), ABS(y)).
+  subtypeO(x, CFLOAT(), ABS(y)).
+  subtypeO(x, CNULL(), ABS(y)).
+  subtypeO(x, CPOINTER(T), ABS(y)).
+  subtypeO(x, CSTRUCT(T), ABS(y)).
+  subtypeO(x, CFUNCTION(Ts, T), ABS(y)).

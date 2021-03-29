@@ -12,7 +12,7 @@ module LIST :
   
 module List : LIST = 
     struct
-      type t = null //= struct { Elt.t hd; t tl; }
+      type t = struct { Elt.t hd; t tl; }
       type elt = int
       let hd = (t xs)Elt.t { return xs->hd; }  
       let tl = (t xs)t { return xs->tl; }

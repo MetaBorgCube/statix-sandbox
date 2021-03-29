@@ -4,7 +4,8 @@ module statics/module-types
 
 imports statics/base
 imports statics/names
-imports statics/c-types
+imports statics/path
+//imports statics/c-types
 
 //imports signatures/modules-sig
 //imports statics/core-sig
@@ -12,20 +13,28 @@ imports statics/c-types
 //imports statics/c
 
 signature
+  sorts KIND
   constructors
     SIG     : scope -> TYPE
     FUNCTOR : ID * TYPE * TYPE -> TYPE
-    ABS     : ID -> TYPE
+
+    TYPEDEC : ID * KIND -> TYPE
+    
+    ABS     : KIND
+    ALIAS   : TYPE -> KIND
+//    NOMINAL : scope -> KIND // TODO: make C structs nominal
     
 rules
 
   proj(SIG(s), x) = typeOfID(s, x).
+    
+  // is it an error to project on a functor? indeed says Gabriel
   
 rules
 
   applyType : TYPE * TYPE -> TYPE 
   
-  applyType(FUNCTOR(x, T1, T2), T3) = T4 :- {s_subs}
+  applyType(FUNCTOR(x, T1, T2), T3@PATHTYPE(p, T3')) = T4 :- {s_subs}
     new s_subs,
     subtypeO(x, T3, T1),
     declarePhantomID(s_subs, x, withType(T3)),
@@ -50,22 +59,16 @@ rules // substitution
   subsAux([(_, (_, s))], _) = typeOf(s).
   
 rules
+
+  subtypeO(x, SIG(s_sig), SIG(s_sig)). 
   
-  subtypeO(x, SIG(s1), SIG(s2)) :- 
-    allDefinedIn(idsInScope(s2), x, s1).
+  subtypeO(x, SIG(s_sig1), SIG(s_sig2)) :- 
+    s_sig1 != s_sig2,
+    allDefinedIn(idsInScope(s_sig2), x, s_sig1).
     
   subtypeO(y, FUNCTOR(x, T1, T2), FUNCTOR(z, S1, S2)) :- 
     subtypeO(y, S1, T1),
     subtypeO(y, T2, S2).
     
   subtypeO(x, ABS(y), ABS(y)).
-  subtypeO(x, CINT(), ABS(y)).
-  subtypeO(x, CFLOAT(), ABS(y)).
-  subtypeO(x, CNULL(), ABS(y)).
-  subtypeO(x, CPOINTER(T), ABS(y)).
-  subtypeO(x, CSTRUCT(T), ABS(y)).
-  subtypeO(x, CFUNCTION(Ts, T), ABS(y)).
   
-//  subtype(ABS(x), ABS(y)).
-//  subtype(CINT(), ABS(x)).
-//  subtype(CPOINTER(T), ABS(x)).

@@ -1,0 +1,86 @@
+module module-statics
+
+language york
+
+test sig types [[
+module A : 
+  sig   
+    type t
+    type s
+  end; 
+]] analysis succeeds
+
+test sig duplicate types [[
+module A : 
+  sig   
+    type t
+    type t
+  end; 
+]] analysis fails
+
+test sig vals [[
+module A : 
+  sig   
+    val x : int
+    val y : int
+  end;  
+]] analysis succeeds
+
+test sig function type [[
+module A : 
+  sig   
+    val inc : (int)int
+  end;  
+]] analysis succeeds
+
+test sig duplicate vals [[
+module A : 
+  sig   
+    val x : int
+    val x : int
+  end;  
+]] analysis fails
+
+test sig module types [[
+module A : 
+  sig   
+    module B : sig end
+    module C : sig end 
+  end;  
+]] analysis succeeds
+
+test sig duplicate module types [[
+  module A : 
+    sig   
+      module B : sig end
+      module B : sig end
+    end; 
+]] analysis fails
+
+
+test sig duplicate module types [[
+module B : 
+  sig
+    type t
+  end;
+module B : 
+  sig
+    type t
+  end;
+]] analysis fails
+
+
+test sig module types [[
+module B : 
+  sig
+    type t
+  end;
+module A : 
+  functor(X : B)
+    sig   
+      val x : X.t
+      module B : sig end
+    end;  
+]] analysis succeeds
+
+

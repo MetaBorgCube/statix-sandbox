@@ -1,0 +1,15 @@
+module type B =
+  sig
+    type t //= B.t
+    val x : t
+  end; 
+    
+module C = //: B =
+  struct 
+    type t = int
+    let x = 0
+  end;
+  
+let foo = C.x + 3;
+
+let bar = C.t;

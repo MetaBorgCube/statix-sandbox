@@ -9,6 +9,8 @@ imports
   injections/-
 
   libspoofax/term/origin
+  
+  signatures/modules-sig
 
 rules // Analysis
 
@@ -19,8 +21,13 @@ rules // Analysis
   // multi-file analysis
 //  editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
 
-  pre-analyze  = origin-track-forced(explicate-injections-york-Program)
+  pre-analyze  = origin-track-forced(explicate-injections-york-Program) //; desugar
   post-analyze = origin-track-forced(implicate-injections-york-Program)
+  
+  desugar-all = topdown(try(desugar))
+  
+  desugar :
+    ModuleTypedStr(x, mty, mtrm) -> ModuleStr(x, Constraint(mtrm, mty))
 
 rules // Editor Services
 

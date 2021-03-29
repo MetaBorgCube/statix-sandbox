@@ -23,5 +23,5 @@ module B : A =
 module C =
   struct
     module B = B
-    let y = B.x 
+    let y = B.x
   end;

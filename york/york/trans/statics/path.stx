@@ -4,13 +4,31 @@ imports signatures/path-sig
 imports statics/base
 imports statics/names
 
+signature
+  constructors
+    PATHTYPE : Path * TYPE -> TYPE
+
 rules
 
   typeOfPath : scope * Path -> TYPE
   
-  typeOfPath(s, PIdent(x)) = typeOfID(s, x).
+  typeOfPath(s, PIdent(x)) = PATHTYPE(PIdent(x), typeOfID(s, x)).
   
   typeOfPath(s, PDot(p, x)) = T2 :- {T1} 
     typeOfPath(s, p) == T1,
     proj(T1, x) == T2.
     
+    
+  proj(PATHTYPE(p, T), x) = PATHTYPE(PDot(p, x), proj(T, x)).
+  
+  subs(s_subs, PATHTYPE(p, T1)) = T2 :-
+   try { typeOfPath(s_subs, p) == T2 } | error $[subs failed]@p. 
+    
+    // PATHTYPE(p, T1) == T2.
+  
+rules
+
+  subsPath : scope * Path -> TYPE
+  
+//  subsPath(s_subs, PIDE
+//  subsPath(s_subs, PDot(p, x)) == T.

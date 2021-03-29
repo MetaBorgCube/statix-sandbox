@@ -13,5 +13,4 @@ context-free syntax
   Program.Program = <<{TL "\n\n"}+>>
   
   TL.Def  = <<Def>;>
-  TL.Spec = <<Spec>;>
-
+  //TL.Spec = <<Spec>;>

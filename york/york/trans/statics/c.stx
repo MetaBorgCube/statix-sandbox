@@ -50,13 +50,15 @@ rules
   
   typeOfCExpr(s, CVar(p)) = typeOfPath(s, p).
   
-  typeOfCExpr(s, CApply(e, es)) = T :- {TS}
-    typeOfCExpr(s, e) == CFUNCTION(TS, T),
-    typesOfCExprs(s, es) == TS.
+  typeOfCExpr(s, CApply(e, es)) = T :- {TS1 TS2}
+    typeOfCExpr(s, e) == CFUNCTION(TS1, T),
+    typesOfCExprs(s, es) == TS2,
+    subtypesO("", TS2, TS1).
     
-  typeOfCExpr(s, CAssign(e1, e2)) = T :- 
-    typeOfLValue(s, e1) == CPOINTER(T),
-    typeOfCExpr(s, e2) == T.
+  typeOfCExpr(s, CAssign(e1, e2)) = T1 :- {T2}
+    typeOfLValue(s, e1) == CPOINTER(T1),
+    typeOfCExpr(s, e2) == T2,
+    subtypeO("", T2, T1).
     
   typeOfCExpr(s, CUnOp(op, e)) = T2 :- {T1}
     typeOfCExpr(s, e) == T1,

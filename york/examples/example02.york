@@ -13,4 +13,4 @@ module a : A =
     let colorOf = (int x) color { return x; }
     let inc = (int x) int { return x + 1; }
     let app = inc(inc(x))
-  end; 
+  end;

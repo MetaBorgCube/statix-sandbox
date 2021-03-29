@@ -1,0 +1,33 @@
+module type B =
+  sig
+    type t //= B.t
+    val x : t
+  end;
+  
+module type FUNC = 
+  functor(X : B)
+    sig   
+      val x : X.t
+      module B : 
+        sig 
+        end
+    end;  
+
+module Func = 
+  functor(X : B)
+    struct    
+      let y = X.x
+    end;  
+    
+module C : B =
+  struct 
+    type t = int
+    let x = 0
+  end;
+  
+module D =
+  struct 
+    module E = Func(C)
+    let foo = E.y
+    let bar = C.t
+  end;

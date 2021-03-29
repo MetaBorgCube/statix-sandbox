@@ -1,0 +1,12 @@
+module module-statics
+
+language york
+
+test sig types [[
+module A =
+  struct
+    type t = int
+    type s = float
+  end; 
+]] analysis succeeds
+

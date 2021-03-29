@@ -42,6 +42,11 @@ context-free syntax
       <ModType>
   >
   
+  Spec.ModTypeSig = <
+    module type <ID> =
+      <ModType>
+  >
+  
 sorts ModTerm
 context-free syntax
 
@@ -89,6 +94,11 @@ context-free syntax
   Def.ModuleStr = <
     module <ID> = 
       <ModTerm>
+  >
+  
+  Def.ModuleTypeStr = <
+    module type <ID> = 
+      <ModType>
   >
   
   Def.ModuleTypedStr = <

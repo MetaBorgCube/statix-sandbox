@@ -1,0 +1,24 @@
+module M : 
+  sig
+    type t
+    type u = int
+    type v = u
+    type w 
+    type z = w
+  end;
+  
+module N : 
+  sig
+    type t    
+    type v = int
+    type z
+    type w = z
+  end;
+  
+module A = 
+  functor (X : M)  
+    struct
+    end;
+    
+module B = 
+  A(N);

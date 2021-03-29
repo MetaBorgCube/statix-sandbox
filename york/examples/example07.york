@@ -1,0 +1,78 @@
+
+
+
+//module F = 
+//  functor(X: sig type t end) 
+//    struct
+//      type t = X.t
+//    end;
+//    
+//module A = 
+//  F(struct type t = int end);
+//  
+
+module B :
+  sig
+    type t 
+    val mkT : ()t
+  end;
+module C : B = 
+  struct
+    type t = struct { int y; int z; }
+    let mkT = ()t { return t{ y = 0; z = 1; a = 2; }; }
+  end; 
+module D : C = 
+  struct
+    type t = struct { int y; int z; }
+    let mkT = ()t { return t{ y = 0; z = 1; a = 2; }; } 
+  end;
+  
+//module B :
+//  sig 
+//    type t = struct { } 
+//  end;
+//module C : B = 
+//  struct
+//    type t = struct { int y; }
+//    let mkT = ()t { return t{ y = t{ y = 0; }; z = 1; }; }
+//  end; 
+  
+//module B :
+//  sig
+//    type t = struct { }
+//    val mkT : ()t
+//  end;
+//  
+//module C : B = 
+//  struct
+//    type t = struct { int x; }
+//    //let mkT = ()t { return t{ x = 0; }; }
+//  end;
+  
+//module G =
+//  functor(X : B) 
+//    struct
+//      type t = X.t
+//      let y = X.mkT()
+//    end;
+//    
+//
+//  
+//module H = 
+//  G ( C );
+//   
+//module D =
+//  struct 
+//    module E = H
+//    let a = E.y
+//  end;
+
+//module B :
+//  sig
+//    type t = struct { int x; int z; }
+//  end;
+//module C : B = 
+//  struct
+//    type t = struct { int x; int z; }
+//    let mkT = ()t { return t{ x = 0; z = 1; }; }
+//  end;
