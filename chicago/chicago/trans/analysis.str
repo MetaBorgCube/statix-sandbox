@@ -4,6 +4,7 @@ imports
 
   statixruntime
   statix/api
+  statix/runtime/renaming
 
   pp
   injections/-
@@ -97,3 +98,17 @@ rules // Debugging
   debug-show-analyzed: (selected, _, _, path, project-path) -> (filename, result)
     with filename := <guarantee-extension(|"analyzed.aterm")> path
        ; result   := selected
+
+rules
+
+  rename-menu-action : 
+    menu-terms -> <rename-action(construct-textual-change, editor-analyze)> menu-terms  
+  
+  rename-test(|selected-term, new-name) = 
+    rename(editor-analyze|selected-term, new-name);get-ast  
+
+  get-ast: [(_, _, ast) | _] -> ast
+   
+  
+    
+    

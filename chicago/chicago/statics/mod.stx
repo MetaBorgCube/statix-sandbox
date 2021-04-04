@@ -75,7 +75,8 @@ rules
     !mod[x, withType(T)] in s,
     resolveMod(s, x) == [(_, (_, _))] 
       | error $[Duplicate definition of module [x]], 
-    @x.type := T.
+    @x.type := T,
+    @x.decl := x.
     
 //  resolveMod(s, x) = ps :-
 //    query mod

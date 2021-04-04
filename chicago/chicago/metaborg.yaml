@@ -26,7 +26,7 @@ language:
     concurrent: false 
   stratego:
     format: jar
-    build: incremental
+    #build: java
     args:
     - -la
     - stratego-lib

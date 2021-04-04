@@ -1,6 +1,6 @@
 module statics/variable
 
-imports statics/base 
+imports statics/base  
 imports signatures/variable-sig  
   
 rules 
@@ -9,7 +9,7 @@ rules
     typeOfVar(s, x) == T | error $[variable undeclared]@x,
     @e.type := T.
     
-  declOk(s, Def(bind)) :- 
+  declOk(s, Def(bind)) :-  
     bindOk(s, s, bind).
     
   bindOk(s_bnd, s_ctx, BindT(x, t, e)) :- {T1 T2}
@@ -37,7 +37,8 @@ rules
     !var[x, withType(T)] in s,
     resolveVar(s, x) == [(_, (_, _))] 
       | error $[Duplicate definition of variable [x]],
-    @x.type := T. 
+    @x.type := T,
+    @x.decl := x. 
     
   resolveVar(s, x) = ps :-  
     query var
