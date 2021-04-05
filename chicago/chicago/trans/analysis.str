@@ -103,6 +103,7 @@ rules
 
   rename-menu-action : 
     menu-terms -> <rename-action(construct-textual-change, editor-analyze)> menu-terms  
+    where debug(!"renaming: ")
   
   rename-test(|selected-term, new-name) = 
     rename(editor-analyze|selected-term, new-name);get-ast  
