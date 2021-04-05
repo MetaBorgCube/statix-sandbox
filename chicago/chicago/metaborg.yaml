@@ -19,7 +19,7 @@ language:
   sdf:
     pretty-print: chicago
     sdf2table: java
-    jsglr-version: recovery-incremental 
+    #jsglr-version: recovery-incremental 
     placeholder:
       prefix: "$"
   statix:
