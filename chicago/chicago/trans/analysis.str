@@ -5,6 +5,7 @@ imports
   statixruntime
   statix/api
   statix/runtime/renaming
+  libspoofax/term/origin
 
   pp
   injections/-
@@ -73,8 +74,8 @@ rules // Analysis
   // multi-file analysis
   editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
 
-  pre-analyze  = explicate-injections-chicago-Start
-  post-analyze = implicate-injections-chicago-Start
+  pre-analyze  = origin-track-forced(explicate-injections-chicago-Start)
+  post-analyze = origin-track-forced(implicate-injections-chicago-Start)
 
 rules // Editor Services
 
