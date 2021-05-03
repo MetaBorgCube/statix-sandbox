@@ -1,0 +1,19 @@
+module renaming/types
+
+language chicago
+
+test rename type from dec [[  
+  type [[Num]] = Int 
+  def x : Num = 1
+]] run rename-test(|#1, "Numeric") to [[
+  type Numeric = Int 
+  def x : Numeric = 1
+]]
+
+test rename type from ref [[  
+  type Num = Int 
+  def x : [[Num]] = 1
+]] run rename-test(|#1, "Numeric") to [[
+  type Numeric = Int 
+  def x : Numeric = 1
+]]

@@ -1,0 +1,19 @@
+module renaming/functions
+
+language chicago
+
+test rename function from dec [[  
+  def [[even]] = fun(x) if x == 0 then true else odd (x - 1) 
+  def odd = fun(x) if x == 0 then false else even (x - 1)
+]] run rename-test(|#1, "evenly") to [[
+  def evenly = fun(x) if x == 0 then true else odd (x - 1) 
+  def odd = fun(x) if x == 0 then false else evenly (x - 1)
+]]
+
+test rename function from ref [[  
+  def even = fun(x) if x == 0 then true else odd (x - 1) 
+  def odd = fun(x) if x == 0 then false else [[even]] (x - 1)
+]] run rename-test(|#1, "evenly") to [[
+  def evenly = fun(x) if x == 0 then true else odd (x - 1) 
+  def odd = fun(x) if x == 0 then false else evenly (x - 1)
+]]
