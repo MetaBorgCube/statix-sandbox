@@ -1,0 +1,56 @@
+module renaming/variables
+
+language chicago
+
+test rename variable from dec [[  
+  def [[a]] = 1
+  def b = a
+]] run rename-test(|#1, "x") to [[
+  def x = 1
+  def b = x
+]]
+
+test rename variable from ref [[  
+  def a = 1
+  def b = [[a]]
+]] run rename-test(|#1, "x") to [[
+  def x = 1
+  def b = x
+]]
+
+test rename variable in let bindings  [[  
+def x = 1
+
+$ let 
+    x = x; 
+    [[y]] = x;
+    x = 3
+  in x + y
+]] run rename-test(|#1, "a") to [[
+def x = 1
+
+$ let 
+    x = x; 
+    a = x;
+    x = 3
+  in x + a
+]]
+
+test rename variable in let bindings with shadowing [[  
+def x = 1
+
+$ let 
+    [[x]] = x; 
+    y = x;
+    x = 3
+  in x + y
+]] run rename-test(|#1, "a") to [[
+def x = 1
+
+$ let 
+    a = x; 
+    y = a;
+    x = 3
+  in x + y
+]]
+

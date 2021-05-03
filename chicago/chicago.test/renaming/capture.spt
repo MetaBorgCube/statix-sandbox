@@ -1,0 +1,14 @@
+module renaming/capture
+
+language chicago
+
+test capture detection in multi module [[  
+  module A { 
+    def [[a]] = 1 
+  } 
+  module B { 
+    import A  
+    def b = 2 
+    def c = a + 1
+  }
+]] run rename-test(|#1, "b") fails

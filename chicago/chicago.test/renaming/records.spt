@@ -1,0 +1,35 @@
+module renaming/records
+
+language chicago
+
+test rename type from dec [[  
+  type [[Point]] = { x : Int, y : Int }
+  def p = Point{x = 0, y = 0}
+]] run rename-test(|#1, "Pt") to [[
+  type Pt = { x : Int, y : Int }
+  def p = Pt{x = 0, y = 0}
+]]
+
+test rename type from ref [[  
+  type Point = { x : Int, y : Int }
+  def p = [[Point]]{x = 0, y = 0}
+]] run rename-test(|#1, "Pt") to [[
+  type Pt = { x : Int, y : Int }
+  def p = Pt{x = 0, y = 0}
+]]
+
+test rename field from dec [[  
+  type Point = { [[x]] : Int, y : Int }
+  def p = Point{x = 0, y = 0}
+]] run rename-test(|#1, "a") to [[
+  type Point = { a : Int, y : Int }
+  def p = Point{a = 0, y = 0}
+]]
+
+test rename field from ref [[  
+  type Point = { x : Int, y : Int }
+  def p = Point{[[x]] = 0, y = 0}
+]] run rename-test(|#1, "a") to [[
+  type Point = { a : Int, y : Int }
+  def p = Point{a = 0, y = 0}
+]]

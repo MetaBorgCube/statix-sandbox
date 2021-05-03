@@ -30,7 +30,8 @@ rules
     !type[x, withType(T)] in s,
     resolveType(s, x) == [(_, (_, _))] 
       | error $[Duplicate definition of type [x]], 
-    @x.type := T.
+    @x.type := T,
+    @x.decl := x.
     
   resolveType(s, x) = ps :-
     query type

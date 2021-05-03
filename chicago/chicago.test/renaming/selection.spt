@@ -1,0 +1,17 @@
+module renaming/selection
+
+language chicago
+
+test select dec without refs [[  
+  def [[a]] = 1
+]] run rename-test(|#1, "x") to [[
+  def x = 1
+]]
+
+test select literal [[  
+  def a = [[1]]
+]] run rename-test(|#1, "x") fails
+
+test select builtin [[  
+  type Num = [[Int]] 
+]] run rename-test(|#1, "x") fails

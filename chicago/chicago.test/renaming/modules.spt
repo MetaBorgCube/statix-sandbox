@@ -1,0 +1,81 @@
+module renaming/modules
+
+language chicago
+
+test rename module from dec [[  
+  module [[A]] { 
+    def a = 1 
+  } 
+  module B { 
+    import A  
+    def b = a + 1
+  }
+]] run rename-test(|#1, "X") to [[
+  module X { 
+    def a = 1 
+  } 
+  module B { 
+    import X  
+    def b = a + 1
+  }
+]]
+
+test rename module from ref [[  
+  module A { 
+    def a = 1 
+  } 
+  module B { 
+    import [[A]]  
+    def b = a + 1
+  }
+]] run rename-test(|#1, "X") to [[
+  module X { 
+    def a = 1 
+  } 
+  module B { 
+    import X  
+    def b = a + 1
+  }
+]]
+
+test rename variable in module [[  
+  module A { 
+    def [[a]] = 1 
+  } 
+  module B { 
+    import A  
+    def b = a + 1
+  }
+]] run rename-test(|#1, "x") to [[
+  module A { 
+    def x = 1 
+  } 
+  module B { 
+    import A  
+    def b = x + 1
+  }
+]]
+
+test rename nested module [[  
+  module A { 
+    module B {
+      def a = 1
+    } 
+  } 
+  module C { 
+    import A;
+    import [[B]]
+    def b = a + 1
+  }
+]] run rename-test(|#1, "X") to [[
+  module A { 
+    module X {
+      def a = 1
+    } 
+  } 
+  module C { 
+    import A;
+    import X
+    def b = a + 1
+  }
+]]
