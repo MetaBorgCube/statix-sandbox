@@ -9,18 +9,18 @@ imports
 
   pp
   injections/-
-  
+
   signatures/booleans-sig
-  
-signature 
-  constructors 
+
+signature
+  constructors
     Class : scope * ID -> TYPE
     Class : ID -> TYPE
-    
+
 rules
 
-  resolve-type : Class(_, x) -> Class(x) 
-  
+  resolve-type : Class(_, x) -> Class(x)
+
 signature
   sorts
     Type
@@ -33,15 +33,15 @@ signature
 //    List : Type -> Type
 //    NoneType : Type
 //    EmptyList : Type
-//	Object : Type
+//    Object : Type
     // We expect to get these types in the grading pipeline
-	// you are free to use your own (custom) types in your Statix file
-	// as long as you write transformation rules from your types to our types
-	// in resolve-type
+    // you are free to use your own (custom) types in your Statix file
+    // as long as you write transformation rules from your types to our types
+    // in resolve-type
 
 // Here you can define the signature of the types you have used in your Statix definiions.
 // This is just an example on how to do it.
-// signature 
+// signature
 //   sorts
 //     MyCustomType
 //
@@ -51,25 +51,25 @@ signature
 rules
 //  get-type: SimpleStatement(expr) -> <get-type> expr // An example on how to match on AST nodes.
   get-type: expr -> type' // Defines a rule which matches on node and returns type'
-  	where 
+      where
       // Assigns variable a to be the result of the Statix analysis of the entire program (or throws an error)
-  		a := <stx-get-ast-analysis <+ fail-msg(|$[no analysis on node [<strip-annos;write-to-string> expr]])>;
+          a := <stx-get-ast-analysis <+ fail-msg(|$[no analysis on node [<strip-annos;write-to-string> expr]])>;
       // Gets the type of the given node (or throws an error)
-	  	type := <stx-get-ast-type(|a) <+ fail-msg(|$[no type on node [<strip-annos;write-to-string> expr]])> expr;
+          type := <stx-get-ast-type(|a) <+ fail-msg(|$[no type on node [<strip-annos;write-to-string> expr]])> expr;
       // Calls a rule to convert the type given by Statix to a type for our tests.
-	  	type' := <resolve-type> type
-	  	
+          type' := <resolve-type> type
+
   resolve-type: a -> a // This rule matches on a and returns a (trivial rule given as example). This implies no transformation actually takes place.
   // resolve-type: MyCustomIntType() -> Int() // This rule matches on your custom type, and returns a type we need in our tests.
   // TODO: Define your own transformation rules to transform types from your Statix defintion to the types we expect in our tests
-	
+
   fail-msg(|msg) = err-msg(|$[get-type: [msg]]); fail
 
 rules // Analysis
 
   // single-file analysis
   //editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "programOk")
-  
+
   // see README.md for details on how to switch to multi-file analysis
   // multi-file analysis
   editor-analyze = stx-editor-analyze(pre-analyze, post-analyze|"statics", "projectOk", "fileOk")
@@ -102,15 +102,6 @@ rules // Debugging
 
 rules
 
-  rename-menu-action : 
-    menu-terms -> <rename-action(construct-textual-change, editor-analyze)> menu-terms  
-    where debug(!"renaming: ")
-  
-  rename-test(|selected-term, new-name) = 
-    rename(editor-analyze|selected-term, new-name);get-ast  
+  rename-menu-action = rename-action(construct-textual-change, editor-analyze, id)
 
-  get-ast: [(_, _, ast) | _] -> ast
-   
-  
-    
-    
+
